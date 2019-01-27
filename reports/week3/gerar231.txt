@@ -1,0 +1,35 @@
+1. Goals for the week of 01/21/2019 - 01/27/2019:
+    [inagural week, no goals]
+
+2. Progress for the week of 01/21/2019 - 01/27/2019:
+    Summary: This week several tasks involving project ideation and team 
+    formation were accomplished. The first was the project pitch, an
+    overall success for myself in specific since my project "GitUp" was chosen
+    by other classmates to be implemented. During the delivery of the
+    pitch and formation of GitUp's team I learned that having clear product 
+    motives and a realistic plan to achieve goals is vital in gaining support. 
+    When the team was officialized we discussed implementation challenges and
+    needs which contributed to articulating GitUp's core functionality. 
+    Later in the week I had the opportunity to browse open-source projects and
+    evaluate them based on complexity and test coverage, choosing one to build
+    and run the test suite. I chose a project called "Closure Stylesheets" which
+    used Maven to build and JUnit to test, I also modified the project to
+    measure test suite coverage using JaCoCo. Completing these tasks required a
+    great deal of documentation reading and thoughtful debugging, I learned that
+    using a reliable and pracitical build is essential for contribution in an
+    open source community. The time to set-up a project has huge influence on
+    programmers' willingness to contribute. Closing the week was a brief
+    in-class exercise on writing an API, something GitUp will take on in this
+    upcoming week. During this exercise I learned the necessity of writing an 
+    API in a way that is quick to iterate and maximizes behavior coverage for
+    word count.
+
+3. Goal's for the week of 01/28/2019 - 02/03/2019:
+    0. Have the project setup (team communication channels, version control,
+    staff communication channels) completed by 1/28/2019.
+    1. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    2. Complete pseudo-code for the test suite based on the API and determine
+    several suitable technologies for test-suite implementation.
+    3. Propose languages/external APIs/resources that will be essential in 
+    building GitUp according to the API.
