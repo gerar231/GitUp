@@ -1,0 +1,35 @@
+1. Goals for the week of 01/21/2019 - 01/27/2019:
+    1. No goals for the first week.
+
+1. Goals for the week of 01/21/2019 - 01/27/2019:
+    1. The first goal this week was to talk to other project groups and figure out which projects interested me.
+       This also required me to try and pitch my project to other groups in hopes that my pitch would interest them.
+    
+    2. The second goal was to try and understand the fine details of the project I'd be working on, to make sure we
+       weren't biting off more than we could chew, but also that our product wasn't trivial or too simple as a 
+       project.
+    
+    3. After forming groups, the goal was to get organized and set up important communication lines and repositories
+       so that our group could productively collaborate.
+
+    Summary: As for the first goal this week, I ended up talking with the GitUp pitch group. I was interested in
+    	     their pitch, but had a little bit of trouble initially grasping the specific features they wanted to
+	     implement. One thing that helped get me on board with the GitUp group was when they described their
+	     goal at a lower level. What they really wanted to do was to handle some of the more simple git user
+	     error cases by "baby-proofing" it with an add-on. This project is something I would've actually liked
+	     to have had as a new computer science major trying to figure out git. I can see the merit of creating
+	     a simple and fast way to make git less user error prone. 	     
+	     After talking it over though, I felt comfortable enough with the depth and focus of their
+	     project idea that I decided I'd join their group. In terms of the last goal for this week, we set up
+	     an email list, a GitHub repo, a slack workspace, and shared our phone numbers. This should allow us to
+	     make efficient progress as a team.
+
+3. Goal's for the week of 01/28/2019 - 02/03/2019:
+    1. The first goal is to make sure everyone in our group has been added to our communication platforms.
+
+    2. We will require an initial API that lays out our core functionality before we can really start
+       developing this project, so this will need to be a top priority.
+
+    3. We will need to brainstorm how we will hope to accomplish our end goals given our API, and figure
+       out the best way to get these components developed. This may include figuring out how to divide and
+       conquer parts of the project.
