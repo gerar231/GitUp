@@ -1,0 +1,14 @@
+What I accomplished this week:
+This week, I worked with my group to improve upon the project proposal from our project pitches.
+We put in a fair amount of time in the project proposal, but while the final product we delivered
+had its strengths, it was far from perfect. We were missing some important parts in our proposal,
+specifically research, a compelling motivation, and measurable tests. Over the course of the weekend, I have
+been working towards filling these gaps. In addition, I've researched into potential high level designs and
+architecture for our project. I also worked on the peer review for the proposal, and was inspired by the
+group we were peer reviewing with regards to making a compelling motivation. I also talked to some of my freinds,
+and have gotten 3 of them to agree to serve as testers for GitUp.
+
+What I hope to accomplish next week:
+I plan to work with my team to finalize the high level architecture this week. Additionally, I plan to
+properly allocate roles within our team and to begin the process of integrating our playtesters for GitUp
+into the development process.
