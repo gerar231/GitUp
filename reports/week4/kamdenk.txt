@@ -1,0 +1,35 @@
+1. Goal's for the week of 01/28/2019 - 02/03/2019:
+    1. The first goal is to make sure everyone in our group has been added to our communication platforms.
+
+    2. We will require an initial API that lays out our core functionality before we can really start
+       developing this project, so this will need to be a top priority.
+
+    3. We will need to brainstorm how we will hope to accomplish our end goals given our API, and figure
+       out the best way to get these components developed. This may include figuring out how to divide and
+       conquer parts of the project.
+
+2. Progress for the week of 01/28/2019 - 02/03/2019:
+    1. We managed to revise our project proposal this week. We were able to add a lot more specificity as to what 
+       we want our product to provide. This even included example use cases that we generated to test our product as 
+       we are developing it.
+    
+    2. When we were figuring out our use cases and how we'd test our product, there was a little bit of difficulty
+       deciding what the behavior of our product should be in our use cases. There was also a good point brought up
+       at our Thursday meeting about thinking more about if we want to be able to force a commit on one machine while
+       operating from a different machine.
+    
+    3. I think one place we're a little bit stuck is that we want to perform some form of automatic pushing to avoid the
+       the local copy from getting too out of sync from the repository, but we currently don't have a great idea of how
+       frequently/infrequently that pushing should occur.
+
+3. Goal's for the week of 02/04/2019 - 02/10/2019:
+    1. I think one of our goals this week should be to figure out what libraries and API's we'll need to use in order to 
+       make our product. 
+
+    2. It is important to find some form of GitHub user complaints so that we can target specific problems real users have
+       and keep them in mind during the development process. This will presumably take place of the user survey we had 
+       originally planned to use, but now seems like it won't pan out.
+
+    3. Since our goal for 02/11/2019 is to have automatic pushing and pulling completed, we need to rethink how often
+       automatic pushing should take place. Originally we threw out an idea for pushing every 30 minutes, but upon
+       further thinking this seems inadequate.
