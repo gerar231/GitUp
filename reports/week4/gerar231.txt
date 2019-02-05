@@ -1,0 +1,53 @@
+1. Goals for the week of 01/28/2019 - 02/03/2019:
+    0. Have the project setup (team communication channels, version control,
+    staff communication channels) completed by 1/28/2019.
+    1. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    2. Complete pseudo-code for the test suite based on the API and determine
+    several suitable technologies for test-suite implementation.
+    3. Propose languages/external APIs/resources that will be essential in 
+    building GitUp according to the API.
+
+2. Progress for the week of 01/28/2019 - 02/03/2019:
+    0. This goal was completely achieved. It was relatively easy to setup
+    these channels as most members in the team had done so before. Suprisingly,
+    the hardest channel to setup was the email list. No blockers here.
+    1. This goal was not completed or started. Since I had anticipated this
+    goal prior to the completion of the Project Proposal (which includes a 
+    schedule) I had the creation of an "API" for GitUp envisioned ahead of
+    what our group decided on. There weren't any particular learnings or 
+    blockers in this process since the goal wasn't even attempted. This goal
+    will rollover to this week because it is a part of our implementation
+    plan according to GitUp's v1 proposal. Also, it would make sense to start
+    making progress on this goal because the "user manual" is due on 2/12/2019
+    which could be captured in creating an API.
+    2. This goal was mostly achieved, the majority of work demonstrated in
+    GitUp's proposal. This goal was easy to achieve since our group worked on
+    this in a team setting. Specific technologies used to test implement this
+    test suite were not discussed but this is reasoned since we have not
+    determined a build framework or core language to implement GitUp. 
+    3. This goal was informally started but not completed. Core technologies
+    identified in creating GitUp thus far will be the Git version control system
+    and some sort of scripting language which allows macro-control of Git VC.
+    Past this our team is unsure of what other APIs/resources we will leverage.
+    I anticipate deciding on a language which is portable and a build system
+    that is lightweight will be ideal for GitUp since it needs to reflect both
+    of those qualities when being used by a client.
+    Summary: Most of this week's progress was a result of completing GitUp's
+    proposal. Blockers this week were minimal. During this upcoming week it will
+    be crucial to mostly complete an API for GitUp (anticipating the "user
+    manual" assignment) and be intentional with choosing technologies to
+    implement GitUp.
+
+3. Goal's for the week of 02/04/2019 - 02/10/2019:
+    0. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    1. Determine and initialize the core language, build framework and test
+    framework for GitUp in the project repository.
+    2. Revise Project to do three things:
+        a. Identify the problem, competitors and insufficient current state
+        all in adjacent sections of the paper.
+        b. Define metrics for comparing GitUp to competitors to evaluate the
+        project's success.
+        c. Support all strong claims with research and include a correctly
+        formatted citations section.
