@@ -29,7 +29,7 @@ experienced developers as points of user data to define GitUp’s features. We
 have found some people but are looking to add a couple more people to each
 group and clearly define responsibilities.
 
-4. TA Meeting Agenda 02/07/2018 @ 16:30:
+4. TA Meeting Agenda 02/07/2018 @ 16:30 in CSE2 151:
 
 TA as a Lead Software Engineer:
     1. Discuss the problem of commiting with enough regularity to be useful, 
