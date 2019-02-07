@@ -1,0 +1,53 @@
+1. Goals for the week of 01/30/2019 - 02/05/2019: N/A
+
+2. Progress for the week of 01/30/2019 - 02/05/2019:
+
+This week we focused on responding to the feedback we received about our project
+proposal, and creating an architecture and implementation plan. In our original
+proposal we planned on using this week to implement the automatic pushing /
+pulling functionality, but after meeting with Martin and seeing our feedback it
+was clear that our time was better spent justifying our problem more fully, and
+thinking through our architecture before we started coding. Gerard took the lead
+on designing a UI, with Kamden and Kaushal focusing on updating the proposal to
+address the feedback and explaining the architecture and UI. Rob hopped between
+teams helping a little with the UI and on evaluating and editing the changes to
+the proposal. It was difficult this week to get our project proposal down to 5
+pages while still including our architectural plan. We needed to be more concise
+with our wording in a few sections to meet the length requirement.
+
+3. Goal's for the week of 02/06/2019 - 02/12/2019:
+
+By next week we now want to have our initial UI finished and begin working on the
+core of our project - the automatic pushing and pulling for the git repo. While
+the actual code to do the pushing and pulling will not be difficult, defining a
+good system for grouping commits will be the core challenge. The system must
+monitor a project without being too invasive or too infrequent. Gerard and
+Kaushal will be responsible for implementing the automatic pushing and pulling
+feature this week, while Kamden and Rob will serve as evaluators. Additionally,
+we’ve begun to form two groups, one of experienced developers and one of less
+experienced developers as points of user data to define GitUp’s features. We
+have found some people but are looking to add a couple more people to each
+group and clearly define responsibilities.
+
+4. TA Meeting Agenda 02/07/2018 @ 16:30:
+
+TA as a Lead Software Engineer:
+    1. Discuss the problem of commiting with enough regularity to be useful, 
+    without being overly invasive.
+        a. Fixed time based heuristic seems both too invasive and not frequent 
+        enough although might be a useful starting point.
+        b. A system based on a varying time between commits increasing frequency
+        when the user is active and decreasing when not active might be possible.
+        c. Some sort of callback system based on when files are opened and
+        closed seems like an interesting alternative.
+
+TA as a TA:
+    1. Ask about the changes made to the project proposal and specifically
+    whether or not the problem definition is more justified. Similarly, confirm
+    that the evaluation plan is comprehensive. 
+    2. Ask about what to prioritize in the report as to respect the page limit. 
+
+TA as a Customer:
+    1. Ask for his impressions upon looking at GitUp UI mockups without
+    explanation of usage.
+    2. Ask for likes and dislikes about competitor interfaces.
