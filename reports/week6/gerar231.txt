@@ -1,0 +1,17 @@
+1. Goals for the week of MM/DD/YYYY (Previous Monday) - MM/DD/YYYY (Previous Sunday):
+    1. [first goal]
+    ...
+    N. [Nth goal]
+
+2. Progress for the week of MM/DD/YYYY (Monday) - MM/DD/YYYY (Sunday):
+    1. [first goal accomplishments, learnings, difficulties, blockers, 
+    new ideas/directions]
+    ...
+    N. [Nth goal accomplishments, learnings, difficulties, blockers, 
+    new ideas/directions]
+    Summary: [summary of the week's progress]  
+
+3. Goal's for the week of MM/DD/YYYY (Upcoming Monday) - MM/DD/YYYY (Upcoming Sunday):
+    1. [first measureable goal, short or long term]
+    ...
+    2. [Nth measureable goal, short of long term]
