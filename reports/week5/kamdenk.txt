@@ -1,0 +1,32 @@
+1. Goal's for the week of 02/04/2019 - 02/10/2019:
+    1. I think one of our goals this week should be to figure out what libraries and API's we'll need to use in order to 
+       make our product. 
+
+    2. It is important to find some form of GitHub user complaints so that we can target specific problems real users have
+       and keep them in mind during the development process. This will presumably take place of the user survey we had 
+       originally planned to use, but now seems like it won't pan out.
+
+    3. Since our goal for 02/11/2019 is to have automatic pushing and pulling completed, we need to rethink how often
+       automatic pushing should take place. Originally we threw out an idea for pushing every 30 minutes, but upon
+       further thinking this seems inadequate.
+       
+2. Progress for the week of 02/04/2019 - 02/10/2019:
+    1. We have decided on what API's and libraries we will need to work with. We will use Tkinter (Python) for our GUI.
+       Tkinter allows the GUI to be cross-platform friendly. We will also use OAuth to handle user credentials when 
+       communicating with Github. Lastly, we will use GitPython to handle actual repository data flow between the local
+       and remote repositories.
+       
+    2. We managed to find a paper that criticizes Git's conceptual design. It references stackoverflow surveys, and provides
+       data that supports our driving motivation behind this project, that Git is too bloated and over-complicated for
+       new users. It seems from this paper that most people believe Git's documentation is inadequate as well.
+       
+    3. We have now, for the most part, decided that autamtic pushing should be event-based. Time-based pushing just doesn't
+       seem to have a golden time constant that's ideal to push after. This feature will most likely get pushed back since we
+       haven't gotten started implementing it yet.
+       
+ 3. Goal's for the week of 02/11/2019 - 02/17/2019:
+    1. It should be a top priority to try and get automatic pushing/pulling implemented this week. We took some extra time to
+       to lay out the architecture of our project, so now we're behind on implementation.
+
+    2. It sounds like OAuth can be finicky to set up, so if we can also get that at least on standby this week then we won't 
+       need to worry about it taking too long in the future, further pushing back our schedule.

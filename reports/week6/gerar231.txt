@@ -1,0 +1,54 @@
+1. Goals for the week of MM/DD/YYYY (Previous Monday) - MM/DD/YYYY (Previous Sunday):
+    0. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    1. Determine and initialize the core language, build framework and test
+    framework for GitUp in the project repository.
+    2. Revise Project to do three things:
+        a. Identify the problem, competitors and insufficient current state
+        all in adjacent sections of the paper.
+        b. Define metrics for comparing GitUp to competitors to evaluate the
+        project's success.
+        c. Support all strong claims with research and include a correctly
+        formatted citations section.
+
+2. Progress for the week of MM/DD/YYYY (Monday) - MM/DD/YYYY (Sunday):
+    0. This goal was partially acheived through the User Manual asssignment. A 
+    complete API has not been created because the usage of said API will primarily 
+    be internal. Through this process the GitUp team was able to establish and
+    execute a highly effective team workflow asynchronously. Each member was
+    assigned a clearly defined module in creating the user manual, myself tackling
+    the login details. Key learning here is to focus on modularizing assignments and
+    implementation goals to allow continious asynchronous work between team members.
+    1. This goal is almost entirely finished aside from creating the test framework.
+    GitUp will be implemented using TUIKinter and PyGithub (as specified in the
+    project proposal doc). Python was chosen as a common ground between team members
+    and for it's high level libraries. A full on build tool might not be super necesarry
+    until packing the project as an executable file. Additionally Python has a built-in
+    module for unit testing (called "unittest") that should be sufficient for creating
+    a test suite.
+    2a. Waiting on feedback for our latest proposal version but across the proposal we
+    have made consisten progress in defining GitUp's differentiating factors vs. comeptitors
+    (both intentional and not). The key one being almost complete automation and abstraction
+    of the version control process with a much simpler interface while still allowing for
+    granular (and intelligently created) version history.
+    2b. Both quantitative and qualitative testing of GitUp has been greatly refined and
+    focuses on internal tests as well as external tests that compare the performance of
+    GitUp to its competitors, such as "Smart grouping case" and "Final use case" detailed
+    in the project proposal.
+    2c. Research and standard citations have been added throughout the entire document
+    to thoroughly back claims.
+    Summary: Significant markers of progress this week include beginning implementation
+    and documentation of GitUp on a technical level, upon getting closer to a final
+    version of the project proposal regarding the product's key features. Learnings
+    were based in improving team workflow by modularizing tasks and defining better
+    metrics for success. Improvements could be made by improving quality of work with
+    regards to research (on first attempts) and doing more active user testing to
+    ensure the product is continiously recieving feedback on functionality and features.
+
+3. Goal's for the week of MM/DD/YYYY (Upcoming Monday) - MM/DD/YYYY (Upcoming Sunday):
+    0. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    1. Seek out some high-level research papers on GitUp's competition and cite them
+    in justifying features of the product.
+    2. Test the feature set of GitUp with users by demonstrating the user interface
+    and core functionality, record at least two trials.
