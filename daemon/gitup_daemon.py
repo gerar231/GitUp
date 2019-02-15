@@ -1,15 +1,22 @@
 from py_daemon.py_daemon import Daemon
-from inotify.adapters import InotifyTree
+from inotify.adapters import InotifyTrees
+import os.path
+import csv
 
 # The repository information is stored in this file.
-REPOSITORY_FILE_PATH = "/usr/GitUp/repositories.csv"
+REPOSITORY_FILE_PATH = "/usr/share/gitup/repositories.csv"
 
 # Represents a single repository that GitUp is tracking
 class Repository(object):
     def __init__(self, remote, local_path, last_pulled):
         self.remote = remote
-        self.local_path = local_path
+        self.local_path = os.path.normpath(local_path)
         self.last_pulled = last_pulled
+
+    def contains(self, path):
+        normed_path = os.path.normpath(path)
+        prefix = os.path.commonprefix([self.local_path, normed_path])
+        return prefix == self.local_path
 
     # Returns True if GitUp is capable of connecting to GitHub to
     # push/pull for this repository. False otherwise.
@@ -33,28 +40,40 @@ class Repository(object):
         # TODO implement this
         return
 
+    def handle_event(self, event):
+        print "event occured in repo"
+
 
 # Parses the repository information stored in the given repo_file and returns
 # a list  of repository objects correspoding to the data in the file.
-def parse_respoitories(repo_file):
-    # TODO implement this
-    return None
-    
+def parse_respoitories(repo_file_path):
+    with open(repo_file_path) as repo_file:
+        repositories = []
+        csv_reader = csv.reader(repo_file, delimiter=',')
+        line = 0
+        for row in csv_reader:
+            if line != 0:
+                remote = row[0]
+                local_path = row[1]
+                last_pulled = row[2]
+                repo = Repository(remote, local_path, last_pulled)
+                repositories.append(repo)
+            line += 1
+        return repositories
+
 # Allows this process to be turned into a Daemon
 class GitUpDaemon(Daemon):
     def run(self):
-        repositories = parse_repositories(REPOSITORY_FILE_PATH)
-        inotify = InotifyTree
-        for repo in repositories:
-            inotify.add_watch(repo.local_path)
-
+        self.repositories = parse_repositories(REPOSITORY_FILE_PATH)
+        local_paths = list(map(lambda x: x.local_path, repositories))
+        inotify = InotifyTrees(local_paths)
         for event in inotify.event_gen(yield_nones=False):
             self.handle_event(event)
-        # TODO Implement this
-        return
    
     # Handle the given inotify event
     def handle_event(event):
-        # TODO Implement this
-        return
+        for repo in self.repositories:
+             event_path = event[2]
+             if repo.contains(event_path):
+                 repo.handle_event(event)
 
