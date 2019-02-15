@@ -41,12 +41,14 @@ class Repository(object):
         return
 
     def handle_event(self, event):
-        print "event occured in repo"
+        (_, type_names, path, filename) = event 
+        print("REPOSITORY=[{}] PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(
+              self.local_path, path, filename, type_names))
 
 
 # Parses the repository information stored in the given repo_file and returns
 # a list  of repository objects correspoding to the data in the file.
-def parse_respoitories(repo_file_path):
+def parse_repositories(repo_file_path):
     with open(repo_file_path) as repo_file:
         repositories = []
         csv_reader = csv.reader(repo_file, delimiter=',')
@@ -65,13 +67,13 @@ def parse_respoitories(repo_file_path):
 class GitUpDaemon(Daemon):
     def run(self):
         self.repositories = parse_repositories(REPOSITORY_FILE_PATH)
-        local_paths = list(map(lambda x: x.local_path, repositories))
+        local_paths = list(map(lambda x: x.local_path, self.repositories))
         inotify = InotifyTrees(local_paths)
         for event in inotify.event_gen(yield_nones=False):
             self.handle_event(event)
    
     # Handle the given inotify event
-    def handle_event(event):
+    def handle_event(self, event):
         for repo in self.repositories:
              event_path = event[2]
              if repo.contains(event_path):
