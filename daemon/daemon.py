@@ -78,7 +78,7 @@ class GitUpDaemon(Daemon):
             for event in inotify.event_gen(yield_nones=False):
                 self.handle_event(event)
         else:
-            print "No repofile provided stopping self"
+            print >> self.stderr, "No repofile provided stopping self"
             self.stop()
    
     # Handle the given inotify event
