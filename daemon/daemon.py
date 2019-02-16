@@ -3,9 +3,6 @@ from inotify.adapters import InotifyTrees
 import os.path
 import csv
 
-# The repository information is stored in this file.
-REPOSITORY_FILE_PATH = "/usr/share/gitup/repositories.csv"
-
 # Represents a single repository that GitUp is tracking
 class Repository(object):
     def __init__(self, remote, local_path, last_pulled):
@@ -65,12 +62,24 @@ def parse_repositories(repo_file_path):
 
 # Allows this process to be turned into a Daemon
 class GitUpDaemon(Daemon):
+    def __init__(self, pidfile, stdin=os.devnull,
+                 stdout=os.devnull, stderr=os.devnull,
+                 home_dir='.', umask=0o22, verbose=1,
+                 use_gevent=False, repofile=None):
+        super(GitUpDaemon, self).__init__(pidfile, stdin, stdout, stderr, home_dir,
+                                          umask, verbose, use_gevent)
+        self.repofile = repofile
+
     def run(self):
-        self.repositories = parse_repositories(REPOSITORY_FILE_PATH)
-        local_paths = list(map(lambda x: x.local_path, self.repositories))
-        inotify = InotifyTrees(local_paths)
-        for event in inotify.event_gen(yield_nones=False):
-            self.handle_event(event)
+        if self.repofile:      
+            self.repositories = parse_repositories(self.repofile)
+            local_paths = list(map(lambda x: x.local_path, self.repositories))
+            inotify = InotifyTrees(local_paths)
+            for event in inotify.event_gen(yield_nones=False):
+                self.handle_event(event)
+        else:
+            print "No repofile provided stopping self"
+            self.stop()
    
     # Handle the given inotify event
     def handle_event(self, event):
