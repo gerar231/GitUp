@@ -3,7 +3,7 @@ language: python
 
 #Specify Python version 3.7.2
 python:
-  - "3.7"
+  - "3.6"
   
 #Command to run tests
 script: 
