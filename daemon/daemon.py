@@ -1,4 +1,4 @@
-from py_daemon.py_daemon import Daemon
+from base_daemon import Daemon
 from repository import Repository
 from inotify.adapters import InotifyTrees
 import os
@@ -11,8 +11,8 @@ class GitUpDaemon(Daemon):
                  stdout=os.devnull, stderr=os.devnull,
                  home_dir='.', umask=0o22, verbose=1,
                  use_gevent=False, repofile=None):
-        super(GitUpDaemon, self).__init__(pidfile, stdin, stdout, stderr, home_dir,
-                                          umask, verbose, use_gevent)
+        super().__init__(pidfile, stdin, stdout, stderr, home_dir,
+                         umask, verbose, use_gevent)
         self.repofile = repofile
         self.repositories = []
 
@@ -33,7 +33,7 @@ class GitUpDaemon(Daemon):
             # the constructor. Allowing the user to not pass a repofile, makes
             # it easier for the user to construct the daemon when they only want
             # to stop it.
-            print >> self.stderr, "run() called without providing a repofile"
+            print >> self.stderr, ("run() called without providing a repofile")
             self.stop()
   
     # Returns True if the given event should be passed along to a

@@ -12,7 +12,7 @@ if not os.path.isdir(logs_dir):
     try:
         os.mkdir(logs_dir)
     except:
-        print "failed to create logs directory"
+        print >> os.stderr,("failed to create logs directory")
         exit(1)
 # delte previous logs
 if os.path.isfile(out):
@@ -25,5 +25,5 @@ daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid',
                      stderr=err)
 # Change this to daemon.run() to run the daemon connected to
 # the terminal for easier debugging
-daemon.run()
+daemon.start()
 
