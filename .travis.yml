@@ -7,4 +7,6 @@ python:
   
 #Command to run tests
 script: 
-  - pytest
+  - echo "Skipping tests until test suite is written."
+  
+  #- pytest
