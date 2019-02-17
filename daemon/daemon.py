@@ -78,7 +78,11 @@ class GitUpDaemon(Daemon):
             if line != 0:
                 path = row[0]
                 last_pulled = row[1]
-                repo = Repository(path=path, last_pulled=last_pulled)
-                self.repositories.append(repo)
+                try:
+                    repo = Repository(path=path, last_pulled=last_pulled)
+                    self.repositories.append(repo)
+                except:
+                    print >> self.stderr, ("repository for " + path + "failed to"
+                        + " be initialized skipping")
             line += 1
 
