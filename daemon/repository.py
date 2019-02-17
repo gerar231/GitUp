@@ -1,6 +1,9 @@
 import os
 import git
 
+class RepositoryInitError(Exception):
+    pass
+
 # Represents a single repository that GitUp is tracking.
 class Repository(git.Repo):
     def __init__(self, path=None, odbt=git.GitCmdObjectDB,
@@ -11,7 +14,7 @@ class Repository(git.Repo):
             self.last_pulled = last_pulled
             self.path = os.path.normpath(path)
         except:
-            raise Error("Repository failed initialization.")
+            raise RepositoryInitError()
 
     def contains(self, path):
         normed_path = os.path.normpath(path)

@@ -1,5 +1,6 @@
 from base_daemon import Daemon
 from repository import Repository
+from repository import RepositoryInitError
 from inotify.adapters import InotifyTrees
 import os
 import csv
@@ -81,7 +82,7 @@ class GitUpDaemon(Daemon):
                 try:
                     repo = Repository(path=path, last_pulled=last_pulled)
                     self.repositories.append(repo)
-                except:
+                except RepositoryInitError:
                     print >> self.stderr, ("repository for " + path + "failed to"
                         + " be initialized skipping")
             line += 1
