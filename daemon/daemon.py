@@ -1,6 +1,7 @@
 from py_daemon.py_daemon import Daemon
 from repository import Repository
 from inotify.adapters import InotifyTrees
+import os
 import csv
 
 # Daemon that monitors file accesses in the repositories specificed in
@@ -22,10 +23,11 @@ class GitUpDaemon(Daemon):
             # Parse repositories on every run to allow restarting to daemon to
             # update the repositories.
             self.__parse_repositories()
-            local_paths = list(map(lambda x: x.local_path, self.repositories))
-            inotify = InotifyTrees(local_paths)
+            paths = list(map(lambda x: x.path, self.repositories))
+            inotify = InotifyTrees(paths)
             for event in inotify.event_gen(yield_nones=False):
-                self.__handle_event(event)
+                if self.__should_process_event(event):
+                    self.__handle_event(event)
         else:
             # A client might end up in the case if they don't pass a repofile to
             # the constructor. Allowing the user to not pass a repofile, makes
@@ -33,7 +35,26 @@ class GitUpDaemon(Daemon):
             # to stop it.
             print >> self.stderr, "run() called without providing a repofile"
             self.stop()
-   
+  
+    # Returns True if the given event should be passed along to a
+    # Repository to be processed, False if it should be ignored.
+    def __should_process_event(self, event):
+        path = event[2]
+        # Makes sure the .git directory get's ignored.
+        if ".git" in path:
+            return False
+        filename = event[3]
+        # All directory events should be considered.
+        if filename == None:
+            return True
+        return not self.__ignores_file_type(filename)
+
+    # Returns True if the given type of file should be ignored, False
+    # otherwise.
+    def __ignores_file_type(self, filename):
+        # For now we only ignore .swp files automatically.
+        return ".swp" in filename
+
     # Handle the given inotify event, finds the repository it pertains to
     # and forwards the event to that repository.
     def __handle_event(self, event):
@@ -55,10 +76,9 @@ class GitUpDaemon(Daemon):
         line = 0
         for row in csv_reader:
             if line != 0:
-                remote = row[0]
-                local_path = row[1]
-                last_pulled = row[2]
-                repo = Repository(remote, local_path, last_pulled)
+                path = row[0]
+                last_pulled = row[1]
+                repo = Repository(path=path, last_pulled=last_pulled)
                 self.repositories.append(repo)
             line += 1
 

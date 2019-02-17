@@ -23,5 +23,7 @@ daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid',
                      repofile=repofile,
                      stdout=out,
                      stderr=err)
-daemon.start()
+# Change this to daemon.run() to run the daemon connected to
+# the terminal for easier debugging
+daemon.run()
 
