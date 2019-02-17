@@ -11,7 +11,7 @@ err = '/tmp/gitup/daemon.err'
 if not os.path.isdir(logs_dir):
     try:
         os.mkdir(logs_dir)
-    except:
+    except OSError:
         print >> os.stderr,("failed to create logs directory")
         exit(1)
 # delte previous logs
