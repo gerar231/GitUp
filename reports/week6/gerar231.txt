@@ -1,4 +1,4 @@
-1. Goals for the week of MM/DD/YYYY (Previous Monday) - MM/DD/YYYY (Previous Sunday):
+1. Goals for the week of 02/04/2019 - 02/10/2019:
     0. Complete a v1 API which gives the functionality of each module and their
     interactions.
     1. Determine and initialize the core language, build framework and test
@@ -11,7 +11,7 @@
         c. Support all strong claims with research and include a correctly
         formatted citations section.
 
-2. Progress for the week of MM/DD/YYYY (Monday) - MM/DD/YYYY (Sunday):
+2. Progress for the week of 02/04/2019 - 02/10/2019:
     0. This goal was partially acheived through the User Manual asssignment. A 
     complete API has not been created because the usage of said API will primarily 
     be internal. Through this process the GitUp team was able to establish and
@@ -45,7 +45,7 @@
     regards to research (on first attempts) and doing more active user testing to
     ensure the product is continiously recieving feedback on functionality and features.
 
-3. Goal's for the week of MM/DD/YYYY (Upcoming Monday) - MM/DD/YYYY (Upcoming Sunday):
+3. Goal's for the week of 02/11/2019 - 02/17/2019:
     0. Complete a v1 API which gives the functionality of each module and their
     interactions.
     1. Seek out some high-level research papers on GitUp's competition and cite them

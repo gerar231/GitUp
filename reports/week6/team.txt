@@ -1,0 +1,21 @@
+Last Week’s Goals: 
+Note: This is the exact text from last week. We apologize for the suboptimal format!
+
+By next week we now want to have our initial UI finished and begin working on the core of our project - the automatic pushing and pulling for the git repo. While the actual code to do the pushing and pulling will not be difficult, defining a good system for grouping commits will be the core challenge. The system must monitor a project without being too invasive or too infrequent. Gerard and Kaushal will be responsible for implementing the automatic pushing and pulling feature this week, while Kamden and Rob will serve as evaluators. Additionally, we’ve begun to form two groups, one of experienced developers and one of less experienced developers as points of user data to define GitUp’s features. We have found some people but are looking to add a couple more people to each group and clearly define responsibilities.
+
+Progress:
+This week we decided that automatic pushing should be event based. To accomplish this, we are currently hoping to use Linux’s inotify API to monitor files opening/closing/being edited. This API creates a file descriptor where changes in watched directories are made readable. Some sort of blocking condition will allow the other parts of the code to not have to be continuously checking for this file having contents.
+At this point, our UI mockups are about as complete as we need them to be in order for us to know what we need to implement in terms of backend. 
+We also are currently trying to figure out whether or not we need to use OAuth. It seems that OAuth be unnecessary, and replaceable with PyGithub, a Python library that enables managing of Git repositories and resources in Python applications.
+
+Plans/Goals:
+By next week we will hopefully be able to communicate with a remote Git repository, and have automatic pushing and pulling fully implemented. This implies that we will have incorporated PyGithub, GitPython, and inotify into our project.
+Evaluate our work through tests and user feedback 
+
+TA Meeting Agenda:
+Treat Martin as a Lead Software Engineer:
+We still need to decide on a heuristic for when enough change has been made to warrant a commit, can you provide any insight into how big of a change should merit this?
+Treat Martin as a TA:
+Are we biting off more than we can chew here for this week’s goals? We’ll have to incorporate all of our external API’s if we accomplish this week’s goal, but we are also behind in our development schedule.
+We’d like some clarification on some of the feedback for the user manual. What action other than install is the user not told how to do? The idea is that there is very little interaction with the user.
+

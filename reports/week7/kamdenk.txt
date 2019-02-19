@@ -1,0 +1,32 @@
+1. Goal's for the week of 02/11/2019 - 02/17/2019:
+    1. It should be a top priority to try and get automatic pushing/pulling implemented this week. We took some extra time to
+       to lay out the architecture of our project, so now we're behind on implementation.
+
+    2. It sounds like OAuth can be finicky to set up, so if we can also get that at least on standby this week then we won't 
+       need to worry about it taking too long in the future, further pushing back our schedule.
+       
+2. Progress for the week of 02/11/2019 - 02/17/2019:
+    1. We now have PyGithub integration in a branch of our repository. We didn't manage to get full on automatic pushing and 
+       pulling implemented. We have the necessary components ready now though, those being file monitoring through a daemon
+       and PyGithub integration for pushing to a repository. The only task left now for automatic pushing and pulling is to
+       connect these components.
+       
+    2. We have an OAuth structure in our repository now, for when we need to authenticate Github communications, but we haven't
+       yet implemented this fully either. The set up process is out of the way though, which will no longer impede our progress
+       moving forward.
+       
+       
+ 3. Goal's for the week of 02/17/2019 - 02/23/2019:
+    1. We now have alot of structure set up for our project. What's left now is to start hooking pieces together. The first step
+       should be to prepare some form of functional demo by Thursday. I think this could most feasibly be achieved by demonstrating
+       our automatic pushing. We have ways to detect when a file is saved and closed, and we have a way to communicate with a Git
+       repo, so for our demo we only need to perform this communication everytime a file is saved or closed.
+       
+    2. We also got feedback suggesting that we give concrete steps for user testing, since our examples were too high level. I
+       think a good goal that responds too this feedback is to write out concrete examples of our high level use cases, and then
+       use our user testing group to perform these tests. This should hopefully allow us notice any bugs before we delve too deep 
+       into the implementation process.
+       
+    3. We have CI set up on our repo, but we don't currently have any real implementation tests running yet. We should also aim
+       to have tests for at least one of either the daemon or the PyGithub integration written and running on our CI by the end
+       of the week.
