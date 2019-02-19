@@ -1,0 +1,12 @@
+#Set language to python
+language: python
+
+#Specify Python version 3.7.2
+python:
+  - "3.6"
+  
+#Command to run tests
+script: 
+  - echo "Skipping tests until test suite is written."
+  
+  #- pytest
