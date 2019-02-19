@@ -1,0 +1,17 @@
+Goals for this Week:
+- Finish implementing automatic pushing/pulling
+- Finish user manual
+- Send out first user feedback survey/poll
+- Continue improving my proficiency with GitPython and Tkinter
+
+Progress this week:
+- Created the updated slides for Friday's presentation
+- Practiced for and delivered first presentation on GitUp
+- Created first version of GUI using Tkinter
+- Updated report and user manual based off of feedback from last week
+
+Goals for Next Week:
+- Get user feedback on GUI + automatic pushing/pulling
+- Begin implementing commit grouping mechanism
+- Continue to improve upon report and user manual
+- Contribute towards first version of past version viewing
