@@ -1,3 +1,4 @@
+import os
 from github import Github
 from git import Repo
 from git import IndexFile
@@ -10,7 +11,10 @@ class UserAccount(object):
 
     def __init__(self, user_name, password):
         """
-        Logs in to a user account and intializes the object
+        Arguments:
+            user_name: user name for a GitHub account, assumes valid.
+            password: password for a GitHub account, assumes valid.
+        Logs in to a user account and intializes the object.
         """
         self.github_control = Github(login_or_token=user_name, password=password)
     
@@ -24,7 +28,13 @@ class UserAccount(object):
         """
         Returns the profile URL for the current user
         """
-        return self.github_control.get_user()._url
+        return self.github_control.get_user().url
+
+    def get_profile_image_url(self):
+        """
+        Returns the profile image URL for the current user
+        """
+        return self.github_control.get_user().avatar_url
 
 
     def github_controller(self):
@@ -33,7 +43,7 @@ class UserAccount(object):
         """
         return self.github_control
 
-    def create_remote_repo(self, local_repo):
+    def create_remote_repo(self, local_repo: Repo):
         """
         Arguments:
             local_repo: GitPython Repo object to create a remote repository for
@@ -45,19 +55,17 @@ class UserAccount(object):
         If a remote already exists throw an error.
         If push failse after a remote repo is created then throw an error.
         """
-        # verify this is a valid git repo
-        assert isinstance(local_repo, Repo)
-
         # verify that there is not remote for this repo
         if len(local_repo.remotes()) != 0:
             AssertionError("local_repo already has a remote.")
 
         # create the remote repository
-        self.github_control.get_user().create_repo(name=local_repo.working_tree_dir, description=str("Repository managed by GitUp."))
+        repo_name = os.path.basename(os.path.normpath(local_repo.working_tree_dir))
+        self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
 
         # ERROR CHECK NEEDED
         # add the remote from the remote repository to the local repository
-        local_repo.create_remote(name="origin", url=self.github_control.get_repo(local_repo.working_tree_dir).url)
+        local_repo.create_remote(name="origin", url=self.github_control.get_repo(repo_name).url)
 
         # create index for this repo
         curr_index = IndexFile(local_repo)
@@ -82,9 +90,6 @@ class UserAccount(object):
         If local_repo does not have a remote named "origin" throw error. 
         If push to remote "origin" fails throw error.
         """
-        # verify this is a valid git repo
-        assert isinstance(local_repo, Repo)
-
         # verify this repo has an origin remote
         if local_repo.remote(name="origin").exists is False:
             AssertionError("No origin remote for repo {1}.".format(local_repo.working_tree_dir))
@@ -93,7 +98,7 @@ class UserAccount(object):
         if local_repo.remote(name="origin").push() is None:
             AssertionError("Push to origin remote failed for repo {1}.".format(local_repo.working_tree_dir))
 
-    def pull_to_local(self, local_repo):
+    def pull_to_local(self, local_repo: Repo):
         """
         Argument:
             local_repo: GitPython repo to pull latest changes from the origin remote
@@ -103,10 +108,6 @@ class UserAccount(object):
         If local_repo does not have a remote named "origin" throw error. 
         If pull from remote "origin" fails throw error.
         """
-        # verify this is a valid git repo
-        
-        assert isinstance(local_repo, Repo)
-
         # verify this repo has an origin remote
         if local_repo.remote(name="origin").exists is False:
             AssertionError("No origin remote for repo {1}.".format(local_repo.working_tree_dir))
