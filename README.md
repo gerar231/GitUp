@@ -1,4 +1,4 @@
-**Welcome to GitUp!**
+***Welcome to GitUp!***
 
 GitUp is a portable and fast backup tool with powerful version history features that’s easy for anyone to use!
 
@@ -14,7 +14,7 @@ As of now, GitUp only works on Linux based systems. Additionally, to use GitUp, 
 
 Simply download the runnable program at [URL for executable] to an easily accessible place on your system, and you’re good to go!
 
-**Using GitUp**:
+***Using GitUp***:
 
 Congratulations! You now have everything you need to use GitUp. To begin, simply click on the GitUp executable file. When you do, GitUp will open and you’ll be greeted by the main menu:
 
@@ -58,7 +58,9 @@ Upon hitting the "*CONFIRM*" button all changes will be applied, shown below:
 
 ![image alt text](images/image_2.png)
 
-**The Project View Screen:**![image alt text](images/image_3.png)
+***The Project View Screen:***
+
+![image alt text](images/image_3.png)
 
 **View/Revert Changes**
 
@@ -72,7 +74,7 @@ By clicking "Change Commits" the user sees a menu allowing them to select a pre 
 
 You don’t need to worry about syncing changes! GitUp will automatically back up your work whenever you change. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
 
-**Important Notes**
+***Important Notes***
 
 Since the projects are on your GitHub account, you can modify your project using git. However, we strongly discourage doing this, as GitUp will handle all aspects of backing up your work and viewing/reverting past versions for you. Also, proceed with caution whenever you get a warning that something could potentially become out of sync! If a file becomes out of sync, GitUp will automatically attempt to resolve it, though you may lose work when it does so.
 
