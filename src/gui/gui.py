@@ -31,7 +31,7 @@ class StartingMenu(tk.Frame):
         tk.Button(self, text = "Remove Project",
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
 
-class LoginWindow(tk.frame):
+class LoginWindow(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         tk.Label(self, text = "Username:").grid(column = 0, row = 0)
@@ -70,8 +70,12 @@ class OpenProjectMenu(tk.Frame):
             command = self.openProject(projs.current()))
 
     def openProject(projName):
-    
-    def fetchProjects(projName)
+        a = 1
+        # Handles user selection of project to add to GitUp
+
+    def fetchProjects():
+        a = 1
+        # A helper method that will fetch all the projects in the users remote repo
  
 class ProjectViewMenu(tk.Frame):
     def __init__(self, master):
