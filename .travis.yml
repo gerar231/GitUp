@@ -6,5 +6,7 @@ matrix:
     sudo: true
     before_script:
       - sudo chmod +x ./daemon/test/test.sh
+      - sudo chmod +x ./src/test/compile-src.sh
     script:
       - ./daemon/test/test.sh
+      - ./src/test/compile-src.sh
