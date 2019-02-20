@@ -70,7 +70,8 @@ class OpenProjectMenu(tk.Frame):
             command = self.openProject(projs.current()))
 
     def openProject(projName):
-        a = 1
+    
+    def fetchProjects(projName)
  
 class ProjectViewMenu(tk.Frame):
     def __init__(self, master):
