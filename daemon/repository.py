@@ -25,3 +25,16 @@ class Repository(git.Repo):
         (_, type_names, path, filename) = event 
         print("REPOSITORY=[{}] PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(
               self.path, path, filename, type_names))
+        last_dir = os.path.abspath(os.path.curdir)
+        os.chdir(self.path)
+        relative_path = os.path.relpath(os.path.join(path, filename))
+        # Check to avoid commiting files multiple times or if no changes have occured
+        changed_files = [ os.path.normpath(item.a_path) 
+                          for item in self.index.diff(None) ]
+        filepath = os.path.normpath(relative_path)
+        if filepath in changed_files or filepath in self.untracked_files:
+            self.git.add(relative_path)
+            self.git.commit(relative_path, m=relative_path)
+        os.chdir(last_dir)
+                            
+

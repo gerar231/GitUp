@@ -13,16 +13,19 @@ if len(sys.argv) != 2:
 
 repo_path = os.path.abspath(sys.argv[1])
 
+# delte previous logs and csv
+if os.path.isfile(out):
+    os.remove(out)
+if os.path.isfile(err):
+    os.remove(err)
+if os.path.isfile(tmp_csv_path):
+   os.remove(tmp_csv_path)
+
 tmp_csv_file = None
 try:
-    if os.path.isfile(tmp_csv_path):
-        os.remove(tmp_csv_path)
     tmp_csv_file = open(tmp_csv_path, 'w+')
 except IOError:
     print("failed to create new repository file")
-    exit(1)
-except OSError:
-    print("failed to delete old repository file")
     exit(1)
 
 tmp_csv_file.write("local_path,last_pulled\n")

@@ -2,8 +2,18 @@ from base_daemon import Daemon
 from repository import Repository
 from repository import RepositoryInitError
 from inotify.adapters import InotifyTrees
+import inotify
 import os
 import csv
+
+event_mask = (inotify.constants.IN_CLOSE_WRITE |
+              inotify.constants.IN_MOVE |
+              inotify.constants.IN_MODIFY |
+              inotify.constants.IN_ISDIR |
+              inotify.constants.IN_CREATE |
+              inotify.constants.IN_DELETE |
+              inotify.constants.IN_DELETE_SELF |
+              inotify.constants.IN_MOVE_SELF)
 
 # Daemon that monitors file accesses in the repositories specificed in
 # the repofile passed to it's constructor.
@@ -25,7 +35,7 @@ class GitUpDaemon(Daemon):
             # update the repositories.
             self.__parse_repositories()
             paths = list(map(lambda x: x.path, self.repositories))
-            inotify = InotifyTrees(paths)
+            inotify = InotifyTrees(paths,mask=event_mask)
             for event in inotify.event_gen(yield_nones=False):
                 if self.__should_process_event(event):
                     self.__handle_event(event)
@@ -54,7 +64,7 @@ class GitUpDaemon(Daemon):
     # otherwise.
     def __ignores_file_type(self, filename):
         # For now we only ignore .swp files automatically.
-        return ".swp" in filename
+        return filename.endswith(".swp") or filename.endswith(".swx")
 
     # Handle the given inotify event, finds the repository it pertains to
     # and forwards the event to that repository.
