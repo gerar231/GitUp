@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 
+proj_name = None
 proj_dir = None
 
 class GitUpApp(tk.Tk):
@@ -36,14 +37,19 @@ class LoginWindow(tk.Frame):
         tk.Frame.__init__(self, master)
         tk.Label(self, text = "Username:").grid(column = 0, row = 0)
         tk.Label(self, text = "Password:").grid(column = 0, row = 1)
-        self.username = tk.Entry(self).grid(column = 1, row = 0)
-        self.password = tk.Entry(self).grid(column = 1, row = 1)
+        self.username = tk.Entry(self)
+        self.username.grid(column = 1, row = 0)
+        self.password = tk.Entry(self)
+        self.password.grid(column = 1, row = 1)
         tk.Button(self, text="Login",
-            command = self.login()).grid(row = 2)
+                command = lambda: self.login(master)).grid(row = 2)
+        tk.Button(self, text="Back",
+                command = lambda: master.switch_frame(StartingMenu)).grid(column = 1, row=2)
 
-    def login(self):
-        if self.username.get() == None:
-            return false
+    def login(self, master):
+        if self.username.get() != "" and self.password.get != "":
+            #TODO: Use username and password for OAuth
+            master.switch_frame(StartingMenu)
 
 class AddProjectMenu(tk.Frame):
     def __init__(self, master):
@@ -51,13 +57,45 @@ class AddProjectMenu(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu))
         tk.Button(self, text = "Create New Project",
-            command = self.createProject).pack()
-        tk.Button(self, text = "Add Existing Project").pack()
+            command = lambda: master.switch_frame(CreateProject)).pack()
+        tk.Button(self, text = "Add Existing Project",
+            command = lambda: master.switch_frame(ExistingProjects)).pack()
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
-    def createProject(*args):
-        tkFileDialog.askopenfilename(initialdir = "/",title = "Select file",filetypes =
-                (("jpeg   files","*.jpg"),("all files","*.*")))
+
+class CreateProject(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        tk.Label(self, text = "Choose project name:").grid()
+        self.name = tk.Entry(self)
+        self.name.grid(column = 1, row = 0)
+        tk.Button(self, text = "Create project",
+            command = lambda: self.createFolder(master, self.name.get())).grid(row = 1)
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).grid(column = 1, row = 1)
+
+    def createFolder(self, master, projName):
+        proj_loc = filedialog.askdirectory()
+        #TODO: Create a repo on GitHub with name projName and clone it to proj_loc
+        master.switch_frame(StartingMenu)
+                
+
+class ExistingProjects(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        tk.Label(self, text = "Choose a project:").pack()
+        projs = ["None", "hah"] #TODO: Get List of names of projects GitUp is currently tracking
+        choose_proj = tk.ttk.Combobox(self, values = tuple(projs))
+        choose_proj.pack()
+        tk.Button(self, text = "Add Project",
+                command = lambda: self.createFolder(master, choose_proj.get())).pack()
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).pack()
+
+    def createFolder(self, master, projName):
+        proj_loc = filedialog.askdirectory()
+        #TODO: clone the repo projName on GitHub to local at proj_loc
+        master.switch_frame(StartingMenu)
 
 class OpenProjectMenu(tk.Frame):
     def __init__(self, master):
@@ -65,36 +103,45 @@ class OpenProjectMenu(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
         tk.Label(self, text = "Choose a project:").pack()
-        projs = ttk.Combobox(self, values = ("First project", "Second project")).pack()
+        projs = ttk.Combobox(self, values = ("First project", "Second project"))
+        projs.pack()
         tk.Button(self, text = "Open Project",
-            command = self.openProject(projs.current()))
+            command = lambda: self.openProject(master, projs.current())).pack()
 
-    def openProject(projName):
-        a = 1
-        # Handles user selection of project to add to GitUp
+    def fetchProjects(self):
+        a = 1#TODO: Return a list of all the projects that are currently being tracked
+    
+    def openProject(self, master, projName):
+        proj_dir = None #TODO: Get the full path to projName
+        master.switch_frame(ProjectMenu)
 
-    def fetchProjects():
-        a = 1
-        # A helper method that will fetch all the projects in the users remote repo
- 
-class ProjectViewMenu(tk.Frame):
+class ProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Button(self, text = "View File History",
-                command = viewFileHistory)
+        tk.Button(self, text = "View File",
+                command = lambda: master.switch_frame(ViewFile)).pack()
 
-    def viewFileHistory():
-        tkFileDialog.askopenfilename(initialdir = proj_dir,title = "Select file to view history",
-                filetypes = (("jpeg   files","*.jpg"),("all files","*.*")))
+class ViewFile(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        filename =  filedialog.askopenfilename(initialdir = proj_dir,
+                title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
+        tk.Label(self, text=filename).pack()
+        with open(filename, "r") as f:
+            tk.Label(self, text=f.read(), justify = 'left').pack()
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).pack()
+        
         
 
 class DeleteProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu))
         tk.Label(self, text = "Choose a project:").pack()
-        tk.ttk.Combobox(self, values = ("First project", "Second project")).pack()
+        projs = ["None", "hah"] #TODO: Get List of names of projects GitUp is currently tracking
+        tk.ttk.Combobox(self, values = tuple(projs)).pack()
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).pack()
 
 if __name__ == "__main__":
     app = GitUpApp()
