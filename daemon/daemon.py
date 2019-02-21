@@ -1,81 +1,89 @@
-from py_daemon.py_daemon import Daemon
+from base_daemon import Daemon
+from repository import Repository
+from repository import RepositoryInitError
 from inotify.adapters import InotifyTrees
-import os.path
+import os
 import csv
 
-# The repository information is stored in this file.
-REPOSITORY_FILE_PATH = "/usr/share/gitup/repositories.csv"
-
-# Represents a single repository that GitUp is tracking
-class Repository(object):
-    def __init__(self, remote, local_path, last_pulled):
-        self.remote = remote
-        self.local_path = os.path.normpath(local_path)
-        self.last_pulled = last_pulled
-
-    def contains(self, path):
-        normed_path = os.path.normpath(path)
-        prefix = os.path.commonprefix([self.local_path, normed_path])
-        return prefix == self.local_path
-
-    # Returns True if GitUp is capable of connecting to GitHub to
-    # push/pull for this repository. False otherwise.
-    def connected(self):
-        # TODO implement this
-        return False
-
-    # Pushes all of the local changes to this repository.
-    def push(self):
-        # TODO implement this
-        return
-
-    # Pull all of the changes from the remote to the local repository.
-    # Updates self.last_pulled and the 'repositories.csv' file.
-    def pull(self):   
-         # TODO implement this
-        return
-    
-    # Commits the changes to the given file to the local repository.
-    def commit_file(self, editted_file_path):
-        # TODO implement this
-        return
-
-    def handle_event(self, event):
-        (_, type_names, path, filename) = event 
-        print("REPOSITORY=[{}] PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(
-              self.local_path, path, filename, type_names))
-
-
-# Parses the repository information stored in the given repo_file and returns
-# a list  of repository objects correspoding to the data in the file.
-def parse_repositories(repo_file_path):
-    with open(repo_file_path) as repo_file:
-        repositories = []
-        csv_reader = csv.reader(repo_file, delimiter=',')
-        line = 0
-        for row in csv_reader:
-            if line != 0:
-                remote = row[0]
-                local_path = row[1]
-                last_pulled = row[2]
-                repo = Repository(remote, local_path, last_pulled)
-                repositories.append(repo)
-            line += 1
-        return repositories
-
-# Allows this process to be turned into a Daemon
+# Daemon that monitors file accesses in the repositories specificed in
+# the repofile passed to it's constructor.
 class GitUpDaemon(Daemon):
+    def __init__(self, pidfile, stdin=os.devnull,
+                 stdout=os.devnull, stderr=os.devnull,
+                 home_dir='.', umask=0o22, verbose=1,
+                 use_gevent=False, repofile=None):
+        super().__init__(pidfile, stdin, stdout, stderr, home_dir,
+                         umask, verbose, use_gevent)
+        self.repofile = repofile
+        self.repositories = []
+
+    # Called when the daemon is started or restarted. May be called directly to
+    # run the daemon connected to a terminal for easier testing.
     def run(self):
-        self.repositories = parse_repositories(REPOSITORY_FILE_PATH)
-        local_paths = list(map(lambda x: x.local_path, self.repositories))
-        inotify = InotifyTrees(local_paths)
-        for event in inotify.event_gen(yield_nones=False):
-            self.handle_event(event)
-   
-    # Handle the given inotify event
-    def handle_event(self, event):
+        if self.repofile:
+            # Parse repositories on every run to allow restarting to daemon to
+            # update the repositories.
+            self.__parse_repositories()
+            paths = list(map(lambda x: x.path, self.repositories))
+            inotify = InotifyTrees(paths)
+            for event in inotify.event_gen(yield_nones=False):
+                if self.__should_process_event(event):
+                    self.__handle_event(event)
+        else:
+            # A client might end up in the case if they don't pass a repofile to
+            # the constructor. Allowing the user to not pass a repofile, makes
+            # it easier for the user to construct the daemon when they only want
+            # to stop it.
+            print >> self.stderr, ("run() called without providing a repofile")
+            self.stop()
+  
+    # Returns True if the given event should be passed along to a
+    # Repository to be processed, False if it should be ignored.
+    def __should_process_event(self, event):
+        path = event[2]
+        # Makes sure the .git directory get's ignored.
+        if ".git" in path:
+            return False
+        filename = event[3]
+        # All directory events should be considered.
+        if filename == None:
+            return True
+        return not self.__ignores_file_type(filename)
+
+    # Returns True if the given type of file should be ignored, False
+    # otherwise.
+    def __ignores_file_type(self, filename):
+        # For now we only ignore .swp files automatically.
+        return ".swp" in filename
+
+    # Handle the given inotify event, finds the repository it pertains to
+    # and forwards the event to that repository.
+    def __handle_event(self, event):
         for repo in self.repositories:
              event_path = event[2]
              if repo.contains(event_path):
                  repo.handle_event(event)
+    
+    # Parses the repository information stored in self.repofile, and stores the
+    # Repostiory objects in self.repositories.
+    def __parse_repositories(self):
+        # if the repository file fails to open there is nothing we can do.
+        try:
+            repo_csv = open(self.repofile, 'r')
+        except IOError:
+            print >> self.stderr, "failed ot open repofile"
+            self.stop()
+        csv_reader = csv.reader(repo_csv, delimiter=',')
+        line = 0
+        for row in csv_reader:
+            if line != 0:
+                path = row[0]
+                last_pulled = row[1]
+                try:
+                    repo = Repository(path=path, last_pulled=last_pulled)
+                    self.repositories.append(repo)
+                except RepositoryInitError:
+                    print >> self.stderr, ("repository for " + path + "failed to"
+                        + " be initialized skipping")
+            line += 1
 
