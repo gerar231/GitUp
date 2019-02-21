@@ -1,0 +1,36 @@
+Last Week’s Goals: 
+  - By next week we will hopefully be able to communicate with a remote Git repository, and have automatic pushing and pulling 
+    fully implemented. This implies that we will have incorporated PyGithub, GitPython, and inotify into our project.
+  - Evaluate our work through tests and user feedback 
+
+Progress:
+  - We now have integration with Linux’s inotify API, GitPython, and PyGithub. 
+  - We have a daemon that uses inotify to monitor a repository and detect when changes are being made. We didn’t manage to connect 
+    this to PyGithub yet (i.e. performing a git operation upon receiving a repository update from the daemon), however we expect 
+    that connecting these two operations won’t be too challenging.
+  - We also completed initial framework for the GUI of GitUp using the Tkinter library. This is also yet to be connected to the core 
+    git communication functionality.
+  - Continuous integration is now present in our repository and is currently creating directories and files for the daemon 
+    (test for daemon yet to be written), as well as compiling the python files within the src directory.
+  - Local repository management will be implementing using GitPython, functionality has been coded to recognize a project folder as a 
+    Git repository.
+  - User Login flow and remote repository management will be implemented using PyGithub. This will allow GitUp to use OAuth permission 
+    features easily and flexibly during development. Thus far functionality for adding a remote to a local repository and 
+    pushing/pulling has been coded.
+  - We’ve developed a small demo that demonstrates the file monitoring feature of GitUp.
+  - We weren’t able to get around to testing with real users.
+
+Plans/Goals:
+  - Connect our daemon script to PyGithub so that the daemon can handle pushing and pulling automatically.
+  - Connect our GUI to git so that it can at least create and delete projects.
+  - Write tests for daemon functionality and PyGithub integration.
+  - Have real users test our initial version with pushing/pulling
+
+TA Meeting Agenda:
+Treat Martin as a Lead Software Engineer:
+  - Does our demo raise any concerns as to the functionality of GitUp? Did the demo demonstrate the functionality you expected it to?
+Treat Martin as a TA:
+  - Where do we put the README if we’re already using it for our User Manual?
+Treat Martin as a Customer:
+  - How does the layout for our GUI look right now? As far as navigability, is it intuitive enough as it is? Would you suggest any 
+    changes to make it more user friendly?
