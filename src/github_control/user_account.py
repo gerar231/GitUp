@@ -48,16 +48,16 @@ class UserAccount(object):
         Arguments:
             local_repo: GitPython Repo object to create a remote repository for
 
-        Creates a remote repository under the working_tree_dir name 
-        and add remote under the name "origin" to this local repository on the current user's
+        Creates a remote repository under the last directory of the working_tree_dir
+        and add remote under the name "GitUp" to this local repository on the current user's
         GitHub account. Pushes all contents of local repo into remote repo after creation.
         If local_repo is not a GitPython Repo throw error.
-        If a remote already exists throw an error.
+        If a "GitUp" remote already exists throw an error.
         If push failse after a remote repo is created then throw an error.
         """
-        # verify that there is not remote for this repo
-        if len(local_repo.remotes()) != 0:
-            AssertionError("local_repo already has a remote.")
+        # verify that there is not a GitUp remote
+        if len(local_repo.remote(name="GitUp")):
+            AssertionError("local_repo already has a GitUp remote.")
 
         # create the remote repository
         repo_name = os.path.basename(os.path.normpath(local_repo.working_tree_dir))
@@ -65,7 +65,7 @@ class UserAccount(object):
 
         # ERROR CHECK NEEDED
         # add the remote from the remote repository to the local repository
-        local_repo.create_remote(name="origin", url=self.github_control.get_repo(repo_name).url)
+        local_repo.create_remote(name="GitUp", url=self.github_control.get_repo(repo_name).url)
 
         # create index for this repo
         curr_index = IndexFile(local_repo)
@@ -77,7 +77,7 @@ class UserAccount(object):
         curr_index.commit("Added all changes after creating remote repo.")
 
         # push to the remote
-        if local_repo.remote(name="origin").push() is None:
+        if local_repo.remote(name="GitUp").push() is None:
             AssertionError("Push to origin failed after remote repo created for {1}".format(local_repo.working_tree_dir))
     
     def push_to_remote(self, local_repo):
@@ -91,12 +91,12 @@ class UserAccount(object):
         If push to remote "origin" fails throw error.
         """
         # verify this repo has an origin remote
-        if local_repo.remote(name="origin").exists is False:
-            AssertionError("No origin remote for repo {1}.".format(local_repo.working_tree_dir))
+        if local_repo.remote(name="GitUp").exists is False:
+            AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
 
         # push to the remote
-        if local_repo.remote(name="origin").push() is None:
-            AssertionError("Push to origin remote failed for repo {1}.".format(local_repo.working_tree_dir))
+        if local_repo.remote(name="GitUp").push() is None:
+            AssertionError("Push to GitUp remote failed for repo {1}.".format(local_repo.working_tree_dir))
 
     def pull_to_local(self, local_repo: Repo):
         """
@@ -109,9 +109,9 @@ class UserAccount(object):
         If pull from remote "origin" fails throw error.
         """
         # verify this repo has an origin remote
-        if local_repo.remote(name="origin").exists is False:
-            AssertionError("No origin remote for repo {1}.".format(local_repo.working_tree_dir))
+        if local_repo.remote(name="GitUp").exists is False:
+            AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
 
         # push to the remote
-        if local_repo.remote(name="origin").pull() is None:
-            AssertionError("Pull to repo {1} from remote origin failed.".format(local_repo.working_tree_dir))
+        if local_repo.remote(name="GitUp").pull() is None:
+            AssertionError("Pull to repo {1} from remote GitUp failed.".format(local_repo.working_tree_dir))
