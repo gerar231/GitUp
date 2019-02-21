@@ -56,7 +56,7 @@ class UserAccount(object):
         If push failse after a remote repo is created then throw an error.
         """
         # verify that there is not a GitUp remote
-        if len(local_repo.remote(name="GitUp")):
+        if local_repo.remote(name="GitUp"):
             AssertionError("local_repo already has a GitUp remote.")
 
         # create the remote repository
