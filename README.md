@@ -14,6 +14,17 @@ As of now, GitUp only works on Linux based systems. Additionally, to use GitUp, 
 
 Simply download the runnable program at [URL for executable] to an easily accessible place on your system, and you’re good to go!
 
+## System Requirements
+
+The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version __ installed:
+[URL for Python download].
+
+## Building from Source
+
+Requirements:
+To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp).
+Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb clean".
+
 # Using GitUp:
 
 Congratulations! You now have everything you need to use GitUp. To begin, simply click on the GitUp executable file. When you do, GitUp will open and you’ll be greeted by the main menu:
