@@ -63,11 +63,20 @@ class ProjectManager(object):
         """
         Arguments:
             path: the absolute path of the directory to restore the repository, error if path is invalid.
-            repo_name: the name of the repository as shown on GitHub, error if no invalid.
+            repo_name: the name of the repository as shown on GitHub, error if the current user does not
+                have a repo associated with this name.
 
         Restores the latest version of a project on a remote repository (associated with the user's GitHub
-        account) in a folder using the repo_name at the given path.
+        account) in a folder using the repo_name at the given path. Returns the repository object if 
+        restored properly, otherwise returns None.
         """
+        # check if the path is valid
+            # if the path is not valid then throw an error
+        # check if the directory is associated with an existing repository
+            # if the directory is associated with an existing repository then throw an error
+        # check if the repo_name exsits on the users account
+            # if repo doesn't exist on user account then error 
+        # clone the repo to the path
         NotImplementedError()
     
     def delete_project_repo(self, path: str, remove_files=False):
@@ -76,7 +85,16 @@ class ProjectManager(object):
             path: the absolute path of a working tree directory of an existing local repository, error if no repo.
             remove_files: if True remove the repository files on the user's GitHub acccount.
         
-        Removes the origin remote from a local repository. Deletes the repository files on the users
-        GitHub account if remove_files is True.
+        Removes the GitUp remote from a local repository. Deletes the repository files on the users
+        GitHub account if remove_files is True. Returns True if repository successfully removed,
+        returns False if the repository was not removed.
         """
+        # check if the path is valid
+            # if the path is not valid then throw an error
+        # check if the directory is associated with an existing repository
+            # if the directory is not associated with an existing repository then throw an error
+        # get the name of the repository
+        # remove the GitUp remote from the local repository
+        # check that the repository name exists on the user's GitHub account
+        # if remove_files is True then remove_files from GitHub
         NotImplementedError()
