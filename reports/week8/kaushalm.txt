@@ -1,0 +1,18 @@
+Goals for this Week:
+- Get user feedback on GUI + automatic pushing/pulling
+- Begin implementing commit grouping mechanism
+- Continue to improve upon report and user manual
+- Contribute towards first version of past version viewing
+
+Progress this week:
+- Continued improvment upon the GUI
+- Progress made on commit grouping and viewing past versions
+- Helped update report
+- Created infrastructure for testing GitUp/obtaining results
+- Was involved in design of result presentation
+
+Goals for Next Week:
+- Finish distribution method to clients (probably through an executable)
+- Get user feedback on v1 of GitUp from 2 of my acquanitances
+- Assist in implementation of version comparing system
+
