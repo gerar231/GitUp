@@ -14,3 +14,8 @@ The spreadsheet requires 6 inputs from the survey for each survey response:
 6. The vote for best overall (Git, GitKraken, or GitUp)
 
 The spreadsheet currently can store up to 100 survey responses, but can be easily expanded.
+For a user to see the results, all they need to do is open the excel spreadsheet. Then, they
+can view the automatically generated graphs to see our results.
+
+We'll also store individual feedback responses based off of using GitUp for an actual software
+project as text files in this directory that a user can click on to read.
