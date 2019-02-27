@@ -2,6 +2,7 @@ import os
 import sys
 import git
 import time
+from git.exc import GitCommandError
 from datetime import datetime
 
 class RepositoryInitError(Exception):
@@ -46,9 +47,15 @@ class Repository(git.Repo):
         if filepath == None:
             # add and commit all the changes
             for path in changed_files:
-                self.__add_commit(path)
+                try:
+                    self.__add_commit(path)
+                except GitCmdError:
+                    print >> sys.stderr,"Committing failed FILE[{}]".format(path)
         elif filepath in changed_files or filepath in self.untracked_files:
-            self.__add_commit(filepath)
+            try:
+                self.__add_commit(filepath)
+            except:
+                print >> sys.stderr,"Committing failed FILE[{}]".format(filepath)
 
     def handle_event(self, event):
         (_, type_names, path, filename) = event 
