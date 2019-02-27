@@ -43,7 +43,6 @@ class GitUpDaemon(Daemon):
             # Parse repositories on every run to allow restarting to daemon to
             # update the repositories.
             self.__parse_repositories()
-            self.__push_pull()
             self.scheduler.start()
             # Schedule the daemon to push/pull all repos every 5 minutes
             self.push_pull_job = self.scheduler.add_job(self.__push_pull,

@@ -72,8 +72,8 @@ class Repository(git.Repo):
     def handle_event(self, event):
         (_, type_names, path, filename) = event
         # Print to the log.
-        print("{}: event recieved\n\trepository: {}\n\tpath: {}" + 
-                "\n\t filename: {}\n\tevent_types: [{}]".format(
+        print(("{}: event received.\n\trepository: {}\n\tpath: {}" + 
+                "\n\tfilename: {}\n\tevent_types: {}").format(
                 self.__get_timestamp(), self.path, path, filename, type_names))
         # Commit the changes.
         last_dir = os.path.abspath(os.path.curdir)
@@ -84,6 +84,8 @@ class Repository(git.Repo):
 
     # Called when the daemon is first started.
     def on_daemon_start(self):
+        # Pull first.
+        self.safe_pull()
         # Commit any changes that may have occured while the daemon was down.
         changed_files = self.__get_changed_files()
         if len(changed_files) != 0:
@@ -91,10 +93,14 @@ class Repository(git.Repo):
                   .format(self.__get_timestamp(), self.path, changed_files))
         # Commit any changes that somehow got missed since the last daemon run.
         self.__safe_commit()
+        # Push last.
+        self.safe_push()
 
     # Pulls the remote for this repository. Returns True on success, False on
     # failure.
     def safe_pull(self):
+        print("{}: pulling.\n\trepo: {}".format(
+                self.__get_timestamp(), self.path))
         try:
             self.git.pull("GitUp", "master")
             return True
@@ -106,6 +112,8 @@ class Repository(git.Repo):
     # Pushes to the remote for this repository. Returns True on success, False
     # on failure
     def safe_push(self):
+        print("{}: pushing.\n\trepo: {}".format(
+                self.__get_timestamp(), self.path))
         try:
             self.git.push("GitUp", "master")
             self.dirty = False
