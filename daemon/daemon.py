@@ -36,6 +36,10 @@ class GitUpDaemon(Daemon):
             self.__parse_repositories()
             paths = list(map(lambda x: x.path, self.repositories))
             inotify = InotifyTrees(paths,mask=event_mask)
+            # Notify the repositories that we are now watching them.
+            for repo in self.repositories:
+                repo.on_daemon_start()
+            # Watch events in repositories
             for event in inotify.event_gen(yield_nones=False):
                 if self.__should_process_event(event):
                     self.__handle_event(event)
