@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
+from local_control import project_manager
 
 proj_name = None
 proj_dir = None
@@ -103,7 +104,7 @@ class OpenProjectMenu(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
         tk.Label(self, text = "Choose a project:").pack()
-        projs = ttk.Combobox(self, values = ("First project", "Second project"))
+        projs = tk.ttk.Combobox(self, values = ("First project", "Second project"))
         projs.pack()
         tk.Button(self, text = "Open Project",
             command = lambda: self.openProject(master, projs.current())).pack()

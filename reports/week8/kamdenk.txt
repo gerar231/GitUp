@@ -1,0 +1,34 @@
+1. Goal's for the week of 02/17/2019 - 02/23/2019:
+    1. We now have alot of structure set up for our project. What's left now is to start hooking pieces together. The first step
+       should be to prepare some form of functional demo by Thursday. I think this could most feasibly be achieved by demonstrating
+       our automatic pushing. We have ways to detect when a file is saved and closed, and we have a way to communicate with a Git
+       repo, so for our demo we only need to perform this communication everytime a file is saved or closed.
+       
+    2. We also got feedback suggesting that we give concrete steps for user testing, since our examples were too high level. I
+       think a good goal that responds too this feedback is to write out concrete examples of our high level use cases, and then
+       use our user testing group to perform these tests. This should hopefully allow us notice any bugs before we delve too deep 
+       into the implementation process.
+       
+    3. We have CI set up on our repo, but we don't currently have any real implementation tests running yet. We should also aim
+       to have tests for at least one of either the daemon or the PyGithub integration written and running on our CI by the end
+       of the week.
+       
+2. Progress for the week of 02/17/2019 - 02/23/2019:
+    1. We created a demo that showcases two of our modules coupled together. Our demo was to start our daemon which monitors a 
+       repository, and tracks the changes of files within it. After the daemon is started, edits can be made to the repository.
+       Then, we can use git commands to check that the repository changes were committed. This showcases both our file monitoring
+       capabilities, and our ability to communicate with git.
+       
+    2. We are taking a step back when it comes to user testing and re-evaluating our methods. We have received more feedback
+       this week stating that a controlled user experiment may not be necessary for our product. It may prove easier for our
+       user testing group to just use our product for a project of theirs, instead of enforcing a set of operations. This way of
+       evaluating our product may also unveil some corner cases we failed to think about initially.
+       
+    3. As far as testing goes, we weren't able to set up any further tests for our CI to run yet. We spent time instead making sure
+       we had a working build system, which we were lacking last week.
+       
+ 3. Goal's for the week of 02/23/2019 - 03/01/2019:
+    1. Complete an initial usable product by linking together our currently separated modules (GUI, Git integrationg, and daemon 
+       monitoring). This will be the bulk of our efforts this week.
+       
+    2. Pick a method of user testing based on feedback given, and then perform an initial user test.

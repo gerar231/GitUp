@@ -1,0 +1,22 @@
+Goals:
+- Get a working demo created for the meeting with Martin
+- Write tests for the daemon and git committing/pushing/pulling code.
+- Begin work on the UI and user interaction with GitUp
+
+Progress:
+This week I suceeded in creating a demo for the meeting with Martin that showed the committing
+functionality. I ended up getting sick and having to work on other projects so I did not get the
+chance to write tests for the daemon. I also believe that given our status as being fairly behind
+on work completed this time might be better spent assisting with the UI and getting a working
+product. I am a little unsure as to what the status of the UI is and have not been able to help out
+hopefully after a team meeting tomorrow and the other status reports being commited this will become
+more clear. I have also volunteered to conduct the pilot study for how we will evaluate GitUp that should
+be occuring later this week.
+
+Goals For Next Week:
+- Begin working on the UI and getting a working product
+- Finish the pilot study and get ready to perform the study on actual users
+- Evaluate various grouping/squishing strategies to make dealing with frequent commits
+  less cumbersome.
+
+
