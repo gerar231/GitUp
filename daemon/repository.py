@@ -26,7 +26,7 @@ class Repository(git.Repo):
         prefix = os.path.commonprefix([self.path, normed_path])
         return prefix == self.path
 
-    def __get_chaged_files(self): 
+    def __get_changed_files(self): 
         return [ os.path.normpath(item.a_path) 
                  for item in self.index.diff(None) ]
 
@@ -42,7 +42,7 @@ class Repository(git.Repo):
     # Add and commit the given filepath, or all unstaged changes if no filepath
     # is given, If the provided file doesn't have unstaged changes does nothing.
     def __safe_commit(self, filepath=None):
-        changed_files = self.get_changed_files()
+        changed_files = self.__get_changed_files()
         if filepath == None:
             # add and commit all the changes
             for path in changed_files:
@@ -61,7 +61,7 @@ class Repository(git.Repo):
         os.chdir(last_dir)
 
     def on_daemon_start(self):
-        changed_files = self.get_changed_files()
+        changed_files = self.__get_changed_files()
         if len(changed_files) != 0:
             ts = time.time()
             current_time = datetime.fromtimestamp(ts).strftime('%m/%d/%Y %H:%M:%S')
