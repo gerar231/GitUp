@@ -39,7 +39,7 @@ After successfully logging in you will be taken to the main menu:
 
 ![image alt text](images/image_1.png)
 
-Because we respect your privacy, GitUp will **never under any circumstances** store any of your GitHub account information. If you don’t believe us, feel free to take a look at our source code at [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp). On your first login you we will create an authorization token for your account to GitUp, you can manage GitUp’s permissions at any time from your account by clicking "*Edit OAuth Settings*" on the main menu, this will redirect you to [https://github.com/settings/applications](https://github.com/settings/applications). From here click on “*Authorized OAuth Apps”* and you can remove/edit GitUp’s permissions. 
+On your first login we will create an authorization token for your account to GitUp, you can manage GitUp’s permissions at any time from your account by clicking "*Edit OAuth Settings*" on the main menu, this will redirect you to [https://github.com/settings/applications](https://github.com/settings/applications). From here click on “*Authorized OAuth Apps”* and you can remove/edit GitUp’s permissions. 
 
 Revoking GitUp permissions from your GitHub account will stop all project backups until you login again.
 
