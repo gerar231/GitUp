@@ -2,6 +2,7 @@ from base_daemon import Daemon
 from repository import Repository
 from repository import RepositoryInitError
 from inotify.adapters import InotifyTrees
+from apscheduler.schedulers.background import BackgroundScheduler
 import inotify
 import os
 import csv
@@ -26,6 +27,13 @@ class GitUpDaemon(Daemon):
                          umask, verbose, use_gevent)
         self.repofile = repofile
         self.repositories = []
+        self.scheduler = BackgroundScheduler()
+        self.push_pull_job = None
+
+    def __push_pull(self):
+        # TODO implement this method to push/pull every repository.
+        print("__push_pull called")
+        return
 
     # Called when the daemon is started or restarted. May be called directly to
     # run the daemon connected to a terminal for easier testing.
@@ -34,8 +42,16 @@ class GitUpDaemon(Daemon):
             # Parse repositories on every run to allow restarting to daemon to
             # update the repositories.
             self.__parse_repositories()
+            self.scheduler.start()
+            # Schedule the daemon to push/pull all repos every 5 minutes
+            self.push_pull_job = self.scheduler.add_job(self.__push_pull,
+                    'interval', minutes=5)
             paths = list(map(lambda x: x.path, self.repositories))
             inotify = InotifyTrees(paths,mask=event_mask)
+            # Notify the repositories that we are now watching them.
+            for repo in self.repositories:
+                repo.on_daemon_start()
+            # Watch events in repositories
             for event in inotify.event_gen(yield_nones=False):
                 if self.__should_process_event(event):
                     self.__handle_event(event)
@@ -46,7 +62,7 @@ class GitUpDaemon(Daemon):
             # to stop it.
             print >> self.stderr, ("run() called without providing a repofile")
             self.stop()
-  
+
     # Returns True if the given event should be passed along to a
     # Repository to be processed, False if it should be ignored.
     def __should_process_event(self, event):
