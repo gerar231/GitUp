@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 from local_control import project_manager
+from github_control import user_account
 
+user = None
 proj_name = None
 proj_dir = None
+repo = None
 
 class GitUpApp(tk.Tk):
     def __init__(self):
@@ -24,6 +27,10 @@ class StartingMenu(tk.Frame):
         tk.Frame.__init__(self, master)
         tk.Label(self, text = "GitUp").pack()
         tk.Label (self, text = "v1.0.0").pack()
+        if user == None:
+            tk.Label(self, text = "No user").pack()
+        else:
+            tk.Label(self, text = user.get_name()).pack()
         tk.Button(self, text = "Login",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
         tk.Button(self, text = "Add Project",
@@ -49,7 +56,10 @@ class LoginWindow(tk.Frame):
 
     def login(self, master):
         if self.username.get() != "" and self.password.get != "":
-            #TODO: Use username and password for OAuth
+            user = user_account.UserAccount(self.username.get(), self.password.get())
+            print(user.get_name())
+            print(user.get_profile_image_url())
+            print(user.get_profile_url())
             master.switch_frame(StartingMenu)
 
 class AddProjectMenu(tk.Frame):
@@ -77,14 +87,14 @@ class CreateProject(tk.Frame):
 
     def createFolder(self, master, projName):
         proj_loc = filedialog.askdirectory()
-        #TODO: Create a repo on GitHub with name projName and clone it to proj_loc
+        project_manager.view_project_repo(projName + proj_loc)
         master.switch_frame(StartingMenu)
                 
 
 class ExistingProjects(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text = "Choose a project:").pack()
+        tk.Label(self, text = "Choose a project to restore:").pack()
         projs = ["None", "hah"] #TODO: Get List of names of projects GitUp is currently tracking
         choose_proj = tk.ttk.Combobox(self, values = tuple(projs))
         choose_proj.pack()
@@ -95,7 +105,7 @@ class ExistingProjects(tk.Frame):
 
     def createFolder(self, master, projName):
         proj_loc = filedialog.askdirectory()
-        #TODO: clone the repo projName on GitHub to local at proj_loc
+        project_manager.restore_project_repo(proj_loc, projName)
         master.switch_frame(StartingMenu)
 
 class OpenProjectMenu(tk.Frame):
@@ -103,17 +113,13 @@ class OpenProjectMenu(tk.Frame):
         tk.Frame.__init__(self, master)
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
-        tk.Label(self, text = "Choose a project:").pack()
-        projs = tk.ttk.Combobox(self, values = ("First project", "Second project"))
         projs.pack()
         tk.Button(self, text = "Open Project",
-            command = lambda: self.openProject(master, projs.current())).pack()
+            command = lambda: self.openProject(master)).pack()
 
-    def fetchProjects(self):
-        a = 1#TODO: Return a list of all the projects that are currently being tracked
-    
-    def openProject(self, master, projName):
-        proj_dir = None #TODO: Get the full path to projName
+    def openProject(self, master):
+        proj_dir = filedialog.askdirectory()
+        project_manager.view_project_repo(proj_dir)
         master.switch_frame(ProjectMenu)
 
 class ProjectMenu(tk.Frame):

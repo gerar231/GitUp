@@ -1,7 +1,7 @@
 import os
 from git import Repo
 from git import IndexFile
-from src.github_control import user_account as uc
+from github_control import user_account as uc
 
 class ProjectManager(object):
 
