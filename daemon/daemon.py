@@ -30,10 +30,11 @@ class GitUpDaemon(Daemon):
         self.scheduler = BackgroundScheduler()
         self.push_pull_job = None
 
+    # Push and pull every repository.
     def __push_pull(self):
-        # TODO implement this method to push/pull every repository.
-        print("__push_pull called")
-        return
+        for repo in self.repositories:
+            repo.safe_pull()
+            repo.safe_push()
 
     # Called when the daemon is started or restarted. May be called directly to
     # run the daemon connected to a terminal for easier testing.
@@ -104,9 +105,8 @@ class GitUpDaemon(Daemon):
         for row in csv_reader:
             if line != 0:
                 path = row[0]
-                last_pulled = row[1]
                 try:
-                    repo = Repository(path=path, last_pulled=last_pulled)
+                    repo = Repository(path=path)
                     self.repositories.append(repo)
                 except RepositoryInitError:
                     print >> self.stderr, ("repository for " + path + "failed to"
