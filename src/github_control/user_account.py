@@ -45,12 +45,13 @@ class UserAccount(object):
     
     def get_remote_repos(self):
         """
-        Returns a list of strings representing the name's of the current user's
-        remote repositories.
+        Returns a list of tuples in the form: 
+        (repo_name, repo_clone_url)
+        representing the name's and clone urls of the current user's remote repositories.
         """
         repos = list()
-        for repo in self.github_control.get_repos():
-            repos.append(repo.name)
+        for repo in self.github_control.get_user().get_repos():
+            repos.append(tuple([repo.name, repo.clone_url]))
         return repos
 
     def create_remote_repo(self, local_repo: Repo):
