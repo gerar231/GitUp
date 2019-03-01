@@ -1,7 +1,8 @@
 import os
+import git
 from git import Repo
 from git import IndexFile
-from src.github_control import user_account as uc
+from github_control import user_account as uc
 
 class ProjectManager(object):
 
@@ -26,8 +27,10 @@ class ProjectManager(object):
             AssertionError("Path given to find a repository is not a valid file path.")
             return None
         else:
-            # primitive implementation, assume this is the working tree directory
-            return Repo(path)
+            try:
+                return Repo(path)
+            except:
+                return None
         
     def view_project_repo(self, path: str):
         """
@@ -70,14 +73,34 @@ class ProjectManager(object):
         account) in a folder using the repo_name at the given path. Returns the repository object if 
         restored properly, otherwise returns None.
         """
-        # check if the path is valid
-            # if the path is not valid then throw an error
+        norm_path = os.path.normpath(path)
+        if os.path.exists(norm_path) is False:
+            AssertionError("Path given to restore a project is not a valid file path.")
+            return None
+
         # check if the directory is associated with an existing repository
-            # if the directory is associated with an existing repository then throw an error
+        repo = self.find_project_repo(norm_path)
+
+        if not repo is None:
+            AssertionError("Path provided to an existing project.")
+            return None
+
         # check if the repo_name exsits on the users account
-            # if repo doesn't exist on user account then error 
+        existing_repos = self.curr_user.get_remote_repos()
+        found_repo = None
+        for r in existing_repos:
+            if r[0] == repo_name:
+                found_repo = r
+
         # clone the repo to the path
-        NotImplementedError()
+        if found_repo is None:
+            AssertionError("No existing project repository with repo_name for this user's account.")
+            return None
+        
+        # join norm path with repo_name for new directory
+        norm_path = os.path.join(norm_path, repo_name)
+
+        return git.Repo.clone_from(found_repo[1], norm_path, branch='master')
     
     def delete_project_repo(self, path: str, remove_files=False):
         """
