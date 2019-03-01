@@ -98,14 +98,39 @@ class ProjectManager(object):
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
-
-        return git.Repo.clone_from(found_repo[1], norm_path, branch='master')
+        cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
+        # TODO: update the .csv file and restart the daemon
+        return cloned_repo
+        
     
     def view_repo_commits(self, path: str):
         """
+        Arguments:
+            path: the absolute path of the directory to be checked, error if path is invalid.
         Returns a List of commit objects for the repo at the given path.
         """
-        raise NotImplementedError()
+        curr_repo = self.find_project_repo(path)
+        raise curr_repo.iter_commits()
+    
+    def revert(self, file_path: str, commit: git.Commit):
+        """
+        Arguments:
+            path: the absolute path of the file to be reset, must be part of a repo, 
+            error if path is invalid.
+            commit: the Commit object to reset this file to.
+
+        Resets the file given at path to the given state described by the Commit object.
+        """
+        norm_path = os.path.normpath(file_path)
+        if os.path.exists(norm_path) is False:
+            raise ValueError("Path given to file to reset is not a valid file path.")
+        
+        # get the repo
+        curr_repo = self.find_project_repo(norm_path)
+        # instantiate the index
+        curr_index = git.IndexFile(curr_repo, norm_path)
+        curr_index.reset(commit=commit, paths=[norm_path])
+
     
     def delete_project_repo(self, path: str, remove_files=False):
         """
