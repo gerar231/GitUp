@@ -22,13 +22,13 @@ class UserAccount(object):
         """
         Returns the user name for the current user
         """
-        return self.github_control.get_user()._name
+        return self.github_control.get_user().name
     
     def get_profile_url(self):
         """
         Returns the profile URL for the current user
         """
-        return self.github_control.get_user().url
+        return self.github_control.get_user().html_url
 
     def get_profile_image_url(self):
         """
@@ -42,18 +42,28 @@ class UserAccount(object):
         Returns the GitHub controller for this user (allows pushing & pulling from Repository)
         """
         return self.github_control
+    
+    def get_remote_repos(self):
+        """
+        Returns a list of tuples in the form: 
+        (repo_name, repo_clone_url)
+        representing the name's and clone urls of the current user's remote repositories.
+        """
+        repos = list()
+        for repo in self.github_control.get_user().get_repos():
+            repos.append(tuple([repo.name, repo.clone_url]))
+        return repos
 
     def create_remote_repo(self, local_repo: Repo):
         """
         Arguments:
-            local_repo: GitPython Repo object to create a remote repository for
-
+            local_repo: GitPython Repo object to create a remote repository on the user account.
         Creates a remote repository under the last directory of the working_tree_dir
         and add remote under the name "GitUp" to this local repository on the current user's
         GitHub account. Pushes all contents of local repo into remote repo after creation.
         If local_repo is not a GitPython Repo throw error.
         If a "GitUp" remote already exists throw an error.
-        If push failse after a remote repo is created then throw an error.
+        If push fails after a remote repo is created then throw an error.
         """
         # verify that there is not a GitUp remote
         if local_repo.remote(name="GitUp"):
@@ -102,7 +112,6 @@ class UserAccount(object):
         """
         Argument:
             local_repo: GitPython repo to pull latest changes from the origin remote
-
         Pulls the latest changes to this local repository from the remote "origin".
         If local_repo is not a GitPython Repo throw error.
         If local_repo does not have a remote named "origin" throw error. 
