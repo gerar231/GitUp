@@ -24,11 +24,10 @@ class ProjectManager(object):
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to find a repository is not a valid file path.")
-            return None
+            raise ValueError("Path given to find a repository is not a valid file path.")
         else:
             try:
-                return Repo(path)
+                return Repo(path, search_parent_directories=True)
             except:
                 return None
         
@@ -46,7 +45,7 @@ class ProjectManager(object):
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to view a project is not a valid file path.")
+            raise ValueError("Path given to view a project is not a valid file path.")
 
         # check if directory is associated with an existing repository
         repo = self.find_project_repo(norm_path)
@@ -70,20 +69,18 @@ class ProjectManager(object):
                 have a repo associated with this name.
 
         Restores the latest version of a project on a remote repository (associated with the user's GitHub
-        account) in a folder using the repo_name at the given path. Returns the repository object if 
+        account) to a folder created using the repo_name at the given path. Returns the repository object if 
         restored properly, otherwise returns None.
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to restore a project is not a valid file path.")
-            return None
+            raise ValueError("Path given to restore a project is not a valid file path.")
 
         # check if the directory is associated with an existing repository
         repo = self.find_project_repo(norm_path)
 
         if not repo is None:
-            AssertionError("Path provided to an existing project.")
-            return None
+            raise ValueError("Path provided to an existing project.")
 
         # check if the repo_name exsits on the users account
         existing_repos = self.curr_user.get_remote_repos()
@@ -94,8 +91,7 @@ class ProjectManager(object):
 
         # clone the repo to the path
         if found_repo is None:
-            AssertionError("No existing project repository with repo_name for this user's account.")
-            return None
+            raise ValueError("No existing project repository with repo_name for this user's account.")
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
@@ -120,4 +116,4 @@ class ProjectManager(object):
         # remove the GitUp remote from the local repository
         # check that the repository name exists on the user's GitHub account
         # if remove_files is True then remove_files from GitHub
-        NotImplementedError()
+        raise NotImplementedError()

@@ -20,9 +20,15 @@ class UserAccount(object):
     
     def get_name(self):
         """
-        Returns the user name for the current user
+        Returns the name associated with this user account.
         """
         return self.github_control.get_user().name
+    
+    def get_id(self):
+        """
+        Returns the user (screen) id associated with this user account.
+        """
+        return self.github_control.get_user().id
     
     def get_profile_url(self):
         """
