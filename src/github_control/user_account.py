@@ -9,46 +9,47 @@ class UserAccount(object):
     for interacting with the UI and Daemon.
     """
 
-    def __init__(self, user_name: str, password: str):
+    def __init__(self, user_name: str=None, password: str=None, token_file_path: str=None):
         """
         Arguments:
-            user_name: user name for a GitHub account, assumes valid.
-            password: password for a GitHub account, assumes valid.
-        Logs in to a user account and creates a token for GitUp that
-        will be stored with the scope of "all" at the path /tmp/GitUp/token.txt.
-        If a token for GitUp already exists than an error will be thrown.
-        """
-        self.github_control = Github(login_or_token=user_name, password=password)
+            user_name: user name for a GitHub account, assumes valid if given.
+            password: password for a GitHub account, assumes valid if given.
+            token_file_path: opens the given at this path and reads the first line for an authorization token, if provided.
 
-        # create a new token
+        If a token_file_path is provided:
+            Checks the file given at path for an authorization token, if none or invalid path then throw ValueError. 
+            If a token exists and is invalid then throw a ValueError.
 
-        # write the token at the default path
-            # throw error if already exists
-
-    @staticmethod 
-    def login_to_existing_user(self, token_file_path: str=None):
-        """
-        Arguments:
-            token_file_path: opens the given at this path and reads the first line for an authorization token.
-
-        If a token_file_path is provided then checks the file given at path for an authorization
-        token, if none then throw ValueError. Otherwise searches default path /tmp/GitUp/token.txt
-        for token. If neither exist then throws a ValueError. After a token has been found,
-        validates this token and attempts to create a Github controller. If creation fails then throw
-        a value error, if succeeds then return a UserAccount object.
-        """
-        if not token_file_path:
-            token_file_path = os.path.normpath("/tmp/GitUp/token.txt")
+        If user_name and password are provided:
+            Logs in to a user account and creates a token for GitUp that
+            will be stored with the scopes of "user, delete_repo, repo" at the path /tmp/GitUp/token.txt.
+            If a token for GitUp already exists at the path /tmp/GitUp/token.txt then login to that user.
         
-        norm_path = os.path.normpath(token_file_path)
-        if os.path.exists(norm_path) is False:
-            raise ValueError("Path given to find a repository is not a valid file path.")
+        If no arguments provided:
+            searches default path /tmp/GitUp/token.txt for token, if no token exists then throw ValueError.
+        """
+        if token_file_path:
+            norm_path = os.path.normpath(token_file_path)
+            if os.path.exists(norm_path) is False:
+                raise ValueError("Path given to find a token is not a valid file path.")
+            norm_path
+            return
 
-        # get the token from the file and read the first line
+        # check for an existing token
+        token_file_path = os.path.normpath("/tmp/GitUp/token.txt")
+        existing_token = None
+        if existing_token:
+            if user_name and password:
+                print(ValueError("A user token already exists, cannot login to a new user."))
+            self.github_control = Github(login_or_token=existing_token)
+            return
 
-        # create a github control with the token
-
-        return NotImplementedError()
+        if user_name and password:
+            self.github_control = Github(login_or_token=user_name, password=password)
+            # create a new token
+            token = self.github_control.get_user().create_authorization(scopes=["user", "delete_repo", "repo"], note_url="https://github.com/gerar231/GitUp", 
+                note="GitUp Authorization token.").token
+            # write the token at the default path
 
     def get_name(self):
         """

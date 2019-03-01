@@ -102,7 +102,9 @@ class ProjectManager(object):
         return git.Repo.clone_from(found_repo[1], norm_path, branch='master')
     
     def view_repo_commits(self, path: str):
-        
+        """
+        Returns a List of commit objects for the repo at the given path.
+        """
         raise NotImplementedError()
     
     def delete_project_repo(self, path: str, remove_files=False):
