@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 from local_control import project_manager
 from github_control import user_account
+import git
+from git import Repo
+from git import Commit
 
 user = None
 proj_manager = None
@@ -33,7 +36,7 @@ class StartingMenu(tk.Frame):
         if user == None:
             tk.Label(self, text = "No user").pack()
         else:
-            tk.Label(self, text = user.get_name()).pack()
+            tk.Label(self, text = user.get_id()).pack()
         tk.Button(self, text = "Login",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
         tk.Button(self, text = "Add Project",
@@ -134,29 +137,45 @@ class OpenProjectMenu(tk.Frame):
 class ProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        print("yo")
         tk.Button(self, text = "View File",
-                command = lambda: master.switch_frame(ViewFile)).pack()
-        scrollbar = tk.Scrollbar(master)
-        scrollbar.pack(side="right", fill="y")
-        listbox = tk.Listbox(master, yscrollcommand=scrollbar.set)
+                command = lambda: master.switch_frame(ViewFile)).grid()
+        scrollbar = tk.Scrollbar(self)
+        scrollbar.grid(column= 1, sticky='ns')
+        listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
         commits = ['1', '2', '3']
         for commit in commits:
             listbox.insert(tk.END, commit)
         scrollbar.config(command=listbox.yview)
-        listbox.pack(side="left", fill="both", expand=1)
+        listbox.grid(row=1)
 
 class ViewFile(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global proj_dir
+        global project_manager
         filename =  filedialog.askopenfilename(initialdir = proj_dir,
                 title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
-        tk.Label(self, text=filename).pack()
-        with open(filename, "r") as f:
-            tk.Label(self, text=f.read(), justify = 'left').pack()
         tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).pack()
-        
+                command = lambda: master.switch_frame(StartingMenu)).grid()
+        #tk.Label(self, text=filename).grid(column=1)
+        #commits = project_manager.view_repo_commits(proj_dir)
+        commit_dates = ["1:37 2/21", "1:43 2/20"]
+        # [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in commits]
+        tk.Label(self, text = "Old Version").grid(row = 1)        
+        pre_version = tk.ttk.Combobox(self, values = commit_dates)
+        pre_version.grid(row = 1, column = 1)
+        tk.Label(self, text="New Version").grid(row = 1, column = 2)
+        post_version = tk.ttk.Combobox(self, values = commit_dates)
+        post_version.grid(row = 1, column = 3)
+        text = tk.Text(self)
+        with open(filename, "r") as f:
+           text.insert(tk.END, f.read())
+        scrollbar = tk.Scrollbar(self, command=text.yview)
+        scrollbar.grid(row = 2, column= 4, sticky='ns')
+        text.config(state = tk.DISABLED)
+        text.grid(row = 2, columnspan = 4)
+        text['yscrollcommand'] = scrollbar.set
 '''       
 class FileView(tk.Frame):
     def __init__(self, master, file):
