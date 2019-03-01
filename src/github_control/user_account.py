@@ -9,15 +9,47 @@ class UserAccount(object):
     for interacting with the UI and Daemon.
     """
 
-    def __init__(self, user_name, password):
+    def __init__(self, user_name: str, password: str):
         """
         Arguments:
             user_name: user name for a GitHub account, assumes valid.
             password: password for a GitHub account, assumes valid.
-        Logs in to a user account and intializes the object.
+        Logs in to a user account and creates a token for GitUp that
+        will be stored with the scope of "all" at the path /tmp/GitUp/token.txt.
+        If a token for GitUp already exists than an error will be thrown.
         """
         self.github_control = Github(login_or_token=user_name, password=password)
-    
+
+        # create a new token
+
+        # write the token at the default path
+            # throw error if already exists
+
+    @staticmethod 
+    def login_to_existing_user(self, token_file_path: str=None):
+        """
+        Arguments:
+            token_file_path: opens the given at this path and reads the first line for an authorization token.
+
+        If a token_file_path is provided then checks the file given at path for an authorization
+        token, if none then throw ValueError. Otherwise searches default path /tmp/GitUp/token.txt
+        for token. If neither exist then throws a ValueError. After a token has been found,
+        validates this token and attempts to create a Github controller. If creation fails then throw
+        a value error, if succeeds then return a UserAccount object.
+        """
+        if not token_file_path:
+            token_file_path = os.path.normpath("/tmp/GitUp/token.txt")
+        
+        norm_path = os.path.normpath(token_file_path)
+        if os.path.exists(norm_path) is False:
+            raise ValueError("Path given to find a repository is not a valid file path.")
+
+        # get the token from the file and read the first line
+
+        # create a github control with the token
+
+        return NotImplementedError()
+
     def get_name(self):
         """
         Returns the name associated with this user account.
@@ -73,29 +105,30 @@ class UserAccount(object):
         If push fails after a remote repo is created then throw an error.
         """
         # verify that there is not a GitUp remote
-        if local_repo.remote(name="GitUp"):
-            AssertionError("local_repo already has a GitUp remote.")
+        try:
+            local_repo.remote(name="GitUp")
+            raise AssertionError("local_repo already has a GitUp remote.")
+        except ValueError:
+            # create the remote repository
+            repo_name = os.path.basename(os.path.normpath(local_repo.working_tree_dir))
+            self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
 
-        # create the remote repository
-        repo_name = os.path.basename(os.path.normpath(local_repo.working_tree_dir))
-        self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+            # ERROR CHECK NEEDED
+            # add the remote from the remote repository to the local repository
+            local_repo.create_remote(name="GitUp", url=self.github_control.get_repo(repo_name).url)
 
-        # ERROR CHECK NEEDED
-        # add the remote from the remote repository to the local repository
-        local_repo.create_remote(name="GitUp", url=self.github_control.get_repo(repo_name).url)
+            # create index for this repo
+            curr_index = IndexFile(local_repo)
+            
+            # add all changes
+            curr_index.add(".")
 
-        # create index for this repo
-        curr_index = IndexFile(local_repo)
-        
-        # add all changes
-        curr_index.add(".")
+            # commit 
+            curr_index.commit("Added all changes after creating remote repo.")
 
-        # commit 
-        curr_index.commit("Added all changes after creating remote repo.")
-
-        # push to the remote
-        if local_repo.remote(name="GitUp").push() is None:
-            AssertionError("Push to origin failed after remote repo created for {1}".format(local_repo.working_tree_dir))
+            # push to the remote
+            if local_repo.remote(name="GitUp").push() is None:
+                raise AssertionError("Push to origin failed after remote repo created for {1}".format(local_repo.working_tree_dir))
     
     def push_to_remote(self, local_repo):
         """
@@ -107,10 +140,11 @@ class UserAccount(object):
         If local_repo does not have a remote named "origin" throw error. 
         If push to remote "origin" fails throw error.
         """
-        # verify this repo has an origin remote
-        if local_repo.remote(name="GitUp").exists is False:
-            AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
-
+        # verify this repo has a GitUp remote
+        try:
+            local_repo.remote(name="GitUp")
+        except ValueError:
+            raise AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
         # push to the remote
         if local_repo.remote(name="GitUp").push() is None:
             AssertionError("Push to GitUp remote failed for repo {1}.".format(local_repo.working_tree_dir))
@@ -125,10 +159,10 @@ class UserAccount(object):
         If local_repo does not have a remote named "origin" throw error. 
         If pull from remote "origin" fails throw error.
         """
-        # verify this repo has an origin remote
-        if local_repo.remote(name="GitUp").exists is False:
-            AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
-
+        try:
+            local_repo.remote(name="GitUp")
+        except ValueError:
+            raise AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
         # push to the remote
         if local_repo.remote(name="GitUp").pull() is None:
             AssertionError("Pull to repo {1} from remote GitUp failed.".format(local_repo.working_tree_dir))

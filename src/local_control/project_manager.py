@@ -56,8 +56,11 @@ class ProjectManager(object):
             # CREATE A NEW REPOSITORY
             repo = Repo.init(path=norm_path, bare=True)
         # ensure the repository has the GitUp remote
-        if not repo.remote(name="GitUp").exists:
+        try:
+            repo.remote(name="GitUp")
+        except ValueError:
             self.curr_user.create_remote_repo(repo)
+        # TODO: update the .csv file and restart the daemon
         # return the Repo object for this path
         return repo    
 
@@ -98,6 +101,10 @@ class ProjectManager(object):
 
         return git.Repo.clone_from(found_repo[1], norm_path, branch='master')
     
+    def view_repo_commits(self, path: str):
+        
+        raise NotImplementedError()
+    
     def delete_project_repo(self, path: str, remove_files=False):
         """
         Arguments:
@@ -116,4 +123,5 @@ class ProjectManager(object):
         # remove the GitUp remote from the local repository
         # check that the repository name exists on the user's GitHub account
         # if remove_files is True then remove_files from GitHub
+        # TODO: update the csv file and restart the daemon
         raise NotImplementedError()
