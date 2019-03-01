@@ -24,11 +24,10 @@ class ProjectManager(object):
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to find a repository is not a valid file path.")
-            return None
+            raise ValueError("Path given to find a repository is not a valid file path.")
         else:
             try:
-                return Repo(path)
+                return Repo(path, search_parent_directories=True)
             except:
                 return None
         
@@ -46,7 +45,7 @@ class ProjectManager(object):
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to view a project is not a valid file path.")
+            raise ValueError("Path given to view a project is not a valid file path.")
 
         # check if directory is associated with an existing repository
         repo = self.find_project_repo(norm_path)
@@ -57,8 +56,11 @@ class ProjectManager(object):
             # CREATE A NEW REPOSITORY
             repo = Repo.init(path=norm_path, bare=True)
         # ensure the repository has the GitUp remote
-        if not repo.remote(name="GitUp").exists:
+        try:
+            repo.remote(name="GitUp")
+        except ValueError:
             self.curr_user.create_remote_repo(repo)
+        # TODO: update the .csv file and restart the daemon
         # return the Repo object for this path
         return repo    
 
@@ -69,20 +71,18 @@ class ProjectManager(object):
             repo_name: the name of the repository as shown on GitHub, error if the current user does not
                 have a repo associated with this name.
         Restores the latest version of a project on a remote repository (associated with the user's GitHub
-        account) in a folder using the repo_name at the given path. Returns the repository object if 
+        account) to a folder created using the repo_name at the given path. Returns the repository object if 
         restored properly, otherwise returns None.
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
-            AssertionError("Path given to restore a project is not a valid file path.")
-            return None
+            raise ValueError("Path given to restore a project is not a valid file path.")
 
         # check if the directory is associated with an existing repository
         repo = self.find_project_repo(norm_path)
 
         if not repo is None:
-            AssertionError("Path provided to an existing project.")
-            return None
+            raise ValueError("Path provided to an existing project.")
 
         # check if the repo_name exsits on the users account
         existing_repos = self.curr_user.get_remote_repos()
@@ -93,13 +93,42 @@ class ProjectManager(object):
 
         # clone the repo to the path
         if found_repo is None:
-            AssertionError("No existing project repository with repo_name for this user's account.")
-            return None
+            raise ValueError("No existing project repository with repo_name for this user's account.")
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
+        cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
+        # TODO: update the .csv file and restart the daemon
+        return cloned_repo
+        
+    
+    def view_repo_commits(self, path: str):
+        """
+        Arguments:
+            path: the absolute path of the directory to be checked, error if path is invalid.
+        Returns a List of commit objects for the repo at the given path.
+        """
+        curr_repo = self.find_project_repo(path)
+        raise curr_repo.iter_commits()
+    
+    def revert(self, file_path: str, commit: git.Commit):
+        """
+        Arguments:
+            path: the absolute path of the file to be reset, must be part of a repo, 
+            error if path is invalid.
+            commit: the Commit object to reset this file to.
+        Resets the file given at path to the given state described by the Commit object.
+        """
+        norm_path = os.path.normpath(file_path)
+        if os.path.exists(norm_path) is False:
+            raise ValueError("Path given to file to reset is not a valid file path.")
+        
+        # get the repo
+        curr_repo = self.find_project_repo(norm_path)
+        # instantiate the index
+        curr_index = git.IndexFile(curr_repo, norm_path)
+        curr_index.reset(commit=commit, paths=[norm_path])
 
-        return git.Repo.clone_from(found_repo[1], norm_path, branch='master')
     
     def delete_project_repo(self, path: str, remove_files=False):
         """
@@ -119,4 +148,5 @@ class ProjectManager(object):
         # remove the GitUp remote from the local repository
         # check that the repository name exists on the user's GitHub account
         # if remove_files is True then remove_files from GitHub
-        NotImplementedError()
+        # TODO: update the csv file and restart the daemon
+        raise NotImplementedError()
