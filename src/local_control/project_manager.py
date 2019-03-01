@@ -54,8 +54,7 @@ class ProjectManager(object):
             # if the directory is not part of an existing repository then create a new one associated with
             # a remote on the user's GitHub account.
             # CREATE A NEW REPOSITORY
-            repo_path = os.path.normpath(os.path.join(norm_path, ".git"))
-            repo = Repo.init(path=repo_path, bare=True)
+            repo = Repo.init(path=norm_path, mkdir=True)
         # ensure the repository has the GitUp remote
         try:
             repo.remote(name="GitUp")

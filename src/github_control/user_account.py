@@ -147,11 +147,12 @@ class UserAccount(object):
 
             if remote_repo is None:
                 remote_repo = self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+                print(remote_repo.get_branches())
                 # remote repo creation failed
 
             # ERROR CHECK NEEDED
             # add the remote from the remote repository to the local repository
-            local_repo.create_remote(name="GitUp", url=remote_repo.html_url)
+            local_repo.create_remote(name="GitUp", url=str(remote_repo.html_url + ".git"))
 
             # create index for this repo
             curr_index = IndexFile(local_repo)
@@ -163,7 +164,7 @@ class UserAccount(object):
             curr_index.commit("Added all changes after creating remote repo.")
 
             # push to the remote
-            if local_repo.remote(name="GitUp").push() is None:
+            if local_repo.git.push(name="GitUp") is None:
                 raise exc.GitCommandError("Push to origin failed after remote repo created for {1}".format(os.path.join(local_repo.common_dir, "..")))
     
     def push_to_remote(self, local_repo):
