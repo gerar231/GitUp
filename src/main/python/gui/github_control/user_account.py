@@ -35,7 +35,7 @@ class UserAccount(object):
         else:
             token_file_path = os.path.normpath("token.txt")
             if os.path.exists(token_file_path) is False and user_name is None and password is None:
-                raise ValueError("No token file at default path {1}".format(token_file_path))
+                raise ValueError("No token file at default path {}".format(token_file_path))
 
         # check for an existing token
         existing_token = None
@@ -52,7 +52,7 @@ class UserAccount(object):
             try:
                 self.get_name()
             except GithubException.BadCredentialsException:
-                raise(ValueError("Invalid token provided in first line of file at {1}".format(token_file_path)))
+                raise(ValueError("Invalid token provided in first line of file at {}".format(token_file_path)))
             return
 
         if user_name and password:

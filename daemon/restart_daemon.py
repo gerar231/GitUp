@@ -2,7 +2,7 @@
 from daemon import GitUpDaemon
 
 def restart_daemon():
-    repofile = "/usr/share/gitup/repositories.csv"
+    repofile = "/tmp/gitup/repositories.csv"
     logs_dir = '/tmp/gitup/'
     out = '/tmp/gitup/daemon.out'
     err = '/tmp/gitup/daemon.err'

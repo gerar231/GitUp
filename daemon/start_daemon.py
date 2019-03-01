@@ -4,7 +4,7 @@ import os
 
 # The repository information is stored in this file.
 def start_daemon():
-    repofile = "/usr/share/gitup/repositories.csv"
+    repofile = "/tmp/gitup/repositories.csv"
     logs_dir = '/tmp/gitup/'
     out = '/tmp/gitup/daemon.out'
     err = '/tmp/gitup/daemon.err'
@@ -26,7 +26,7 @@ def start_daemon():
                          stderr=err)
     # Change this to daemon.run() to run the daemon connected to
     # the terminal for easier debugging
-    daemon.start()
+    daemon.run()
    
 if __name__ == "__main__":
     start_daemon()
