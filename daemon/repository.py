@@ -2,6 +2,8 @@ import os
 import sys
 import git
 import time
+sys.path.append(os.path.normpath("../src/main/python/gui/"))
+from github_control.user_account import UserAccount
 from git.exc import GitCommandError
 from datetime import datetime
 

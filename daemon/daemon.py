@@ -103,7 +103,7 @@ class GitUpDaemon(Daemon):
         csv_reader = csv.reader(repo_csv, delimiter=',')
         line = 0
         for row in csv_reader:
-            if line != 0:
+            if line != 0 || not row || not row[0]:
                 path = row[0]
                 try:
                     repo = Repository(path=path)

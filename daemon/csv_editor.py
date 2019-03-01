@@ -9,7 +9,7 @@ def add_project(csv_file, path):
     new_rows = []
     line = 0
     for row in reader:
-        if line != 0 && row[0].equals(path):
+        if line != 0 and row[0] == path:
             raise Error("project already exists")
         else:
             new_rows.append(','.join(row))
@@ -20,7 +20,7 @@ def add_project(csv_file, path):
     writer.writerows(newrows)
 
 @staticmethod
-def create_csv(csv_file)
+def create_csv(csv_file):
     header = "last_pulled"
     csv = open(csv_file, 'w+')
     writer = csv.writer(csv)
