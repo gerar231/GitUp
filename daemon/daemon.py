@@ -56,7 +56,7 @@ class GitUpDaemon(Daemon):
     # print the error to the log.
     def __get_user_account(self):
         try: 
-            self.user_account = UserAccount(None, None)
+            self.user_account = UserAccount()
         except ValueError:
             self.user_account = None
             print("{}: failed to create user account".format(
