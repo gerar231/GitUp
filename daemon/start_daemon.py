@@ -26,7 +26,7 @@ def start_daemon():
                          stderr=err)
     # Change this to daemon.run() to run the daemon connected to
     # the terminal for easier debugging
-    daemon.start()
+    daemon.run()
    
 if __name__ == "__main__":
     start_daemon()
