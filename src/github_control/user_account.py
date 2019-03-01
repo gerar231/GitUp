@@ -3,6 +3,7 @@ from github import Github
 from github import GithubException
 from git import Repo
 from git import IndexFile
+from git import exc
 import typing
 
 class UserAccount(object):
@@ -136,12 +137,21 @@ class UserAccount(object):
             raise AssertionError("local_repo already has a GitUp remote.")
         except ValueError:
             # create the remote repository
-            repo_name = os.path.basename(os.path.normpath(local_repo.working_tree_dir))
-            self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+            repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
+            existing_repos = self.github_control.get_user().get_repos()
+            remote_repo = None
+            for curr_repo in existing_repos:
+                if curr_repo.name == repo_name:
+                    remote_repo = curr_repo
+                    break
+
+            if remote_repo is None:
+                remote_repo = self.github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+                # remote repo creation failed
 
             # ERROR CHECK NEEDED
             # add the remote from the remote repository to the local repository
-            local_repo.create_remote(name="GitUp", url=self.github_control.get_repo(repo_name).url)
+            local_repo.create_remote(name="GitUp", url=remote_repo.html_url)
 
             # create index for this repo
             curr_index = IndexFile(local_repo)
@@ -154,7 +164,7 @@ class UserAccount(object):
 
             # push to the remote
             if local_repo.remote(name="GitUp").push() is None:
-                raise AssertionError("Push to origin failed after remote repo created for {1}".format(local_repo.working_tree_dir))
+                raise exc.GitCommandError("Push to origin failed after remote repo created for {1}".format(os.path.join(local_repo.common_dir, "..")))
     
     def push_to_remote(self, local_repo):
         """
@@ -170,10 +180,10 @@ class UserAccount(object):
         try:
             local_repo.remote(name="GitUp")
         except ValueError:
-            raise AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
         # push to the remote
         if local_repo.remote(name="GitUp").push() is None:
-            AssertionError("Push to GitUp remote failed for repo {1}.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("Push to GitUp remote failed for repo {1}.".format(local_repo.working_tree_dir))
 
     def pull_to_local(self, local_repo: Repo):
         """
@@ -188,7 +198,7 @@ class UserAccount(object):
         try:
             local_repo.remote(name="GitUp")
         except ValueError:
-            raise AssertionError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("No GitUp remote for repo {1}.".format(local_repo.working_tree_dir))
         # push to the remote
         if local_repo.remote(name="GitUp").pull() is None:
-            AssertionError("Pull to repo {1} from remote GitUp failed.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("Pull to repo {1} from remote GitUp failed.".format(local_repo.working_tree_dir))

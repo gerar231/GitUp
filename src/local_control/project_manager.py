@@ -54,7 +54,8 @@ class ProjectManager(object):
             # if the directory is not part of an existing repository then create a new one associated with
             # a remote on the user's GitHub account.
             # CREATE A NEW REPOSITORY
-            repo = Repo.init(path=norm_path, bare=True)
+            repo_path = os.path.normpath(os.path.join(norm_path, ".git"))
+            repo = Repo.init(path=repo_path, bare=True)
         # ensure the repository has the GitUp remote
         try:
             repo.remote(name="GitUp")
@@ -110,7 +111,7 @@ class ProjectManager(object):
         Returns a List of commit objects for the repo at the given path.
         """
         curr_repo = self.find_project_repo(path)
-        raise curr_repo.iter_commits()
+        return curr_repo.iter_commits()
     
     def revert(self, file_path: str, commit: git.Commit):
         """
