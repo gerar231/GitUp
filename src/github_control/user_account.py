@@ -55,7 +55,7 @@ class UserAccount(object):
                 print(ValueError("A user token already exists, cannot login to a new user."))
             self.__github_control = Github(login_or_token=existing_token)
             try:
-                self.__id = self.__github_control.get_user().id
+                self.__login = self.__github_control.get_user().id
             except GithubException.BadCredentialsException:
                 raise(ValueError("Invalid token provided in first line of file at {1}".format(token_file_path)))
             # set token for this session
@@ -65,7 +65,7 @@ class UserAccount(object):
         if user_name and password:
             self.__github_control = Github(login_or_token=user_name, password=password)
             try:
-                self.__id = self.__github_control.get_user().id
+                self.__login = self.__github_control.get_user().id
             except GithubException.BadCredentialsException:
                 raise(ValueError("Invalid user_name and/or password provided."))
             # get existing authorizations if for GitUp then delete, then create new auth token.
@@ -89,11 +89,11 @@ class UserAccount(object):
         """
         return self.__github_control.get_user().name
     
-    def get_id(self):
+    def get_login(self):
         """
-        Returns the user (screen) id associated with this user account.
+        Returns the user (screen) login associated with this user account.
         """
-        return self.__github_control.get_user().id
+        return self.__login
     
     def get_profile_url(self):
         """
@@ -166,10 +166,28 @@ class UserAccount(object):
             # commit 
             curr_index.commit("GitUp added all changes after creating remote repo.")
 
-            # push to the remote using https://username:token@remote_url.git
+            # push to the remote using https://token@remote_url.git
             # perform a push using the git binary, specifying the url dynamically generated in the above format
-            if local_repo.remote(name="GitUp").push() is None:
+            if local_repo.git.push(self.__create_push_url(local_repo, "GitUp"), ) is None:
                 raise exc.GitCommandError("Push to origin failed after remote repo created for {1}".format(os.path.join(local_repo.common_dir, "..")))
+    
+    def __create_push_url(self, local_repo: Repo, remote_name: str):
+        """
+        Arguments:
+            local_repo: Repo the push operation is being performed on.
+            remote_name: name of remote associated with Repo local_repo.
+        
+        Returns a string in the form https://user_login:token@remote_repo_url.git for the
+        remote_name specified as a remote of local_repo using the GitUp access token and
+        the current user's id.
+        """
+        # get the "GitUp" remote url, assumes url is the only one and is the first from iterator
+        url = next(local_repo.remote(name=remote_name).urls)
+        # right half of remote
+        url = url.split("https://")
+        # splice the url correctly
+        url = "https://{}:{}@{}".format(self.__login, self.__token, url[0])
+        return url
     
     def push_to_remote(self, local_repo):
         """
