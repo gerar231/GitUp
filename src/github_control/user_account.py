@@ -148,28 +148,29 @@ class UserAccount(object):
             if remote_repo is None:
                 # create a new remote repository if none found
                 remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
-                print("printing branches:")
-                for b in remote_repo.get_branches():
-                    print(b.name)
-                # remote repo creation failed
+                print(remote_repo.git_url)
 
             # ERROR CHECK NEEDED
             # add the remote from the remote repository to the local repository
-            local_repo.create_remote(name="GitUp", url=str(remote_repo.html_url + ".git"))
+            remote_url = str(remote_repo.html_url + ".git")
+            print("created remote repo")
+            local_repo.create_remote(name="GitUp", url=remote_url)
 
-            # create index for this repo
-            curr_index = IndexFile(local_repo)
+            print(remote_url)
             
             # add all changes
-            curr_index.add(".")
+            local_repo.git.add(".")
 
             # commit 
-            curr_index.commit("GitUp added all changes after creating remote repo.")
+            print("changes added.")
+            local_repo.git.commit(m="GitUp added all changes after creating remote repo.")
 
             # push to the remote using https://token@remote_url.git
             # perform a push using the git binary, specifying the url dynamically generated in the above format
-            if local_repo.git.push(self.__create_push_url(local_repo, "GitUp"), ) is None:
+            print("about to push")
+            if local_repo.git.push(self.__create_push_url(local_repo, "GitUp"), "master") is None:
                 raise exc.GitCommandError("Push to origin failed after remote repo created for {1}".format(os.path.join(local_repo.common_dir, "..")))
+            print("pushed!")
     
     def __create_push_url(self, local_repo: Repo, remote_name: str):
         """
@@ -185,8 +186,10 @@ class UserAccount(object):
         url = next(local_repo.remote(name=remote_name).urls)
         # right half of remote
         url = url.split("https://")
+        print(url)
         # splice the url correctly
-        url = "https://{}:{}@{}".format(self.__login, self.__token, url[0])
+        url = "https://{}@{}".format(self.__token, url[1])
+        print(url)
         return url
     
     def push_to_remote(self, local_repo):
