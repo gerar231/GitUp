@@ -123,12 +123,12 @@ class UserAccount(object):
         Arguments:
             local_repo: GitPython Repo object to create a remote repository on the user account.
 
-        Create or retrieve a remote repository under the name of the parent directory containing the repo
+        Create a remote repository under the name of the parent directory containing the repo
         on the current user's GitHub account and add remote under the name "GitUp" to this local repository. 
         Adds all changes and pushes all contents of local repo into remote repo after creation.
-        If local_repo is not a GitPython Repo throw error.
-        If a "GitUp" remote already exists throw an error.
-        If push fails after a remote repo is created then throw an error.
+        If a "GitUp" remote already exists throw an AssertionError.
+        If a remote repo with conflicting name exists then throw an AssertionError.
+        If push fails after a remote repo is created then throw a GitCommandError.
         """
         # verify that there is not a GitUp remote
         try:
@@ -184,12 +184,11 @@ class UserAccount(object):
     def push_to_remote(self, local_repo):
         """
         Argument:
-           local_repo: GitPython repo to push to changes to remote.
+           local_repo: GitPython repo to push to changes to GitUp remote.
         
-        Pushes the latest changes to the remote repository under remote "origin".
-        If local_repo is not a GitPython Repo throw error.
-        If local_repo does not have a remote named "origin" throw error. 
-        If push to remote "origin" fails throw error.
+        Pushes the latest changes to the remote repository under remote "GitUp".
+        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
+        If push to remote "GitUp" fails throw GitCommandError.
         """
         # verify this repo has a GitUp remote
         try:
@@ -203,12 +202,11 @@ class UserAccount(object):
     def pull_to_local(self, local_repo: Repo):
         """
         Argument:
-            local_repo: GitPython repo to pull latest changes from the origin remote
+            local_repo: GitPython repo to pull latest changes from the GitUp remote
 
-        Pulls the latest changes to this local repository from the remote "origin".
-        If local_repo is not a GitPython Repo throw error.
-        If local_repo does not have a remote named "origin" throw error. 
-        If pull from remote "origin" fails throw error.
+        Pulls the latest changes to this local repository from the remote "GitUp".
+        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
+        If pull from remote "GitUp" fails throw a GitCommandError.
         """
         try:
             local_repo.remote(name="GitUp")
