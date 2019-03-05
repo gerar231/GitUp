@@ -17,5 +17,6 @@ Goals for Next Week:
 - Further develop commit grouping mechanism based off feedback
 - Respond to design complaints from user feedback
 - Develop prelimnary slides for final presentation
+- Implement front end for merge conflict resolution
 
 
