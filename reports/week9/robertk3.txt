@@ -1,0 +1,14 @@
+Goals:
+- Begin working on the UI and getting a working product
+- Finish the pilot study and get ready to perform the study on actual users
+- Evaluate various grouping/squishing strategies to make dealing with frequent commits
+  less cumbersome.
+
+Progress:
+This week Gerard and I presented. While our demo didn't work, overall the presentation went well and we recieved useful feedback about naming commits. We also begun wiring together all the parts of our application and are very close to having a working version 1. We have not had a chance to do any sort of study since we don't have a working product yet, however we have changed this study to be easier to conduct so I am not very concerned about it. The team is meeting up tomorrow to hopefully complete work on version 1.
+
+Goals for next week.
+- Get a working version 1.
+- Complete the first draft of our final report. 
+
+
