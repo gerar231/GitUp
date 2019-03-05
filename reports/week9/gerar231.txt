@@ -1,0 +1,44 @@
+1. Goals for the week of 02/25/2019 - 03/03/2019:
+    1. Complete the version one implementation of the GitUp user account and 
+    remote repository control.
+    2. Complete a version one unit test suite for the above implementation.
+    3. Complete one user test for the user account flow and functionality.
+
+2. Progress for the week of 02/25/2019 - 03/03/2019:
+    1. A version one implementation has been created! This includes OAuth login
+    support along with remote repository creation, cloning, pushing and pulling
+    as needed by GitUp. The biggest lesson in this process centered around
+    testing and debugging practices. In regards to testing, I found that writing
+    code which can be tested dynamically and quickly is essential, using 
+    Python's interpreter really helped with this process since it was very easy
+    to test integration cases as they were needed. This process allowed for the
+    casual brainstorming and design of tests that will be documented in a more
+    formal test suite later on. When fixing the problems exposed by the
+    interpreter testing debugging the most effective method was getting a basic
+    implementation working first and then refining afterward (in the same commit
+    ) to avoid letting lazy code get closer to the production build.
+    2. No unit test suite can be found in the build for the UserAccount and
+    ProjectManager modules but during the creation and debugging process several
+    unit test cases were exposed. The most vulnerable processes which should be
+    backed by testing are those which involve creating remote repositories and/
+    or remotes which are associated with local repositories that backup projects
+    . The reason behind emphasizing these tests lies in the nuance of different
+    cases which could occur (conflicting repo names, existing repos/remotes,
+    large projects etc.).
+    3. No user tests have been practiced involving UserAccount/Project setup and
+    usage although our team spent a decent amount of time refining our existing
+    user testing. Major revisions to the user testing went from basic ABC -->
+    123 testing and comparison to two phases seperation of usage and comparison
+    testing for more accurate results with a smaller sample size. This objective 
+    should be achieveable and will be carried over into the next week.
+    Summary: Compared to previous weeks this one felt far more productive and
+    many tangible results were produced in implementation, testing and 
+    presentation. It's awesome to see all the planning and documentation become
+    a useable product, I think it will pay off!
+
+3. Goal's for the week of 03/04/2019 - 03/10/2019:
+    1. Add functionality to the UserAccount and ProjectManager modules for
+    comparing version history of projects (for use by the GUI) and support
+    project directory tracking with the Daemon.
+    2. Complete a version one unit test suite for the above implementation.
+    3. Complete one user test for the user account flow and functionality.
