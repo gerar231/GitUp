@@ -1,0 +1,21 @@
+Goals for this Week:
+- Finish distribution method to clients (probably through an executable)
+- Get user feedback on v1 of GitUp from 2 of my acquanitances
+- Assist in implementation of version comparing system
+
+Progress this week:
+- Finished GUI implementation for GitUp v1.0
+- Revised and finished updated GitUp testing methodology/survey
+- Confirmed two non-developers for usability test and three developers for hallway testing
+- Helped in creation of slides for 2nd presentation
+- Decided on method of distribution for final Product
+- Updated Report
+
+Goals for Next Week:
+- Quickly resolve any staff feedback from prelim report
+- Collect user feedback
+- Further develop commit grouping mechanism based off feedback
+- Respond to design complaints from user feedback
+- Develop prelimnary slides for final presentation
+
+
