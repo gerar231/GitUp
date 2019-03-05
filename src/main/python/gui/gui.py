@@ -130,7 +130,7 @@ class OpenProjectMenu(tk.Frame):
 
     def openProject(self, master):
         global proj_dir
-        proj_dir = filedialog.askdirectory(initialdir = "/home/kaushalm/451-xk")
+        proj_dir = filedialog.askdirectory(initialdir = "/")
         global project_manager
         #project_manager.view_project_repo(proj_dir)
         master.switch_frame(ProjectMenu)
@@ -165,9 +165,6 @@ class ProjectMenu(tk.Frame):
         scrollbar.config(command=listbox.yview)
         listbox.grid(row=1)
         # listbox.bind('<Double-1>', lambda x: self.getFileViewer())
-
-    def getFileViewer(self):
-        if (listbox.get)
 
 class ViewFile(tk.Frame):
     def __init__(self, master):
