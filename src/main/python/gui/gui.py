@@ -12,6 +12,7 @@ proj_name = None
 proj_dir = None
 repo = None
 
+# Main Application
 class GitUpApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -63,7 +64,7 @@ class LoginWindow(tk.Frame):
     def login(self, master):
         if self.username.get() != "" and self.password.get != "":
             global user
-            user = user_account.UserAccount(self.username.get(), self.password.get())
+            user = user_account.UserAccount(self.username.get(), self.password.get(), "token.txt")
             print(user.get_name())
             print(user.get_profile_image_url())
             print(user.get_profile_url())
@@ -129,7 +130,7 @@ class OpenProjectMenu(tk.Frame):
 
     def openProject(self, master):
         global proj_dir
-        proj_dir = filedialog.askdirectory(initialdir = "/")
+        proj_dir = filedialog.askdirectory(initialdir = "/home/kaushalm/451-xk")
         global project_manager
         #project_manager.view_project_repo(proj_dir)
         master.switch_frame(ProjectMenu)
@@ -143,39 +144,88 @@ class ProjectMenu(tk.Frame):
         scrollbar = tk.Scrollbar(self)
         scrollbar.grid(column= 1, sticky='ns')
         listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
-        commits = ['1', '2', '3']
-        for commit in commits:
-            listbox.insert(tk.END, commit)
+        self.commits = {
+                    "1/24":["14:23", "15:32"],
+                    "1/22":["2:42"]
+                }
+        for group in self.commits.keys():
+            listbox.insert(tk.END, group)
         scrollbar.config(command=listbox.yview)
         listbox.grid(row=1)
+        listbox.bind('<Double-1>', lambda x: self.viewDetailedCommits(listbox.get(listbox.curselection())))
+
+    def viewDetailedCommits(self, groupName):
+        commitWindow = tk.Toplevel()
+        scrollbar = tk.Scrollbar(commitWindow)
+        scrollbar.grid(column= 1, sticky='ns')
+        listbox = tk.Listbox(commitWindow, yscrollcommand=scrollbar.set)
+        for commit in self.commits[groupName]:
+            listbox.insert(tk.END, commit)
+        # listbox.insert(tk.END, "BACK")
+        scrollbar.config(command=listbox.yview)
+        listbox.grid(row=1)
+        # listbox.bind('<Double-1>', lambda x: self.getFileViewer())
+
+    def getFileViewer(self):
+        if (listbox.get)
 
 class ViewFile(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global proj_dir
+        print(proj_dir)
         global project_manager
-        filename =  filedialog.askopenfilename(initialdir = proj_dir,
+        self.filename =  filedialog.askopenfilename(initialdir = proj_dir,
                 title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
+        self.filename = self.filename.replace(proj_dir, '')
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).grid()
         #tk.Label(self, text=filename).grid(column=1)
-        #commits = project_manager.view_repo_commits(proj_dir)
+        #self.commits = project_manager.view_repo_commits(proj_dir, file)
         commit_dates = ["1:37 2/21", "1:43 2/20"]
         # [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in commits]
         tk.Label(self, text = "Old Version").grid(row = 1)        
-        pre_version = tk.ttk.Combobox(self, values = commit_dates)
-        pre_version.grid(row = 1, column = 1)
+        self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
+        self.pre_version.grid(row = 1, column = 1)
         tk.Label(self, text="New Version").grid(row = 1, column = 2)
-        post_version = tk.ttk.Combobox(self, values = commit_dates)
-        post_version.grid(row = 1, column = 3)
+        self.post_version = tk.ttk.Combobox(self, values = commit_dates)
+        self.post_version.grid(row = 1, column = 3)
         text = tk.Text(self)
-        with open(filename, "r") as f:
-           text.insert(tk.END, f.read())
+        text.tag_config("del", background="#fcc9c9", foreground="red")
+        text.tag_config("add", background="#ccfcc9", foreground="#1e9e16")
+        with open(proj_dir + "/" + self.filename, "r") as f:
+            file_contents = f.read().splitlines()
+            for line in file_contents:
+                if len(line) > 0 and line[0] == 'd':
+                    text.insert(tk.END, line + '\n', 'del')
+                elif len(line) > 0 and line[0] == 'm':
+                    text.insert(tk.END, line + '\n', 'add')
+                else:
+                    text.insert(tk.END, line + '\n')
         scrollbar = tk.Scrollbar(self, command=text.yview)
         scrollbar.grid(row = 2, column= 4, sticky='ns')
         text.config(state = tk.DISABLED)
         text.grid(row = 2, columnspan = 4)
         text['yscrollcommand'] = scrollbar.set
+        self.pre_version.bind("<<ComboboxSelected>>", self.getDiff())
+        self.post_version.bind("<<ComboboxSelected>>", self.getDiff())
+
+    def getDiff(self):
+        return "1"        
+        self.commits = ["1"]
+        pre_commit = self.commits[self.pre_version.current()].hexsha
+        post_commit = self.commits[self.post_version.current()].hexsha
+        diff_contents = "hi!" # GET DIFF CONTENTS HERE
+        diff_lines = diff_contents.splitlines()
+        for line in file_contents:
+            if len(line) > 0 and line[0] == '-':
+                text.insert(tk.END, line + '\n', 'del')
+            elif len(line) > 0 and line[0] == '+':
+                text.insert(tk.END, line + '\n', 'add')
+            else:
+                text.insert(tk.END, line + '\n')
+        
+        
 '''       
 class FileView(tk.Frame):
     def __init__(self, master, file):
