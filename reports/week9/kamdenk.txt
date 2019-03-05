@@ -1,0 +1,22 @@
+1. Goal's for the week of 02/23/2019 - 03/01/2019:
+    1. Complete an initial usable product by linking together our currently separated modules (GUI, Git integration, and daemon 
+       monitoring). This will be the bulk of our efforts this week.
+       
+    2. Pick a method of user testing based on feedback given, and then perform an initial user test.
+       
+2. Progress for the week of 02/23/2019 - 03/01/2019:
+    1. We managed to create a usable product that tracks and commits changes to repositories. Repositories are also able to be
+       received from GitHub through our login service. We now have the GUI, Git integration, and daemon monitoring working in
+       tandem for at least partial functionality, which was our goal.
+    
+    2. We were unable to perform tests with users outside of our own team, but we managed to make a lot of progress on implementation
+       which was very important this week. A demo was created though for the presentation that at least somewhat simulates user
+       interactions.
+      
+3. Goal's for the week of 03/01/2019 - 03/07/2019:
+    1. Clean up and finalize our build system, as well as provide a way to download an executable for GitUp. We're looking at 
+       the Freeze utility to create a python executable.
+       
+    2. First implementation of smart groupings of commits.
+    
+    3. At least one user test.
