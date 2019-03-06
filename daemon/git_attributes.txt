@@ -1,0 +1,25 @@
+# Automatically created GitUp attributes. Modifying these may
+# cause issues with commit naming. Feel free to add attributes
+# elsewhere in the file.
+*.ada diff=ada
+*.bib diff=bibtex
+*.c diff=cpp
+*.cpp diff=cpp
+*.cc diff=cpp
+*.cs diff=csharp
+*.css diff=css
+*.f90 diff=fortran
+*.f95 diff=fortran
+*.f03 diff=fortran
+*.fountain diff=fountain
+*.go diff=golang
+*.html diff=html
+*.java diff=java
+*.m diff=matlab
+*.mm diff=objc
+*.pas diff=pascal
+*.pl diff=perl
+*.php diff=php
+*.py diff=python
+*.rb diff=ruby
+*.tex diff=tex
