@@ -124,17 +124,10 @@ class ProjectManager(object):
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
             raise ValueError("Path given to project to CSV is not a valid file path.")
-
-        csv_path = "/tmp/gitup/repositories.csv"
-
-        if os.path.exists(csv_path) is False:
-            CSV.create_csv(csv_path)
-        
         try:
-            CSV.add_project(csv_path, path)
+            CSV.add_project(path)
         except ValueError:
             return False
-
         # if necessarry then restart the Daemon
         DMN.restart_daemon()
         return True
