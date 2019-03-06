@@ -1,11 +1,14 @@
+import sys
+import os
 import tkinter as tk
 from tkinter import filedialog, ttk
-from local_control import project_manager
-from github_control import user_account
 import git
 from git import Repo
 from git import Commit
 import time
+sys.path.append(os.path.normpath("../"))
+from local_control import project_manager
+from github_control import user_account
 
 user = None
 proj_manager = None
