@@ -13,3 +13,4 @@ def initialize(project):
     project.build_depends_on('PyGitHub')
     project.build_depends_on('GitPython')
     project.build_depends_on('inotify')
+    project.build_depends_on('apscheduler')
