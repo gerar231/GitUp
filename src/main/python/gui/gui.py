@@ -32,15 +32,13 @@ class StartingMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global user
-        print(user)
         tk.Label(self, text = "GitUp").pack()
         tk.Label (self, text = "v1.0.0").pack()
         if user == None:
-            tk.Label(self, text = "No user").pack()
-        else:
-            tk.Label(self, text = user.get_id()).pack()
-        tk.Button(self, text = "Login",
+            tk.Button(self, text = "Login",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
+        else:
+            tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
         tk.Button(self, text = "Add Project",
                 command = lambda: master.switch_frame(ExistingProjects)).pack()
         tk.Button(self, text = "View Project",
@@ -133,9 +131,10 @@ class OpenProjectMenu(tk.Frame):
         global proj_dir
         proj_dir = filedialog.askdirectory(initialdir = "/")
         global repo
-        repo = Repo(proj_dir)
         global project_manager
-        #project_manager.view_project_repo(proj_dir)
+        # repo = project_manager.view_project_repo(proj_dir)
+        repo = Repo(proj_dir)
+
         master.switch_frame(ProjectMenu)
 
 class ProjectMenu(tk.Frame):
@@ -180,8 +179,10 @@ class ViewFile(tk.Frame):
         self.filename = self.filename.replace(proj_dir, '')
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).grid()
+        tk.Button(self, text = "Compare",
+                command = lambda: self.getDiff()).grid(column=3)
         #tk.Label(self, text=filename).grid(column=1)
-        self.commits = repo.iter_commits('--all', paths=proj_dir + "/" + self.filename)
+        self.commits = list(repo.iter_commits('--all', paths=proj_dir + "/" + self.filename))
         commit_dates = [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in self.commits]
         tk.Label(self, text = "Old Version").grid(row = 1)        
         self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
@@ -189,40 +190,45 @@ class ViewFile(tk.Frame):
         tk.Label(self, text="New Version").grid(row = 1, column = 2)
         self.post_version = tk.ttk.Combobox(self, values = commit_dates)
         self.post_version.grid(row = 1, column = 3)
-        text = tk.Text(self)
-        text.tag_config("del", background="#fcc9c9", foreground="red")
-        text.tag_config("add", background="#ccfcc9", foreground="#1e9e16")
+        self.text = tk.Text(self)
+        self.text.tag_config("del", background="#fcc9c9", foreground="red")
+        self.text.tag_config("add", background="#ccfcc9", foreground="#1e9e16")
         with open(proj_dir + "/" + self.filename, "r") as f:
             file_contents = f.read().splitlines()
             for line in file_contents:
                 if len(line) > 0 and line[0] == 'd':
-                    text.insert(tk.END, line + '\n', 'del')
+                    self.text.insert(tk.END, line + '\n', 'del')
                 elif len(line) > 0 and line[0] == 'm':
-                    text.insert(tk.END, line + '\n', 'add')
+                    self.text.insert(tk.END, line + '\n', 'add')
                 else:
-                    text.insert(tk.END, line + '\n')
-        scrollbar = tk.Scrollbar(self, command=text.yview)
+                    self.text.insert(tk.END, line + '\n')
+        scrollbar = tk.Scrollbar(self, command=self.text.yview)
         scrollbar.grid(row = 2, column= 4, sticky='ns')
-        text.config(state = tk.DISABLED)
-        text.grid(row = 2, columnspan = 4)
-        text['yscrollcommand'] = scrollbar.set
-        self.pre_version.bind("<<ComboboxSelected>>", self.getDiff())
-        self.post_version.bind("<<ComboboxSelected>>", self.getDiff())
+        self.text.config(state = tk.DISABLED)
+        self.text.grid(row = 2, columnspan = 4)
+        self.text['yscrollcommand'] = scrollbar.set
+        #self.pre_version.bind("<<ComboboxSelected>>", self.getDiff())
+        #self.post_version.bind("<<ComboboxSelected>>", self.getDiff())
 
-    def getDiff(self):
-        return "1"        
-        self.commits = ["1"]
-        pre_commit = self.commits[self.pre_version.current()].hexsha
-        post_commit = self.commits[self.post_version.current()].hexsha
-        diff_contents = "hi!" # GET DIFF CONTENTS HERE
+    def getDiff(self):       
+        global repo
+        global proj_dir
+        self.text.config(state = tk.NORMAL)
+        self.text.delete('1.0', tk.END)
+        print(self.commits[self.pre_version.current()].hexsha)
+        print(self.commits[self.post_version.current()].hexsha)
+        diff_contents = repo.git.diff(self.commits[self.pre_version.current()], self.commits[self.post_version.current()], proj_dir + "/" + self.filename)
+        print(diff_contents)
         diff_lines = diff_contents.splitlines()
-        for line in file_contents:
+        for line in diff_lines[4:]:
+            print(line)
             if len(line) > 0 and line[0] == '-':
-                text.insert(tk.END, line + '\n', 'del')
+                self.text.insert(tk.END, line + '\n', 'del')
             elif len(line) > 0 and line[0] == '+':
-                text.insert(tk.END, line + '\n', 'add')
-            else:
-                text.insert(tk.END, line + '\n')
+                self.text.insert(tk.END, line + '\n', 'add')
+            elif len(line) > 0 and line[:2] != '@@':
+                self.text.insert(tk.END, line + '\n')
+        self.text.config(state = tk.DISABLED)
         
         
 '''       
