@@ -141,9 +141,12 @@ class UserAccount(object):
             repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
             existing_repos = self.__github_control.get_user().get_repos()
             # check if the user has an existing remote repository of this name
+            i = 0
             for curr_repo in existing_repos:
                 if curr_repo.name == repo_name:
-                    raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
+                    i = i + 1
+                    repo_name = repo_name + str(i)
+                    # raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
 
             # create a new remote repository
             remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))

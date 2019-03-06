@@ -10,14 +10,14 @@ def add_project(csv_file, path):
     line = 0
     for row in reader:
         if line != 0 and row[0] == path:
-            raise Error("project already exists")
+            raise ValueError("project already exists")
         else:
             new_rows.append(','.join(row))
     new_rows.append(path)
     csv.close()
     csv = open(csv_file, 'w')
     writer = csv.writer(csv)
-    writer.writerows(newrows)
+    writer.writerows(new_rows)
 
 @staticmethod
 def create_csv(csv_file):
