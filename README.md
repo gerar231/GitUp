@@ -87,9 +87,12 @@ Since the projects are on your GitHub account, you can modify your project using
 ## Building from Source
 
 Requirements:
-To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp).
-The second step is to download PyBuilder which we use to build our project. You can run "sudo pip3.6 install pybuilder" from the
-terminal to download this. Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb".
+The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version 3.6 installed: [https://www.python.org/downloads/release/python-368/](https://www.python.org/downloads/release/python-368/).
+
+
+To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp) using "git clone https://github.com/gerar231/GitUp". The second step is to download PyBuilder, which we use to build our project. You can run "sudo python3.6 -m pip install pybuilder" from the terminal to download this. Next, navigate into the repository from the terminal. After navigating to the repository, first run the command "sudo pyb install_dependencies", followed by "sudo pyb". 
+
+To run GitUp, navigate from the top level of the repository to /src/main/python/gui and then run "python3.6 gui.py".
 
 ## Projects that helped us:
 
