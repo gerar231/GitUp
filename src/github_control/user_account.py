@@ -33,6 +33,8 @@ class UserAccount(object):
         
         In all cases, if this user does not have a public key associated with this 
         """
+        # TODO: refresh Oauth token
+        # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
         if token_file_path:
             norm_path = os.path.normpath(token_file_path)
             if os.path.exists(norm_path) is False:
@@ -55,7 +57,7 @@ class UserAccount(object):
                 print(ValueError("A user token already exists, cannot login to a new user."))
             self.__github_control = Github(login_or_token=existing_token)
             try:
-                self.__login = self.__github_control.get_user().id
+                self.__login = self.__github_control.get_user().login
             except GithubException.BadCredentialsException:
                 raise(ValueError("Invalid token provided in first line of file at {1}".format(token_file_path)))
             # set token for this session
@@ -65,7 +67,7 @@ class UserAccount(object):
         if user_name and password:
             self.__github_control = Github(login_or_token=user_name, password=password)
             try:
-                self.__login = self.__github_control.get_user().id
+                self.__login = self.__github_control.get_user().login
             except GithubException.BadCredentialsException:
                 raise(ValueError("Invalid user_name and/or password provided."))
             # get existing authorizations if for GitUp then delete, then create new auth token.
