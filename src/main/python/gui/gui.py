@@ -43,7 +43,7 @@ class StartingMenu(tk.Frame):
                 command = lambda: master.switch_frame(ExistingProjects)).pack()
         tk.Button(self, text = "View Project",
                 command = lambda: master.switch_frame(OpenProjectMenu)).pack()
-        tk.Button(self, text = "Remove Project",
+        tk.Button(self, text = "Remove Project", state = tk.DISABLED,
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
 
 class LoginWindow(tk.Frame):
@@ -64,10 +64,6 @@ class LoginWindow(tk.Frame):
         if self.username.get() != "" and self.password.get != "":
             global user
             user = user_account.UserAccount(self.username.get(), self.password.get())
-            print(user.get_name())
-            print(user.get_profile_image_url())
-            print(user.get_profile_url())
-            print(user)
             global project_manager
             project_manager = project_manager.ProjectManager(user)
             master.switch_frame(StartingMenu)
@@ -132,20 +128,24 @@ class OpenProjectMenu(tk.Frame):
         proj_dir = filedialog.askdirectory(initialdir = "/")
         global repo
         global project_manager
-        # repo = project_manager.view_project_repo(proj_dir)
-        repo = Repo(proj_dir)
+        repo = project_manager.view_project_repo(proj_dir)
+        #repo = Repo(proj_dir)
 
         master.switch_frame(ProjectMenu)
 
 class ProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        print("yo")
         tk.Button(self, text = "View File",
                 command = lambda: master.switch_frame(ViewFile)).grid()
+        '''
         scrollbar = tk.Scrollbar(self)
         scrollbar.grid(column= 1, sticky='ns')
         listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
+        commitlist = list(repo.iter_commits('--all'))
+        for commit in commitlist:
+            time = time.localtime(commit.committed_date)
+            key = "%a, %d %b %Y %H:%M"
         self.commits = {
                     "1/24":["14:23", "15:32"],
                     "1/22":["2:42"]
@@ -167,61 +167,52 @@ class ProjectMenu(tk.Frame):
         scrollbar.config(command=listbox.yview)
         listbox.grid(row=1)
         # listbox.bind('<Double-1>', lambda x: self.getFileViewer())
+        '''
 
 class ViewFile(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global proj_dir
-        print(proj_dir)
         global project_manager
         self.filename =  filedialog.askopenfilename(initialdir = proj_dir,
                 title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
         self.filename = self.filename.replace(proj_dir, '')
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).grid()
-        tk.Button(self, text = "Compare",
-                command = lambda: self.getDiff()).grid(column=3)
+        compare = tk.Button(self, text = "Compare",
+                command = lambda: self.getDiff()).grid(row=1,column=4)
         #tk.Label(self, text=filename).grid(column=1)
         self.commits = list(repo.iter_commits('--all', paths=proj_dir + "/" + self.filename))
         commit_dates = [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in self.commits]
         tk.Label(self, text = "Old Version").grid(row = 1)        
         self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
         self.pre_version.grid(row = 1, column = 1)
+        self.pre_version.current(0)
         tk.Label(self, text="New Version").grid(row = 1, column = 2)
         self.post_version = tk.ttk.Combobox(self, values = commit_dates)
         self.post_version.grid(row = 1, column = 3)
         self.text = tk.Text(self)
         self.text.tag_config("del", background="#fcc9c9", foreground="red")
         self.text.tag_config("add", background="#ccfcc9", foreground="#1e9e16")
-        with open(proj_dir + "/" + self.filename, "r") as f:
-            file_contents = f.read().splitlines()
-            for line in file_contents:
-                if len(line) > 0 and line[0] == 'd':
-                    self.text.insert(tk.END, line + '\n', 'del')
-                elif len(line) > 0 and line[0] == 'm':
-                    self.text.insert(tk.END, line + '\n', 'add')
-                else:
-                    self.text.insert(tk.END, line + '\n')
         scrollbar = tk.Scrollbar(self, command=self.text.yview)
         scrollbar.grid(row = 2, column= 4, sticky='ns')
         self.text.config(state = tk.DISABLED)
         self.text.grid(row = 2, columnspan = 4)
         self.text['yscrollcommand'] = scrollbar.set
-        #self.pre_version.bind("<<ComboboxSelected>>", self.getDiff())
-        #self.post_version.bind("<<ComboboxSelected>>", self.getDiff())
+        self.post_version.current(0)
+        self.getDiff()
 
     def getDiff(self):       
         global repo
         global proj_dir
         self.text.config(state = tk.NORMAL)
         self.text.delete('1.0', tk.END)
-        print(self.commits[self.pre_version.current()].hexsha)
-        print(self.commits[self.post_version.current()].hexsha)
+        if self.pre_version.current() == self.post_version.current():
+            with open(proj_dir + "/" + self.filename, "r") as f:
+                self.text.insert(tk.END, f.read())
         diff_contents = repo.git.diff(self.commits[self.pre_version.current()], self.commits[self.post_version.current()], proj_dir + "/" + self.filename)
-        print(diff_contents)
         diff_lines = diff_contents.splitlines()
         for line in diff_lines[4:]:
-            print(line)
             if len(line) > 0 and line[0] == '-':
                 self.text.insert(tk.END, line + '\n', 'del')
             elif len(line) > 0 and line[0] == '+':

@@ -8,12 +8,12 @@ def create_csv():
         os.mkdir("/tmp/gitup")
     if os.path.exists(csv_path) is True:
         return False
-    header = "last_pulled"
+    header = "local_path"
     csv_file = open(csv_path, 'w+')
     writer = csv.writer(csv_file)
-    writer.writerow(header)
+    writer.writerow([header])
     csv_file.close()
-    return True    
+    return True
 
 def add_project(path):
     if os.path.exists(csv_path) is False:
@@ -21,15 +21,15 @@ def add_project(path):
             print("CSV creation failed.")
     path = os.path.normpath(path)
     csv_file = open(csv_path, 'r')
-    reader = csv.reader(csv_file)
+    reader = csv.reader(csv_file, delimiter=',')
     new_rows = []
     line = 0
     for row in reader:
-        if line != 0 and row[0] == path:
+        if row[0] == path:
             raise ValueError("project already exists")
         else:
-            new_rows.append(','.join(row))
-    new_rows.append(path)
+            new_rows.append(row)
+    new_rows.append([path])
     csv_file.close()
     csv_file = open(csv_path, 'w')
     writer = csv.writer(csv_file)
