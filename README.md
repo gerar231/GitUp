@@ -16,14 +16,8 @@ Simply download the runnable program at [URL for executable] to an easily access
 
 ## System Requirements
 
-The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version __ installed:
-[URL for Python download].
-
-## Building from Source
-
-Requirements:
-To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp).
-Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb clean".
+The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version 3.6 installed:
+[https://www.python.org/downloads/release/python-368/](https://www.python.org/downloads/release/python-368/).
 
 # Using GitUp:
 
@@ -89,6 +83,12 @@ You don’t need to worry about syncing changes! GitUp will automatically back u
 # Important Notes
 
 Since the projects are on your GitHub account, you can modify your project using git. However, we strongly discourage doing this, as GitUp will handle all aspects of backing up your work and viewing/reverting past versions for you. Also, proceed with caution whenever you get a warning that something could potentially become out of sync! If a file becomes out of sync, GitUp will automatically attempt to resolve it, though you may lose work when it does so.
+
+## Building from Source
+
+Requirements:
+To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp).
+Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb".
 
 ## Projects that helped us:
 
