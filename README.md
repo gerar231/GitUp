@@ -88,7 +88,8 @@ Since the projects are on your GitHub account, you can modify your project using
 
 Requirements:
 To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp).
-Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb".
+The second step is to download PyBuilder which we use to build our project. You can run "sudo pip3.6 install pybuilder" from the
+terminal to download this. Next, navigate to the repository from the terminal. After navigating to the repository, just run "pyb".
 
 ## Projects that helped us:
 
