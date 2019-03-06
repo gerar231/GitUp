@@ -1,0 +1,2 @@
+PATH=$PATH:/usr/local/bin:/usr/bin
+@reboot /home/robertk3/GitUp/daemon/start_daemon.py

@@ -1,0 +1,52 @@
+1. Goals for the week of 02/11/2019 - 02/17/2019:
+    0. Complete a v1 API which gives the functionality of each module and their
+    interactions.
+    1. Seek out some high-level research papers on GitUp's competition and cite 
+    them in justifying features of the product.
+    2. Test the feature set of GitUp with users by demonstrating the user 
+    interface and core functionality, record at least two trials.
+
+2. Progress for the week of 02/11/2019 - 02/17/2019:
+    1. [first goal accomplishments, learnings, difficulties, blockers, 
+    new ideas/directions]
+    ...
+    N. [Nth goal accomplishments, learnings, difficulties, blockers, 
+    new ideas/directions]
+    Summary: [summary of the week's progress]  
+    0. This goal no longer seems relevant for GitUp's implementation and is
+    actually covered better through objectives such as creating a test suite
+    and a high quality user manual. The closest to an "API" that GitUp will see
+    will be through method comments/specifications that enable the interactions
+    between modules such as the UI, UserAccount and daemon. As it stands code
+    has been written for all three of these components, it would make sense to
+    continue this goal in some form by urging for the creation of some internal
+    documentation to make module interactions easier and more abstract for the
+    GitUp development team.
+    1. One research paper cited in the project was "What's Wrong with Git?..."
+    although this obviously only satisfies 1/2 of the goal's requirements. 
+    Another place to utilize research in support of GitUp would be in creating
+    test suites for the project and moving forward with user testing. It will be
+    very important to read up on proper user testing in completing goal #2 from
+    this week before the product demo on 02/21/2019.
+    2. No progress was made on this goal because no implementation was ready
+    for the user to demo. This goal should carry over well into this week since
+    a version 1 of the UI will be ready and we will be doing a demo on 02/21/2019.
+    As referenced above, in order for these tests to be effective they should be
+    well documented and user testing methods should be support by research in
+    order to maximize the insights produced from each session. 
+    Summary: Overall the goals set for this week seemed out of synchronization
+    with the actions that were taken. I think from a high level this previous
+    week was a big step for GitUp in integrating more research into our project
+    and begining to build each module. Learnings from this week relate to the
+    practice of peer programming, which our group did on Saturday 02/16/2019,
+    initially code moved slowly but by the end of the 4 hour session we had done
+    quite a bit of the version 1 implementation and should have no problem
+    getting a demo out by Thursday for check in.
+
+3. Goal's for the week of 02/18/2019 - 02/24/2019:
+    1. Complete a working demo of GitUp (logging changes to project files in a
+    dynamic way) by 02/21/2019 for check-in.
+    2. Read research on user testing and document findings in the repository 
+    with preliminary user test designs.
+    3. Perform one well documented user test before the 02/21/2019 demo and
+    one user test afterwards.

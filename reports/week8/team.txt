@@ -1,0 +1,26 @@
+Last Week’s Goals: 
+- Connect our daemon script to PyGithub so that the daemon can handle pushing and pulling automatically.
+- Connect our GUI to git so that it can at least create and delete projects.
+- Write tests for daemon functionality and PyGithub integration.
+- Have real users test our initial version with pushing/pulling
+
+Progress:
+- We can now perform automatic committing when the daemon detects changes to a file. This was demonstrated in our demo last week.
+- The daemon now starts on system start and is robust to being killed/restarted.
+- The daemon also now logs its actions to make debugging it easier.
+- We have yet to write any tests.
+- We didn’t manage to get real user input on our product yet because of issues between Python versions for the GUI and PyGithub, although these are now resolved, so we can move forward.
+
+Plans/Goals:
+- Finish a usable prototype of GitUp.
+- Have real users test our initial version with pushing/pulling (in the context of our Google Survey)
+- Look at the generated graphs from our Google survey results, as well as the notes from our experienced user pool and come to conclusions about what GitUp is lacking.
+- Begin work on smarter groupings of commits.
+
+TA Meeting Agenda:
+- Treat Martin as a Lead Software Engineer:
+- It seems like we are a little behind schedule on this project, do you have any suggestions on what we should finish first and how we should catch up?
+- Treat Martin as a TA:
+- Does our Google survey ask the right questions? Would you take any questions out? Would you add any questions?
+- How should we go about shortening our google survey and the time commitment for users.
+

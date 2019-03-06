@@ -1,0 +1,42 @@
+1. Goals for the week of 02/18/2019 - 02/24/2019:
+    1. Complete a working demo of GitUp (logging changes to project files in a
+    dynamic way) by 02/21/2019 for check-in.
+    2. Read research on user testing and document findings in the repository 
+    with preliminary user test designs.
+    3. Perform one well documented user test before the 02/21/2019 demo and
+    one user test afterwards.
+
+2. Progress for the week of 02/18/2019 - 02/24/2019:
+    1. A working demo which demonstrated file monitoring through the use of a
+    daemon was shown at the check-in on 2/21/2019. In the process of building
+    this our team was able to iterate on the modules of development for GitUp.
+    I personally didn't play a huge role in creating this demo since my work
+    involves communication between local and remote repositories on a specific
+    user account. Overall, based on this metric, our project is in a decent
+    place to move forward with development towards a finished version of our
+    system. 
+    2. As of now the user test metrics have been designed according to ease of
+    use, functionality, speed and overall preference for users. Data gathering
+    tools (excel and Google Forms) have been tested and are functional. The
+    project proposal has been updated to include far more research that
+    justifies GitUp's functionality and compares existing alternatives. Research
+    also supports implementation and testing methodologies. In this process our
+    team was really able to articulate the most beneficial and essential features
+    of the product. I didn't take a very active role in designing the user tests
+    but will when user tests are created for the login flow.
+    3. No user tests were performed in this previous week since our user testing
+    had not been fully designed. Nothing in particular was learned here since
+    this goal was not even attempted. If anything, I'd be interested to see when
+    this actually gets performed, ideally by the end of this upcoming week!
+    Summary: Progress seemed pretty binary this week, goals 1 and 2 were nearly
+    completed while goal 3 was not event attempted. Moving forward in this week
+    my focus is to set goals that are 100% relevant to this week's activities.
+    Additionally, it would be optimal to achieve nearly 100% of the goal
+    objectives. I also want to be more involved with the user testing side of
+    the project as the implementation nears completion.
+
+3. Goal's for the week of 02/25/2019 - 03/03/2019:
+    1. Complete the version one implementation of the GitUp user account and 
+    remote repository control.
+    2. Complete a version one unit test suite for the above implementation.
+    3. Complete one user test for the user account flow and functionality.
