@@ -2,11 +2,11 @@ import os
 import git
 from git import Repo
 from git import IndexFile
-from github_control import user_account as uc
 import sys
-sys.path.append(os.path.normpath("../../../../"))
+sys.path.append(os.path.normpath("../"))
+from github_control import user_account as uc
 import daemon.csv_editor as CSV
-import daemon.restart_daemon as DMN
+import daemon.daemon_launcher as DMN
 
 class ProjectManager(object):
 
