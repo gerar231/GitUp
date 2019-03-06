@@ -1,5 +1,5 @@
 #!/usr/bin/env python3.7
-from daemon import GitUpDaemon
+from .daemon import GitUpDaemon
 
 def restart_daemon():
     repofile = "/tmp/gitup/repositories.csv"

@@ -6,9 +6,9 @@ import time
 from datetime import datetime
 sys.path.append(os.path.normpath("../src/main/python/gui"))
 from github_control.user_account import UserAccount
-from base_daemon import Daemon
-from repository import Repository
-from repository import RepositoryInitError
+from .base_daemon import Daemon
+from .repository import Repository
+from .repository import RepositoryInitError
 from inotify.adapters import InotifyTrees
 from apscheduler.schedulers.background import BackgroundScheduler
 
