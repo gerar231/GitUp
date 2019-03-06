@@ -4,6 +4,7 @@ from git import Repo
 from git import IndexFile
 from src.github_control import user_account as uc
 import daemon.csv_editor as CSV
+import daemon.restart_daemon as DMN
 
 class ProjectManager(object):
 
@@ -64,7 +65,7 @@ class ProjectManager(object):
         except ValueError:
             self.curr_user.create_remote_repo(repo)
         # TODO: update the .csv file and restart the daemon
-        self.__update_csv(norm_path)
+        self.__update_daemon_csv(norm_path)
         # return the Repo object for this path
         return repo    
 
@@ -104,18 +105,18 @@ class ProjectManager(object):
         norm_path = os.path.join(norm_path, repo_name)
         cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
         # TODO: update the .csv file and restart the daemon
-        self.__update_csv(norm_path) 
+        self.__update_daemon_csv(norm_path) 
         return cloned_repo
     
-    def __update_csv(self, path: str) -> bool:
+    def __update_daemon_csv(self, path: str) -> bool:
         """
         Arguments:
             path: the absolute path of the project to add to the CSV tracked by the Daemon.
         
-        Adds the path specified by the argument to the CSV tracked by the Daemon. Returns
-        True if the path was successfully added, returns False if the path was already in
-        the CSV. Creates a new project CSV at the CSV path if it doesn't exist. Error if
-        path is not a valid directory.
+        Adds the path specified by the argument to the CSV tracked by the Daemon and restart
+        it. Returns True if the path was successfully added, returns False if the path was 
+        already in the CSV. Creates a new project CSV at the CSV path if it doesn't exist. 
+        Error if path is not a valid directory.
         """
         norm_path = os.path.normpath(path)
         if os.path.exists(norm_path) is False:
@@ -131,6 +132,8 @@ class ProjectManager(object):
         except ValueError:
             return False
 
+        # if necessarry then restart the Daemon
+        DMN.restart_daemon()
         return True
     
     def view_repo_commits(self, path: str):

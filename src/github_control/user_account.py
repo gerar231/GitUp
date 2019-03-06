@@ -129,7 +129,7 @@ class UserAccount(object):
         on the current user's GitHub account and add remote under the name "GitUp" to this local repository. 
         Adds all changes and pushes all contents of local repo into remote repo after creation.
         If a "GitUp" remote already exists throw an AssertionError.
-        If a remote repo with conflicting name exists then throw an AssertionError.
+        If a remote repo with conflicting name exists then new remote repo created with name + (number of conflicts)
         If push fails after a remote repo is created then throw a GitCommandError.
         """
         # verify that there is not a GitUp remote
