@@ -9,10 +9,10 @@ def create_csv():
     if os.path.exists(csv_path) is True:
         return False
     header = "last_pulled"
-    csv = open(csv_path, 'w+')
-    writer = csv.writer(csv)
+    csv_file = open(csv_path, 'w+')
+    writer = csv.writer(csv_file)
     writer.writerow(header)
-    csv.close()
+    csv_file.close()
     return True    
 
 def add_project(path):
@@ -20,8 +20,8 @@ def add_project(path):
         if create_csv() is False:
             print("CSV creation failed.")
     path = os.path.normpath(path)
-    csv = open(csv_path, 'r')
-    reader = csv.reader(csv)
+    csv_file = open(csv_path, 'r')
+    reader = csv.reader(csv_file)
     new_rows = []
     line = 0
     for row in reader:
@@ -30,7 +30,7 @@ def add_project(path):
         else:
             new_rows.append(','.join(row))
     new_rows.append(path)
-    csv.close()
+    csv_file.close()
     csv = open(csv_path, 'w')
     writer = csv.writer(csv)
     writer.writerows(new_rows)
