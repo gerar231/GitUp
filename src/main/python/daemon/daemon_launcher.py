@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 import os
 import sys
-from daemon import GitUpDaemon
+from .daemon import GitUpDaemon
     
 repofile = "/tmp/gitup/repositories.csv"
 logs_dir = '/tmp/gitup/'

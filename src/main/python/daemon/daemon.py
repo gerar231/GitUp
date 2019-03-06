@@ -6,9 +6,9 @@ import time
 from datetime import datetime
 from inotify.adapters import InotifyTrees
 from apscheduler.schedulers.background import BackgroundScheduler
-from base_daemon import Daemon
-from repository import Repository
-from repository import RepositoryInitError
+from .base_daemon import Daemon
+from .repository import Repository
+from .repository import RepositoryInitError
 sys.path.append(os.path.normpath("../"))
 from github_control.user_account import UserAccount
 
