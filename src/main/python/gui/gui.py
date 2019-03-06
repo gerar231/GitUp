@@ -5,6 +5,7 @@ from github_control import user_account
 import git
 from git import Repo
 from git import Commit
+import time
 
 user = None
 proj_manager = None
@@ -64,7 +65,7 @@ class LoginWindow(tk.Frame):
     def login(self, master):
         if self.username.get() != "" and self.password.get != "":
             global user
-            user = user_account.UserAccount(self.username.get(), self.password.get(), "token.txt")
+            user = user_account.UserAccount(self.username.get(), self.password.get())
             print(user.get_name())
             print(user.get_profile_image_url())
             print(user.get_profile_url())
@@ -131,6 +132,8 @@ class OpenProjectMenu(tk.Frame):
     def openProject(self, master):
         global proj_dir
         proj_dir = filedialog.askdirectory(initialdir = "/")
+        global repo
+        repo = Repo(proj_dir)
         global project_manager
         #project_manager.view_project_repo(proj_dir)
         master.switch_frame(ProjectMenu)
@@ -178,9 +181,8 @@ class ViewFile(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).grid()
         #tk.Label(self, text=filename).grid(column=1)
-        #self.commits = project_manager.view_repo_commits(proj_dir, file)
-        commit_dates = ["1:37 2/21", "1:43 2/20"]
-        # [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in commits]
+        self.commits = repo.iter_commits('--all', paths=proj_dir + "/" + self.filename)
+        commit_dates = [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in self.commits]
         tk.Label(self, text = "Old Version").grid(row = 1)        
         self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
         self.pre_version.grid(row = 1, column = 1)
