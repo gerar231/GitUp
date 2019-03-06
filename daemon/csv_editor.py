@@ -3,7 +3,7 @@ import os
 
 @staticmethod
 def add_project(csv_file, path):
-    path = os.path.normpath(path);
+    path = os.path.normpath(path)
     csv = open(csv_file, 'r')
     reader = csv.reader(csv)
     new_rows = []
