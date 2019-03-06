@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.7
 import os
 import sys
-from .daemon import GitUpDaemon
+sys.path.append(os.path.normpath("../"))
+from daemon.daemon import GitUpDaemon
     
 repofile = "/tmp/gitup/repositories.csv"
 logs_dir = '/tmp/gitup/'
@@ -27,7 +28,7 @@ def start_daemon():
                          stderr=err)
     # Change this to daemon.run() to run the daemon connected to
     # the terminal for easier debugging
-    daemon.run()
+    daemon.start()
 
 def stop_daemon():
     daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid')
