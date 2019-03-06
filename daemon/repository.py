@@ -1,4 +1,6 @@
 import os
+import shutil
+import re
 import sys
 import git
 import time
@@ -32,14 +34,36 @@ class Repository(git.Repo):
     # Returns the list of changed files for this repo.
     def __get_changed_files(self): 
         return [ os.path.normpath(item.a_path) 
-                 for item in self.index.diff(None) ]
+                 for item in self.index.diff(None) ] + self.untracked_files
+
+    # return a commit message for the given filepath based on the chnages that have
+    # been made to it.
+    def __get_commit_message(self, filepath, is_del):
+        if is_del:
+            return "delete " + filepath
+        elif filepath in self.__get_changed_files():
+            # unified=0 is important so every hunk starts at the modified line,
+            # this makes the hunk headers accurate.
+            diff = self.git.diff("HEAD", filepath, unified=0)
+            message = ""
+            for line in diff.splitlines():
+                regex = re.compile("^@@.+@@")
+                if regex.match(line):
+                   print(line)
+                   # chop the header and following space out of the line.
+                   line = line[line.find("@@", line.find("@@") + 1) + 3:]
+                   if line not in message:
+                       message += line + "\n"
+            if message:
+                return filepath + ": " + message
+        return filepath
 
     # Add and commit the given filepath. If a message is provided it will be
-    # used as the commit message otherwise the filepath will be used as the
-    # commit message. 
-    def __add_commit(self, filepath, message=None):
+    # used as the commit message otherwise the result of self.__get_commit_message(filepath)
+    # will be used as the commit message. 
+    def __add_commit(self, filepath, is_del, message=None):
         if message == None:
-            message = filepath
+            message = self.__get_commit_message(filepath, is_del)
         self.git.add(filepath)
         self.git.commit(filepath, m=message)
 
@@ -50,22 +74,26 @@ class Repository(git.Repo):
 
     # Add and commit the given filepath, or all unstaged changes if no filepath
     # is given, If the provided file doesn't have unstaged changes does nothing.
-    def __safe_commit(self, filepath=None):
+    def __safe_commit(self, filepath=None, is_dir=False, is_del=False):
         changed_files = self.__get_changed_files()
         if filepath == None:
             # add and commit all the changes
             for path in changed_files:
                 try:
-                    self.__add_commit(path)
+                    self.__add_commit(path, is_del)
                     self.dirty = True
-                except GitCmdError:
+                except GitCommandError as e:
                     self.__commit_failure(path)
-        elif filepath in changed_files or filepath in self.untracked_files:
+                    print(e, file=sys.stderr)
+        # Directories don't show up in the untracked files so we have to
+        # manually check if this is a directory
+        if is_dir or filepath in changed_files:
             try:
-                self.__add_commit(filepath)
+                self.__add_commit(filepath, is_del)
                 self.dirty = True
-            except:
-                self.__commit_failure(filepath)
+            except GitCommandError as e:
+                self.__commit_failure(filepath) 
+                print(e, file=sys.stderr)
 
     # Returns a formated string representing the current time.
     def __get_timestamp(self): 
@@ -75,6 +103,7 @@ class Repository(git.Repo):
     # Called when an event occurs in the repository.
     def handle_event(self, event, user_account):
         (_, type_names, path, filename) = event
+        is_dir = False
         # Print to the log.
         print(("{}: event received.\n\trepository: {}\n\tpath: {}" + 
                 "\n\tfilename: {}\n\tevent_types: {}").format(
@@ -83,13 +112,36 @@ class Repository(git.Repo):
         last_dir = os.path.abspath(os.path.curdir)
         os.chdir(self.path)
         relative_path = os.path.relpath(os.path.join(path, filename))
-        self.__safe_commit(filepath=relative_path)
+        if "IN_ISDIR" in type_names:
+            is_dir = True
+            # add a separator to the end of the path.
+            relative_path += os.sep
+        is_del = "IN_DELETE" in type_names or "IN_DELETE_SELF" in type_names
+        self.__safe_commit(filepath=relative_path, is_dir=is_dir, is_del=is_del)
         os.chdir(last_dir)
+
+    # create the git attributes file for the given repository if one does not exist.
+    def __create_git_attributes(self):
+        filepath = os.path.join(self.path, ".gitattributes")
+        if not os.path.exists(filepath):
+            print("{}: creating new .gitattributes\n\trepo: {}"
+                    .format(self.__get_timestamp(), self.path))
+            try:
+                print(os.path.abspath(os.path.curdir), file=sys.stderr)
+                shutil.copy(os.path.relpath("git_attributes.txt"), filepath)
+            except Exception as e:
+                print("{}: failed to setup .gitattributes\n\trepo: {}"
+                        .format(self.__get_timestamp(), self.path), file=sys.stderr)
+                print(e, file=sys.stderr)
+        else:
+            print("{}: found existing .gitattributes\n\trepo: {}"
+                    .format(self.__get_timestamp(), self.path))
 
     # Called when the daemon is first started.
     def on_daemon_start(self, user_account):
         # Pull first.
         self.safe_pull(user_account)
+        self.__create_git_attributes() 
         # Commit any changes that may have occured while the daemon was down.
         changed_files = self.__get_changed_files()
         if len(changed_files) != 0:
