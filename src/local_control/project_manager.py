@@ -1,10 +1,13 @@
 import os
 import git
+import sys
 from git import Repo
 from git import IndexFile
-from src.github_control import user_account as uc
-import daemon.csv_editor as CSV
-import daemon.restart_daemon as DMN
+sys.path.append(os.path.normpath("../../Mix"))
+from github_control import user_account as uc
+sys.path.append(os.path.normpath("../../daemon"))
+from daemon import csv_editor as CSV
+from daemon import restart_daemon as DMN
 
 class ProjectManager(object):
 
@@ -122,7 +125,7 @@ class ProjectManager(object):
         if os.path.exists(norm_path) is False:
             raise ValueError("Path given to project to CSV is not a valid file path.")
 
-        csv_path = "/tmp/GitUp/repositories.csv"
+        csv_path = "/tmp/gitup/repositories.csv"
 
         if os.path.exists(csv_path) is False:
             CSV.create_csv(csv_path)

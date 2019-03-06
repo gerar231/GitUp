@@ -41,7 +41,7 @@ class UserAccount(object):
                 raise ValueError("token_file_path is not a valid file path.")
         else:
             token_file_path = os.path.normpath("token.txt")
-            if os.path.exists(token_file_path) is False and user_name is None and password is None:
+            if os.path.exists(token_file_path) is None and user_name is None and password is None:
                 raise ValueError("No token file at default path {1}".format(token_file_path))
 
         # check for an existing token
