@@ -1,0 +1,34 @@
+Last Week’s Goals: 
+  - Finish a usable prototype of GitUp.
+  - Have real users test our initial version with pushing/pulling (in the context of our Google Survey)
+  - Look at the generated graphs from our Google survey results, as well as the notes from our experienced user pool and come to 
+    conclusions about what GitUp is lacking.
+  - Begin work on smarter groupings of commits.
+
+Progress:
+  - While there are still some use cases that GitUp is unable to handle, we have managed to connect the GUI, daemon, and GitHub 
+    integration and have them communicating.
+  - All the pieces of our project work independently. The issue is with integrating them together
+  - We’re aware we’re still behind on implementation, and we’ve devoted extra time this week to get an initial product that we 
+    can give out for our user tests.
+  - We have no user testing results yet, but we did remodel our user testing to be less expensive and taxing on our users. 
+  - We’ve been focusing primarily on making sure that GitUp can support our user survey in terms of functionality. Because of this, 
+    we haven’t focused much on smarter groupings of commits, although we do have an initial algorithm that groups commits based on 
+    the time they were created (into buckets of a day). We can also now track which methods were edited in which file (similar to diff 
+    show-c-function) which will be useful for smarter group algorithms eventually.
+
+Plans/Goals:
+  - Our number one goal is to finish development of GitUp to the point where we can conduct a user test. This needs to get done ASAP.
+  - Get users to complete our survey and analyze the results.
+  - Add merge conflict resolution mechanism
+
+TA Meeting Agenda:
+
+Treat Martin as a Lead Software Engineer:
+  - How should our repository be organized?
+  - Are there any problems with our current repository organization?
+
+Treat Martin as a Customer:
+  - What are your thoughts on the GUI design?
+  - Does anything seem poorly designed/hard to use?
+  - Is there functionality you expect to see but isn’t present?
