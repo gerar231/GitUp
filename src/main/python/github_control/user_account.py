@@ -33,6 +33,7 @@ class UserAccount(object):
         """
         # TODO: refresh Oauth token
         # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
+        self.__token = None
         if token_file_path:
             norm_path = os.path.normpath(token_file_path)
             if os.path.exists(norm_path) is False:
