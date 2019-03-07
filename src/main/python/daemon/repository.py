@@ -6,7 +6,7 @@ import git
 import time
 from datetime import datetime
 from git.exc import GitCommandError
-sys.path.append(os.path.normpath("../src/main/python/gui/"))
+sys.path.append(os.path.normpath("../"))
 from github_control.user_account import UserAccount
 
 class RepositoryInitError(Exception):

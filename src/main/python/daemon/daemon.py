@@ -4,13 +4,13 @@ import inotify
 import csv
 import time
 from datetime import datetime
-sys.path.append(os.path.normpath("../src/main/python/gui"))
-from github_control.user_account import UserAccount
+from inotify.adapters import InotifyTrees
+from apscheduler.schedulers.background import BackgroundScheduler
 from .base_daemon import Daemon
 from .repository import Repository
 from .repository import RepositoryInitError
-from inotify.adapters import InotifyTrees
-from apscheduler.schedulers.background import BackgroundScheduler
+sys.path.append(os.path.normpath("../"))
+from github_control.user_account import UserAccount
 
 event_mask = (inotify.constants.IN_CLOSE_WRITE |
               inotify.constants.IN_MOVE |
