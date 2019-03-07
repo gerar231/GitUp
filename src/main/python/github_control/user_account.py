@@ -1,6 +1,6 @@
 import os, sys
+import github
 from github import Github
-from github import GithubException
 from git import Repo
 from git import IndexFile
 from git import exc
@@ -42,7 +42,7 @@ class UserAccount(object):
         # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
 
         # file path used to store a GitHub Access token.
-        default_token_path = os.path.normpath(os.path.join(os.path.realpath(__file__), "token.txt"))
+        default_token_path = os.path.normpath(os.path.join(os.path.realpath(__file__),"..", "token.txt"))
 
         # check if a token_path is provided
         if token_path is None:
@@ -50,7 +50,7 @@ class UserAccount(object):
         else:
             norm_path = os.path.normpath(token_path)
             if os.path.exists(norm_path) is False and user_name is None and password is None:
-                sys.stderr.write("Provided token_path for login is not a valid file path, using default path {}".format(token_path))
+                sys.stderr.write("Provided token_path {} for login is not a valid file path, using default path {}.\n".format(token_path, default_token_path))
                 token_path = default_token_path
 
         # if any username/password provided
@@ -58,7 +58,7 @@ class UserAccount(object):
             self.__github_control = Github(login_or_token=user_name, password=password)
             try:
                 self.__login = self.__github_control.get_user().login
-            except GithubException.BadCredentialsException:
+            except github.GithubException:
                 raise ValueError("Invalid user_name and/or password provided.")
             # get existing authorizations if for GitUp then delete, then create new auth token.
             authorizations = self.__github_control.get_user().get_authorizations()
@@ -69,7 +69,7 @@ class UserAccount(object):
             token = self.__github_control.get_user().create_authorization(scopes=["user", "delete_repo", "repo"], note_url="https://github.com/gerar231/GitUp", 
                 note="GitUp Authorization token.").token
             # write the token at the path
-            with open(token_path, "w") as token_file:
+            with open(token_path, "w+") as token_file:
                 print("New token created for {}: {}.".format(self.__login, token))
                 token_file.writelines(token)
             # set token for this session
@@ -88,8 +88,8 @@ class UserAccount(object):
                         self.__token = existing_token
                         # provided token is valid, exit the method.
                         return
-                except (FileNotFoundError, GithubException.BadCredentialsException):
-                    sys.stderr.write("Provided token_path for login is not a valid file path, using default path {}".format(token_path))
+                except (github.GithubException):
+                    sys.stderr.write("Provided token_path {} has invalid token, using default path {}.\n".format(token_path, default_token_path))
                     token_path = default_token_path
             # checking default_token_path
             try:
@@ -101,10 +101,10 @@ class UserAccount(object):
                         self.__token = existing_token
                         # token at default path is valid, exit the method
                         return
-                    except GithubException.BadCredentialsException:
+                    except github.GithubException:
                         raise ValueError("Token at default path {} was invalid (might need login refresh).".format(token_path))
             except FileNotFoundError:
-                raise ValueError("No user_name and/or password and no token at default path {1}.".format(token_path))
+                raise ValueError("No user_name and/or password and no token at default path {}.".format(token_path))
 
 
     def get_name(self):
