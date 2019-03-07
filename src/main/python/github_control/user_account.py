@@ -50,7 +50,7 @@ class UserAccount(object):
         else:
             norm_path = os.path.normpath(token_path)
             if os.path.exists(norm_path) is False and user_name is None and password is None:
-                sys.stderr.write("Provided token_path for login is not a valid file path, checking default path {}".format(token_path))
+                sys.stderr.write("Provided token_path for login is not a valid file path, using default path {}".format(token_path))
                 token_path = default_token_path
 
         # if any username/password provided
@@ -84,14 +84,13 @@ class UserAccount(object):
                     with open(token_path) as token_file:
                         existing_token = token_file.readline()
                         self.__github_control = Github(login_or_token=existing_token)
-                        try:
-                            self.__login = self.__github_control.get_user().login
-                            self.__token = existing_token
-                            # provided token is valid, exit the method.
-                            return
-                        except GithubException.BadCredentialsException:
-                            sys.stderr.write("Provided token at path {} is not valid, checking default path {}.".format(token_path, default_token_path))
-                            token_path = default_token_path
+                        self.__login = self.__github_control.get_user().login
+                        self.__token = existing_token
+                        # provided token is valid, exit the method.
+                        return
+                except (FileNotFoundError, GithubException.BadCredentialsException):
+                    sys.stderr.write("Provided token_path for login is not a valid file path, using default path {}".format(token_path))
+                    token_path = default_token_path
             # checking default_token_path
             try:
                 with open(token_path) as token_file:
