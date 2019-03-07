@@ -1,5 +1,5 @@
 *.pyc
 *.swp
 *.vscode
-src/local_control/local_setup_script.py
 src/token.txt
+local_control_script.py
