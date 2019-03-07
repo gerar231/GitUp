@@ -3,10 +3,10 @@ import git
 from git import Repo
 from git import IndexFile
 import sys
-sys.path.append(os.path.normpath("../"))
+sys.path.append(os.path.normpath(os.path.join(os.path.realpath(__file__), "..", "..")))
 from github_control import user_account as uc
-import daemon.csv_editor as CSV
-import daemon_launcher.daemon_launcher as DMN
+from daemon import csv_editor as CSV
+from daemon_launcher import daemon_launcher as DMN
 
 class ProjectManager(object):
 
@@ -61,9 +61,9 @@ class ProjectManager(object):
             # CREATE A NEW REPOSITORY
             repo = Repo.init(path=norm_path)
             repo.git.init()
-        # ensure the repository has the GitUp remote
+        # ensure the repository has the origin remote
         try:
-            repo.remote(name="GitUp")
+            repo.remote(name="origin")
         except ValueError:
             self.curr_user.create_remote_repo(repo)
         # TODO: update the .csv file and restart the daemon
@@ -105,8 +105,11 @@ class ProjectManager(object):
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
         cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
-        # TODO: update the .csv file and restart the daemon
-        self.__update_daemon_csv(norm_path) 
+        try:
+            cloned_repo.remote(name="origin")
+            self.__update_daemon_csv(norm_path) 
+        except:
+            raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
         return cloned_repo
     
     def __update_daemon_csv(self, path: str) -> bool:
@@ -164,7 +167,8 @@ class ProjectManager(object):
             path: the absolute path of a working tree directory of an existing local repository, error if no repo.
             remove_files: if True remove the repository files on the user's GitHub acccount.
         
-        Removes the GitUp remote from a local repository. Deletes the repository files on the users
+        Removes the origin remote from a local repository and alerts the project directory from those
+        being tracked by GitUp. Deletes the repository files on the users
         GitHub account if remove_files is True. Returns True if repository successfully removed,
         returns False if the repository was not removed.
         """
@@ -173,7 +177,7 @@ class ProjectManager(object):
         # check if the directory is associated with an existing repository
             # if the directory is not associated with an existing repository then throw an error
         # get the name of the repository
-        # remove the GitUp remote from the local repository
+        # remove the origin remote from the local repository
         # check that the repository name exists on the user's GitHub account
         # if remove_files is True then remove_files from GitHub
         # TODO: update the csv file and restart the daemon

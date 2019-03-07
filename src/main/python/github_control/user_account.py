@@ -147,16 +147,16 @@ class UserAccount(object):
         Arguments:
             local_repo: GitPython Repo object to create a remote repository on the user account.
         Create a remote repository under the name of the parent directory containing the repo
-        on the current user's GitHub account and add remote under the name "GitUp" to this local repository. 
+        on the current user's GitHub account and add remote under the name "origin" to this local repository. 
         Adds all changes and pushes all contents of local repo into remote repo after creation.
-        If a "GitUp" remote already exists throw an AssertionError.
+        If an "origin" remote already exists throw an AssertionError.
         If a remote repo with conflicting name exist then thrown an AssertionError.
         If push fails after a remote repo is created then throw a GitCommandError.
         """
-        # verify that there is not a GitUp remote
+        # verify that there is not an origin remote
         try:
-            local_repo.remote(name="GitUp")
-            raise AssertionError("local_repo already has a GitUp remote.")
+            local_repo.remote(name="origin")
+            raise AssertionError("local_repo already has an origin remote.")
         except ValueError:
             # attempt to create a new remote repository using the folder containing the repository name
             repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
@@ -167,13 +167,13 @@ class UserAccount(object):
                     raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
 
             # create a new remote repository
-            remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+            remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository created by GitUp."))
             print(remote_repo.git_url)
 
             # ERROR CHECK NEEDED
             # add the remote from the remote repository to the local repository
             remote_url = str(remote_repo.clone_url)
-            local_repo.create_remote(name="GitUp", url=remote_url)
+            local_repo.create_remote(name="origin", url=remote_url)
             
             # add all changes
             local_repo.git.add(".")
@@ -183,7 +183,7 @@ class UserAccount(object):
 
             # push to the remote using https://token@remote_url.git
             # perform a push using the git binary, specifying the url dynamically generated in the above format
-            if local_repo.git.push(self.__create_remote_url(local_repo, "GitUp"), "master") is None:
+            if local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master") is None:
                 raise exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
     
     def __create_remote_url(self, local_repo: Repo, remote_name: str):
@@ -196,7 +196,7 @@ class UserAccount(object):
         remote_name specified as a remote of local_repo using the GitUp access token and
         the current user's id.
         """
-        # get the "GitUp" remote url, assumes url is the only one and is the first from iterator
+        # get the "origin" remote url, assumes url is the only one and is the first from iterator
         url = next(local_repo.remote(name=remote_name).urls)
         # right half of remote
         url = url.split("https://")
@@ -207,33 +207,33 @@ class UserAccount(object):
     def push_to_remote(self, local_repo):
         """
         Argument:
-           local_repo: GitPython repo to push to changes to GitUp remote.
+           local_repo: GitPython repo to push to changes to origin remote.
         
-        Pushes the latest changes to the remote repository under remote "GitUp" to branch master.
-        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
-        If push to remote "GitUp" fails throw GitCommandError.
+        Pushes the latest changes to the remote repository under remote "origin" to branch master.
+        If local_repo does not have a remote named "origin" throw a GitCommandError.
+        If push to remote "origin" fails throw GitCommandError.
         """
-        # verify this repo has a GitUp remote
+        # verify this repo has an origin remote
         try:
-            local_repo.remote(name="GitUp")
+            local_repo.remote(name="origin")
         except ValueError:
-            raise exc.GitCommandError("No GitUp remote for repo {}.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
         # push to the remote
-        if local_repo.git.push(self.__create_remote_url(local_repo, "GitUp"), "master") is None:
-            raise exc.GitCommandError("Push to GitUp remote failed for repo {}.".format(local_repo.working_tree_dir))
+        if local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master") is None:
+            raise exc.GitCommandError("Push to origin remote failed for repo {}.".format(local_repo.working_tree_dir))
 
     def pull_to_local(self, local_repo: Repo):
         """
         Argument:
-            local_repo: GitPython repo to pull latest changes from the GitUp remote
-        Pulls the latest changes to this local repository from the remote "GitUp" on branch master.
-        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
-        If pull from remote "GitUp" fails throw a GitCommandError.
+            local_repo: GitPython repo to pull latest changes from the origin remote
+        Pulls the latest changes to this local repository from the remote "origin" on branch master.
+        If local_repo does not have a remote named "origin" throw a GitCommandError.
+        If pull from remote "origin" fails throw a GitCommandError.
         """
         try:
-            local_repo.remote(name="GitUp")
+            local_repo.remote(name="origin")
         except ValueError:
-            raise exc.GitCommandError("No GitUp remote for repo {}.".format(local_repo.working_tree_dir))
+            raise exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
         # push to the remote
-        if local_repo.git.pull(self.__create_remote_url(local_repo, "GitUp"), "master") is None:
-            raise exc.GitCommandError("Pull to repo {} from remote GitUp failed.".format(local_repo.working_tree_dir))
+        if local_repo.git.pull(self.__create_remote_url(local_repo, "origin"), "master") is None:
+            raise exc.GitCommandError("Pull to repo {} from remote origin failed.".format(local_repo.working_tree_dir))
