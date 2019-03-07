@@ -1,12 +1,15 @@
 matrix:
   include:
     language: python
-    python: 3.7
+    python: 3.6
     dist: xenial
     sudo: true
     before_script:
-      - sudo chmod +x ./daemon/test/test.sh
+      - sudo chmod +x ./src/main/python/daemon/test/test.sh
       - sudo chmod +x ./src/test/compile-src.sh
+      - python3.6 -m pip install pybuilder
     script:
-      - ./daemon/test/test.sh
+      - ./src/main/python/daemon/test/test.sh
       - ./src/test/compile-src.sh
+      - pyb install_dependencies
+      - pyb
