@@ -12,7 +12,7 @@ As of now, GitUp only works on Linux based systems. Additionally, to use GitUp, 
 
 ## Download GitUp
 
-Simply download the runnable program at [URL for executable] to an easily accessible place on your system, and you’re good to go!
+Simply download the runnable program at https://www.dropbox.com/sh/6b9m3x3yx5ewmla/AACQUobVn7HXC8kURkqPk56Da?dl=0 to an easily accessible place on your system, and you’re good to go!
 
 ## System Requirements
 
