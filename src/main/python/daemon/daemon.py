@@ -57,10 +57,11 @@ class GitUpDaemon(Daemon):
     def __get_user_account(self):
         try: 
             self.user_account = UserAccount()
-        except ValueError:
+        except ValueError as e:
             self.user_account = None
             print("{}: failed to create user account".format(
                     self.__get_timestamp()), file=sys.stderr)
+            print(e, file=sys.stderr)
 
     # Parses the repository information stored in self.repofile, and stores the
     # Repostiory objects in self.repositories.
@@ -69,9 +70,10 @@ class GitUpDaemon(Daemon):
         repo_csv = None
         try:
             repo_csv = open(self.repofile, 'r')
-        except:
+        except Exception as e:
             print("{}: failed to open repofile".format(
                     self.__get_timestamp()), file=sys.stderr)
+            print(e, file=sys.stderr)
             self.stop()
         csv_reader = csv.reader(repo_csv, delimiter=',')
         line = 0
@@ -81,9 +83,10 @@ class GitUpDaemon(Daemon):
                 try:
                     repo = Repository(path=path)
                     self.repositories.append(repo)
-                except RepositoryInitError:
+                except Exception e:
                     print("repository for " + path + "failed to"
                         + " be initialized skipping", file=sys.stderr)
+                    print(e, file=sys.stderr)
             line += 1
 
     # Begin watching for events in the repositories and forwarding
