@@ -43,7 +43,14 @@ class UserAccount(object):
         # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
 
         # file path used to store a GitHub Access token.
-        default_token_path = os.path.normpath(os.path.join(os.path.realpath(__file__),"..", "token.txt"))
+        if os.path.exists("/tmp/gitup") is False:
+            os.mkdir("/tmp/gitup")
+        default_token_path = os.path.normpath("/tmp/gitup/token.txt")
+
+        # user account fields start as None
+        self.__github_control = None
+        self.__token = None
+        self.__login = None
 
         # check if a token_path is provided
         if token_path is None:
