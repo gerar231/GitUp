@@ -3,8 +3,9 @@ import os
 import sys
 sys.path.append(os.path.normpath("../"))
 from daemon.daemon import GitUpDaemon
-    
-repofile = "/tmp/gitup/repositories.csv"
+
+pidfile = '/tmp/gitup_daemon.pid'
+repofile = '/tmp/gitup/repositories.csv'
 logs_dir = '/tmp/gitup/'
 out = '/tmp/gitup/daemon.out'
 err = '/tmp/gitup/daemon.err'
@@ -22,7 +23,7 @@ def start_daemon():
         os.remove(out)
     if os.path.isfile(err):
         os.remove(err)
-    daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid',
+    daemon = GitUpDaemon(pidfile=pidfile,
                          repofile=repofile,
                          stdout=out,
                          stderr=err)
@@ -31,15 +32,18 @@ def start_daemon():
     daemon.start()
 
 def stop_daemon():
-    daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid')
+    daemon = GitUpDaemon(pidfile=pidfile)
     daemon.stop()
 
 def restart_daemon():
-    daemon = GitUpDaemon(pidfile='/tmp/gitup_daemon.pid',
+    daemon = GitUpDaemon(pidfile=pidfile,
                          repofile=repofile,
                          stdout=out,
                          stderr=err)
     daemon.restart()
+
+def daemon_is_running():
+    return os.path.exists(pidfile)
 
 def usage():
     print('usage ./daemon_launcher.py start|stop|restart')
@@ -53,7 +57,11 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'stop':
         stop_daemon()
     elif sys.argv[1] == 'restart':
-        restart_daemon()
+        if daemon_is_running():
+            restart_daemon()
+        else:
+            print("daemon not running starting instead")
+            start_daemon()
     else:
         print("invalid option {}".format(sys.argv[1]))
         usage()
