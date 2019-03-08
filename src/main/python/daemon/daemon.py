@@ -8,7 +8,6 @@ from inotify.adapters import InotifyTrees
 from apscheduler.schedulers.background import BackgroundScheduler
 from .base_daemon import Daemon
 from .repository import Repository
-from .repository import RepositoryInitError
 sys.path.append(os.path.normpath("../"))
 from github_control.user_account import UserAccount
 
@@ -83,7 +82,7 @@ class GitUpDaemon(Daemon):
                 try:
                     repo = Repository(path=path)
                     self.repositories.append(repo)
-                except Exception e:
+                except Exception as e:
                     print("repository for " + path + "failed to"
                         + " be initialized skipping", file=sys.stderr)
                     print(e, file=sys.stderr)

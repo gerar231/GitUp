@@ -2,6 +2,7 @@ import os
 import git
 from git import Repo
 from git import IndexFile
+from multiprocessing import Process
 import sys
 sys.path.append(os.path.normpath(os.path.join(os.path.realpath(__file__), "..", "..")))
 from github_control import user_account as uc
@@ -106,7 +107,7 @@ class ProjectManager(object):
         norm_path = os.path.join(norm_path, repo_name)
         cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
         try:
-            cloned_repo.remote(name="origin")
+            cloned_repo.remote()
             self.__update_daemon_csv(norm_path) 
         except:
             raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
@@ -130,7 +131,12 @@ class ProjectManager(object):
         except ValueError:
             return False
         # if necessarry then restart the Daemon
-        DMN.restart_daemon()
+        # Calling DMN.restart_daemon() causes a fairly complicated bug, due to
+        # the double fork attempting to call exit from the parent processes. To
+        # avoid this restarting the daemon should be done from a separate process.
+        p = Process(target=DMN.restart_daemon)
+        p.start()
+        p.join()
         return True
     
     def view_repo_commits(self, path: str):
