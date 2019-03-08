@@ -67,7 +67,7 @@ class ProjectManager(object):
         except ValueError:
             self.curr_user.create_remote_repo(repo)
         # TODO: update the .csv file and restart the daemon
-        #self.__update_daemon_csv(norm_path)
+        self.__update_daemon_csv(norm_path)
         # return the Repo object for this path
         return repo    
 
@@ -107,7 +107,7 @@ class ProjectManager(object):
         cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
         try:
             cloned_repo.remote(name="origin")
-            #self.__update_daemon_csv(norm_path) 
+            self.__update_daemon_csv(norm_path) 
         except:
             raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
         return cloned_repo
