@@ -82,8 +82,8 @@ class GitUpDaemon(Daemon):
                     repo = Repository(path=path)
                     self.repositories.append(repo)
                 except RepositoryInitError:
-                    print >> self.stderr, ("repository for " + path + "failed to"
-                        + " be initialized skipping")
+                    print("repository for " + path + "failed to"
+                        + " be initialized skipping", file=sys.stderr)
             line += 1
 
     # Begin watching for events in the repositories and forwarding
