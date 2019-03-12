@@ -9,20 +9,14 @@ from git.exc import GitCommandError
 sys.path.append(os.path.normpath("../"))
 from github_control.user_account import UserAccount
 
-class RepositoryInitError(Exception):
-    pass
-
 # Represents a single repository that GitUp is tracking.
 class Repository(git.Repo):
     def __init__(self, path=None, odbt=git.GitCmdObjectDB,
                  search_parent_directories=False, expand_vars=True,
                  dirty="0"):
-        try:
-            super().__init__(path, odbt, search_parent_directories, expand_vars)
-            self.dirty = dirty == "1"
-            self.path = os.path.normpath(path)
-        except:
-            raise RepositoryInitError()
+        super().__init__(path, odbt, search_parent_directories, expand_vars)
+        self.dirty = dirty == "1"
+        self.path = os.path.normpath(path)
 
     # Returns True if the given path is containd in this repository, False
     # otherwise.
@@ -44,7 +38,13 @@ class Repository(git.Repo):
         elif filepath in self.__get_changed_files():
             # unified=0 is important so every hunk starts at the modified line,
             # this makes the hunk headers accurate.
-            diff = self.git.diff("HEAD", filepath, unified=0)
+            try:
+                diff = self.git.diff("HEAD", filepath, unified=0)
+            except GitCommandError as e:
+                print("{}: failed to diff file {}.".format(self.__get_timestamp(), filepath),
+                      file=sys.stderr)
+                print(e, file=sys.stderr)
+                return filepath
             message = ""
             for line in diff.splitlines():
                 regex = re.compile("^@@.+@@")
@@ -87,7 +87,7 @@ class Repository(git.Repo):
                     print(e, file=sys.stderr)
         # Directories don't show up in the untracked files so we have to
         # manually check if this is a directory
-        if is_dir or filepath in changed_files:
+        elif is_dir or filepath in changed_files:
             try:
                 self.__add_commit(filepath, is_del)
                 self.dirty = True
@@ -164,12 +164,14 @@ class Repository(git.Repo):
                 self.__get_timestamp(), self.path))
         if not user_account:
             self.__pull_failure()
+            print("\n\tno user account", file=sys.stderr)
             return False
         try:
             user_account.pull_to_local(self)
             return True
-        except GitCommandError:
+        except GitCommandError as e:
             self.__pull_failure()
+            print(e, file=sys.stderr)
             return False
    
     # Print an error message about failing to push to the remote. 
@@ -184,13 +186,14 @@ class Repository(git.Repo):
                 self.__get_timestamp(), self.path))
         if not user_account:
             self.__push_failure()
+            print("\n\tno user account.", file=sys.stderr)
             return False
         try:
             user_account.push_to_remote(self)
             self.dirty = False
             return True
-        except GitCommandError:
+        except GitCommandError as e:
             self.__push_failure()
+            print(e, file=sys.stderr)
             return False
-        
 

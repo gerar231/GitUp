@@ -1,6 +1,7 @@
-import os
+import os, sys
+import github
 from github import Github
-from github import GithubException
+import git
 from git import Repo
 from git import IndexFile
 from git import exc
@@ -12,63 +13,60 @@ class UserAccount(object):
     for interacting with the UI and Daemon.
     """
 
-    def __init__(self, user_name: str=None, password: str=None, token_file_path: str=None):
+    def __init__(self, user_name: str=None, password: str=None, token_path: str=None):
         """
         Arguments:
             user_name: user name for a GitHub account, assumes valid if given.
             password: password for a GitHub account, assumes valid if given.
-            token_file_path: opens the file at this path and reads the first line for an authorization token, if provided.
-        If a token_file_path is provided:
-            Checks the file given at path for an authorization token, if none or invalid path then throw ValueError. 
-            If a token exists and is invalid then throw a ValueError.
-        If user_name and password are provided:
-            Logs in to a user account and creates a token for GitUp that
-            will be stored with the scopes of "user, delete_repo, repo" at the path /tmp/GitUp/token.txt.
-            If a token for GitUp already exists at the path /tmp/GitUp/token.txt then login to that user.
-        
+            token_path: opens the file at this path and reads the first line for an authorization token, if provided.
+
         If no arguments provided:
-            searches default path /tmp/GitUp/token.txt for token, if no token exists then throw ValueError.
-        
-        In all cases, if this user does not have a public key associated with this 
+            Checks default_token_path, if no token exists at the default path then throw a ValueError. 
+            If token at default path is invalid then throw a ValueError.
+
+        If user_name or password are provided:
+            Uses provided token_path or default_token_path if none, if neither are valid then Value Error. 
+            
+        If only a token_path is provided:
+            Checks the file given at path for an authorization token, if none or invalid path then print error message 
+            and check the default path. If no token exists at default path and no username and password then throw error.
+
+        If user_name and password are provided:
+            Logs in to a user account and creates a new token for GitUp that
+            will be stored with the scopes of "user, delete_repo, repo" at the the provided path or 
+            default_token_path if not provided.
+            If a token for GitUp already exists at the used path then remove the existing
+            token and write the new token.
+            If user_name and password are invalid then throw a ValueError.
         """
         # TODO: refresh Oauth token
         # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
+        # file path used to store a GitHub Access token.
+        if os.path.exists("/tmp/gitup") is False:
+            os.mkdir("/tmp/gitup")
+        default_token_path = os.path.normpath("/tmp/gitup/token.txt")
+
+        # user account fields start as None
+        self.__github_control = None
         self.__token = None
-        if token_file_path:
-            norm_path = os.path.normpath(token_file_path)
-            if os.path.exists(norm_path) is False:
-                raise ValueError("token_file_path is not a valid file path.")
+        self.__login = None
+
+        # check if a token_path is provided
+        if token_path is None:
+            token_path = default_token_path 
         else:
-            token_file_path = os.path.normpath("token.txt")
-            if os.path.exists(token_file_path) is None and user_name is None and password is None:
-                raise ValueError("No token file at default path {1}".format(token_file_path))
+            norm_path = os.path.normpath(token_path)
+            if os.path.exists(norm_path) is False and user_name is None and password is None:
+                sys.stderr.write("Provided token_path {} for login is not a valid file path, using default path {}.\n".format(token_path, default_token_path))
+                token_path = default_token_path
 
-        # check for an existing token
-        existing_token = None
-        try:
-            with open(token_file_path) as token_file:
-                existing_token = token_file.readline() 
-        except FileNotFoundError:
-            existing_token = None
-
-        if existing_token:
-            if user_name and password:
-                print(ValueError("A user token already exists, cannot login to a new user."))
-            self.__github_control = Github(login_or_token=existing_token)
-            try:
-                self.__login = self.__github_control.get_user().login
-            except GithubException.BadCredentialsException:
-                raise(ValueError("Invalid token provided in first line of file at {1}".format(token_file_path)))
-            # set token for this session
-            self.__token = existing_token
-            return
-
+        # if any username/password provided
         if user_name and password:
             self.__github_control = Github(login_or_token=user_name, password=password)
             try:
                 self.__login = self.__github_control.get_user().login
-            except GithubException.BadCredentialsException:
-                raise(ValueError("Invalid user_name and/or password provided."))
+            except github.GithubException:
+                raise ValueError("Invalid user_name and/or password provided.")
             # get existing authorizations if for GitUp then delete, then create new auth token.
             authorizations = self.__github_control.get_user().get_authorizations()
             for auth in authorizations:
@@ -77,12 +75,44 @@ class UserAccount(object):
             # create a new token
             token = self.__github_control.get_user().create_authorization(scopes=["user", "delete_repo", "repo"], note_url="https://github.com/gerar231/GitUp", 
                 note="GitUp Authorization token.").token
-            # write the token at the default path
-            with open(token_file_path, "w") as token_file:
-                print(token)
+            # write the token at the path
+            with open(token_path, "w+") as token_file:
+                print("New token created for {}: {}.".format(self.__login, token))
                 token_file.writelines(token)
             # set token for this session
             self.__token = token
+            return
+        else:
+            # no username or password provided, use token_path.
+            existing_token = None
+            if token_path != default_token_path:
+                # user provided token path that wasn't default
+                try:
+                    with open(token_path) as token_file:
+                        existing_token = token_file.readline()
+                        self.__github_control = Github(login_or_token=existing_token)
+                        self.__login = self.__github_control.get_user().login
+                        self.__token = existing_token
+                        # provided token is valid, exit the method.
+                        return
+                except (github.GithubException):
+                    sys.stderr.write("Provided token_path {} has invalid token, using default path {}.\n".format(token_path, default_token_path))
+                    token_path = default_token_path
+            # checking default_token_path
+            try:
+                with open(token_path) as token_file:
+                    existing_token = token_file.readline() 
+                    self.__github_control = Github(login_or_token=existing_token)
+                    try:
+                        self.__login = self.__github_control.get_user().login
+                        self.__token = existing_token
+                        # token at default path is valid, exit the method
+                        return
+                    except github.GithubException:
+                        raise ValueError("Token at default path {} was invalid (might need login refresh).".format(token_path))
+            except FileNotFoundError:
+                raise ValueError("No user_name and/or password and no token at default path {}.".format(token_path))
+
 
     def get_name(self):
         """
@@ -119,41 +149,47 @@ class UserAccount(object):
             repos.append(tuple([repo.name, repo.clone_url]))
         return repos
 
-    def create_remote_repo(self, local_repo: Repo):
+    def create_remote_repo(self, local_repo: Repo, create_new_origin=False):
         """
         Arguments:
             local_repo: GitPython Repo object to create a remote repository on the user account.
+            create_new_origin: If true then attempts to create a new remote repository under
+            existing origin, default is False.
+
         Create a remote repository under the name of the parent directory containing the repo
-        on the current user's GitHub account and add remote under the name "GitUp" to this local repository. 
+        on the current user's GitHub account and add remote under the name "origin" to this local repository. 
         Adds all changes and pushes all contents of local repo into remote repo after creation.
-        If a "GitUp" remote already exists throw an AssertionError.
-        If a remote repo with conflicting name exists then new remote repo created with name + (number of conflicts)
+        If an "origin" remote already exists and create_new_origin is False then throw AssertionError.
+        If a remote repo with conflicting name exist then thrown an AssertionError.
         If push fails after a remote repo is created then throw a GitCommandError.
         """
-        # verify that there is not a GitUp remote
+        # verify that there is not an origin remote
         try:
-            local_repo.remote(name="GitUp")
-            raise AssertionError("local_repo already has a GitUp remote.")
+            local_repo.remote(name="origin")
+            # local repo has origin remote
+            if not create_new_origin:
+                raise AssertionError("local_repo already has an origin remote and create_new_origin is False.")
         except ValueError:
+            # local repo does not have origin remote
+            create_new_origin = True
+
+        if create_new_origin:
             # attempt to create a new remote repository using the folder containing the repository name
             repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
             existing_repos = self.__github_control.get_user().get_repos()
             # check if the user has an existing remote repository of this name
-            i = 0
             for curr_repo in existing_repos:
                 if curr_repo.name == repo_name:
-                    i = i + 1
-                    repo_name = repo_name + str(i)
-                    # raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
+                    raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
 
             # create a new remote repository
-            remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository managed by GitUp."))
+            remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository created by GitUp."))
             print(remote_repo.git_url)
 
             # ERROR CHECK NEEDED
             # add the remote from the remote repository to the local repository
-            remote_url = str(remote_repo.html_url + ".git")
-            local_repo.create_remote(name="GitUp", url=remote_url)
+            remote_url = str(remote_repo.clone_url)
+            local_repo.create_remote(name="origin", url=remote_url)
             
             # add all changes
             local_repo.git.add(".")
@@ -163,10 +199,12 @@ class UserAccount(object):
 
             # push to the remote using https://token@remote_url.git
             # perform a push using the git binary, specifying the url dynamically generated in the above format
-            if local_repo.git.push(self.__create_push_url(local_repo, "GitUp"), "master") is None:
-                raise exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
+            try:
+                local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
+            except:
+                raise git.exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
     
-    def __create_push_url(self, local_repo: Repo, remote_name: str):
+    def __create_remote_url(self, local_repo: Repo, remote_name: str):
         """
         Arguments:
             local_repo: Repo the push operation is being performed on.
@@ -176,7 +214,7 @@ class UserAccount(object):
         remote_name specified as a remote of local_repo using the GitUp access token and
         the current user's id.
         """
-        # get the "GitUp" remote url, assumes url is the only one and is the first from iterator
+        # get the "origin" remote url, assumes url is the only one and is the first from iterator
         url = next(local_repo.remote(name=remote_name).urls)
         # right half of remote
         url = url.split("https://")
@@ -187,33 +225,37 @@ class UserAccount(object):
     def push_to_remote(self, local_repo):
         """
         Argument:
-           local_repo: GitPython repo to push to changes to GitUp remote.
+           local_repo: GitPython repo to push to changes to origin remote.
         
-        Pushes the latest changes to the remote repository under remote "GitUp".
-        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
-        If push to remote "GitUp" fails throw GitCommandError.
+        Pushes the latest changes to the remote repository under remote "origin" to branch master.
+        If local_repo does not have a remote named "origin" throw a GitCommandError.
+        If push to remote "origin" fails throw GitCommandError.
         """
-        # verify this repo has a GitUp remote
+        # verify this repo has an origin remote
         try:
-            local_repo.remote(name="GitUp")
+            local_repo.remote(name="origin")
         except ValueError:
-            raise exc.GitCommandError("No GitUp remote for repo {}.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
         # push to the remote
-        if local_repo.git.push(self.__create_push_url(local_repo, "GitUp"), "master") is None:
-            raise exc.GitCommandError("Push to GitUp remote failed for repo {}.".format(local_repo.working_tree_dir))
+        try:
+            local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
+        except:
+            raise git.exc.GitCommandError("Push to origin remote failed for repo {}.".format(local_repo.working_tree_dir))
 
     def pull_to_local(self, local_repo: Repo):
         """
         Argument:
-            local_repo: GitPython repo to pull latest changes from the GitUp remote
-        Pulls the latest changes to this local repository from the remote "GitUp".
-        If local_repo does not have a remote named "GitUp" throw a GitCommandError.
-        If pull from remote "GitUp" fails throw a GitCommandError.
+            local_repo: GitPython repo to pull latest changes from the origin remote
+        Pulls the latest changes to this local repository from the remote "origin" on branch master.
+        If local_repo does not have a remote named "origin" throw a GitCommandError.
+        If pull from remote "origin" fails throw a GitCommandError.
         """
         try:
-            local_repo.remote(name="GitUp")
+            local_repo.remote(name="origin")
         except ValueError:
-            raise exc.GitCommandError("No GitUp remote for repo {}.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
         # push to the remote
-        if local_repo.remote(name="GitUp").pull() is None:
-            raise exc.GitCommandError("Pull to repo {} from remote GitUp failed.".format(local_repo.working_tree_dir))
+        try:
+            local_repo.git.pull(self.__create_remote_url(local_repo, "origin"), "master")
+        except:
+            raise git.exc.GitCommandError("Pull to repo {} from remote origin failed.".format(local_repo.working_tree_dir))

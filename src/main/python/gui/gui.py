@@ -6,7 +6,7 @@ import git
 from git import Repo
 from git import Commit
 import time
-sys.path.append(os.path.normpath("../"))
+sys.path.append(os.path.normpath(os.path.join(os.path.realpath(__file__), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
 
