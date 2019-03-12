@@ -1,0 +1,16 @@
+Goals.
+- Get a working version 1.
+- Complete the first draft of our final report. 
+
+Progress:
+We now have a working version of our project that can be used to clone repos, add repos, commit, push,
+pull and view differences. We still need a ui component to show commit groups, and a button in the UI to
+allow reverting. This is very close to a working version, and could potentially be used for user testing
+however, implmenting these features and doing a bit of dogfooding to ensure the tool works as expected
+is a good idea before proceeding with testing. We should defintely schedule testing with our peers for
+the end of this week however.
+
+Goals:
+- Complete user testing.
+- Update report with user testing data. 
+
