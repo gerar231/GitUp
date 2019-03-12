@@ -23,13 +23,19 @@ class GitUpApp(tk.Tk):
         self.geometry('600x350')
         self.title('GitUp')
         self._frame = None
-        self.switch_frame(StartingMenu)
-
+        global user   
+        try:
+            user = user_account.UserAccount("/tmp/gitup/token.txt")
+            self.switch_frame(StartingMenu)
+        except ValueError:
+            self.switch_frame(LoginWindow)
+ 
     def switch_frame(self, frame_class):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = frame_class(self)
         self._frame.pack()
+
 
 class StartingMenu(tk.Frame):
     def __init__(self, master):
@@ -37,11 +43,9 @@ class StartingMenu(tk.Frame):
         global user
         tk.Label(self, text = "GitUp").pack()
         tk.Label (self, text = "v1.0.0").pack()
-        if user == None:
-            tk.Button(self, text = "Login",
+        tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
+        tk.Button(self, text = "Logout",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
-        else:
-            tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
         tk.Button(self, text = "Add Project",
                 command = lambda: master.switch_frame(ExistingProjects)).pack()
         tk.Button(self, text = "View Project",
@@ -49,6 +53,7 @@ class StartingMenu(tk.Frame):
         tk.Button(self, text = "Remove Project", state = tk.DISABLED,
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
 
+# Login window for GitUp
 class LoginWindow(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -66,39 +71,11 @@ class LoginWindow(tk.Frame):
     def login(self, master):
         if self.username.get() != "" and self.password.get != "":
             global user
-            user = user_account.UserAccount(self.username.get(), self.password.get())
+            user = user_account.UserAccount(self.username.get(), self.password.get(), "/tmp/gitup/token.txt")
             global project_manager
             project_manager = project_manager.ProjectManager(user)
             master.switch_frame(StartingMenu)
-'''
-class AddProjectMenu(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu))
-        tk.Button(self, text = "Create New Project",
-            command = lambda: master.switch_frame(CreateProject)).pack()
-        tk.Button(self, text = "Add Existing Project",
-            command = lambda: master.switch_frame(ExistingProjects)).pack()
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).pack()
-
-class CreateProject(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        tk.Label(self, text = "Choose project name:").grid()
-        self.name = tk.Entry(self)
-        self.name.grid(column = 1, row = 0)
-        tk.Button(self, text = "Create project",
-            command = lambda: self.createFolder(master, self.name.get())).grid(row = 1)
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).grid(column = 1, row = 1)
-
-    def createFolder(self, master, projName):
-        proj_loc = filedialog.askdirectory()
-        project_manager.view_project_repo(projName + proj_loc)
-        master.switch_frame(StartingMenu)
-'''                
+          
 
 class ExistingProjects(tk.Frame):
     def __init__(self, master):
