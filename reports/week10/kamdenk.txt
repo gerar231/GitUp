@@ -1,0 +1,20 @@
+1. Goal's for the week of 03/04/2019 - 03/11/2019:
+    1. Clean up and finalize our build system, as well as provide a way to download an executable for GitUp. We're looking at 
+       the Freeze utility to create a python executable.
+       
+    2. First implementation of smart groupings of commits.
+    
+    3. At least one user test.
+    
+2. Progress for the week of 03/04/2019 - 03/11/2019:
+    1. The CI for our project now runs the build system on every commit, and is compiling every python file in our directory as
+       well. CI is currently passing for our last few commits. I was able to play around with cx_Freeze for Python executables
+       and create an executable that opens up the GUI, and am making progress towards it packaging the backend as well with the
+       GUI.
+    
+    2. We have functionality for getting a python map that stores information about commits based on their time stamp (date).
+    
+    3. Unfortunately we still didn't get any user tests done
+      
+3. Goal's for the week of 03/11/2019 - 03/18/2019:
+  1. Finish GitUp for user testing purposes, and perform user tests.
