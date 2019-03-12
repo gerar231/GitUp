@@ -1,0 +1,30 @@
+1. Goals for the week of 03/04/2019 - 03/10/2019:
+    1. Add functionality to the UserAccount and ProjectManager modules for
+    comparing version history of projects (for use by the GUI) and support
+    project directory tracking with the Daemon.
+    2. Complete a version one unit test suite for the above implementation.
+    3. Complete one user test for the user account flow and functionality.
+
+2. Progress for the week of 03/04/2019 - 03/10/2019:
+    1. Functionality for version history comparison has been added to GitUp but
+    is not currently located in the ProjectManager class. Project directory
+    tracking with the Daemon has been completed as well after some major bug
+    fixes during this previous week's work. Major learnings from these events
+    relate to repository structure and code review/peer programming. Our team
+    was able to drastically speed up our debugging capabilities simply by 
+    cleaning up our repository and peer programming more often.
+    2. No progress made here, seems like this goal was a bit ambitious but will
+    carry over directly into this week as our team focuses in development and
+    user testing.
+    3. See above item #2.
+    Summary: Things are coming together at an accelerating pace as we approach
+    the final release of GitUp as they should be. The major goals left on
+    the list is to support our implementation with development tests and our
+    design with user tests in addition to adding some small pieces of code here 
+    and there for functionality.
+
+3. Goal's for the week of 03/11/2019 - 03/17/2019:
+    1. Complete the implementation of ProjectManager and UserAccount modules
+    by merging version history code and writing project deletion functions.
+    2. Complete a version one unit test suite for both modules above.
+    3. Complete a version one integration test for both modules above.
