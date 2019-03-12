@@ -41,7 +41,6 @@ class UserAccount(object):
         """
         # TODO: refresh Oauth token
         # TODO: handle deleting tokens when a user logs out or just different behavior for passing in a new username and password
-
         # file path used to store a GitHub Access token.
         if os.path.exists("/tmp/gitup") is False:
             os.mkdir("/tmp/gitup")
