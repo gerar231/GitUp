@@ -41,6 +41,9 @@ class StartingMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global user
+        global proj_manager
+        if proj_manager is None:
+            proj_manager = project_manager.ProjectManager(user)
         tk.Label(self, text = "GitUp").pack()
         tk.Label (self, text = "v1.0.0").pack()
         tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
@@ -72,8 +75,6 @@ class LoginWindow(tk.Frame):
         if self.username.get() != "" and self.password.get != "":
             global user
             user = user_account.UserAccount(self.username.get(), self.password.get(), "/tmp/gitup/token.txt")
-            global project_manager
-            project_manager = project_manager.ProjectManager(user)
             master.switch_frame(StartingMenu)
           
 
@@ -92,7 +93,7 @@ class ExistingProjects(tk.Frame):
 
     def createFolder(self, master, projName):
         proj_loc = filedialog.askdirectory()
-        project_manager.restore_project_repo(proj_loc, projName)
+        proj_manager.restore_project_repo(proj_loc, projName)
         master.switch_frame(StartingMenu)
 
 class OpenProjectMenu(tk.Frame):
@@ -107,10 +108,11 @@ class OpenProjectMenu(tk.Frame):
         global proj_dir
         proj_dir = filedialog.askdirectory(initialdir = "/")
         global repo
-        global project_manager
-        repo = project_manager.view_project_repo(proj_dir)
+        global proj_manager
+        repo = proj_manager.find_project_repo(proj_dir)
+        if repo is None:
+            repo = proj_manager.view_project_repo(proj_dir)
         #repo = Repo(proj_dir)
-
         master.switch_frame(ProjectMenu)
 
 class ProjectMenu(tk.Frame):
@@ -153,7 +155,7 @@ class ViewFile(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global proj_dir
-        global project_manager
+        global proj_manager
         self.filename =  filedialog.askopenfilename(initialdir = proj_dir,
                 title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
         self.filename = self.filename.replace(proj_dir, '')
@@ -234,7 +236,7 @@ class DeleteProjectMenu(tk.Frame):
         projs = ["None", "hah"] #TODO: Get List of names of projects GitUp is currently tracking
         options = tk.ttk.Combobox(self, values = tuple(projs)).pack()
         tk.Button(self, text = "Delete Project",
-                command = project_manager.delete_project_repo(options.get()))
+                command = proj_manager.delete_project_repo(options.get()))
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
 
