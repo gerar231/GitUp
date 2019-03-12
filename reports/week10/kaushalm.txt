@@ -1,0 +1,24 @@
+Goals for This Week:
+- Quickly resolve any staff feedback from prelim report
+- Collect user feedback
+- Further develop commit grouping mechanism based off feedback
+- Respond to design complaints from user feedback
+- Develop prelimnary slides for final presentation
+- Implement front end for merge conflict resolution
+
+Progress this Week:
+- Fixed bugs with v1 of the GUI. Version 1 of the GUI is now functional and works with the backend.
+- Added commit grouping to the GUI
+- In the process of a revamp to the GUI's design
+- Updates to User Manual and Report
+- Lined up users for testing for 3/12
+
+Goals for next Week:
+- Finish implementing file reverting (URGENT)
+- Finish revamp of GUI
+- Obtain and respond to user feed back
+- Make edits to user manual and report as necessary
+- Begin work on final presentation
+'
+
+
