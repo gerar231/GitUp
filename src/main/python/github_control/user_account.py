@@ -23,13 +23,13 @@ class UserAccount(object):
         If no arguments provided:
             Checks default_token_path, if no token exists at the default path then throw a ValueError. 
             If token at default path is invalid then throw a ValueError.
-
-        If user_name or password are provided:
-            Uses provided token_path or default_token_path if none, if neither are valid then Value Error. 
             
         If only a token_path is provided:
             Checks the file given at path for an authorization token, if none or invalid path then print error message 
             and check the default path. If no token exists at default path and no username and password then throw error.
+
+        If user_name or password are provided:
+            Uses provided token_path or default_token_path if none, if neither are valid then Value Error. 
 
         If user_name and password are provided:
             Logs in to a user account and creates a new token for GitUp that
@@ -197,10 +197,9 @@ class UserAccount(object):
             # commit 
             local_repo.git.commit(m="GitUp added all changes after creating remote repo.")
 
-            # push to the remote using https://token@remote_url.git
-            # perform a push using the git binary, specifying the url dynamically generated in the above format
+            # perform a push
             try:
-                local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
+                self.push_to_remote(local_repo)
             except:
                 raise git.exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
     
