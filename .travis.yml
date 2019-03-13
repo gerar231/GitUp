@@ -5,11 +5,9 @@ matrix:
     dist: xenial
     sudo: true
     before_script:
-      - sudo chmod +x ./src/main/python/daemon/test/test.sh
       - sudo chmod +x ./src/test/compile-src.sh
       - python3.6 -m pip install pybuilder
     script:
-      - ./src/main/python/daemon/test/test.sh
       - ./src/test/compile-src.sh
       - pyb install_dependencies
       - pyb
