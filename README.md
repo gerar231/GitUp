@@ -31,7 +31,7 @@ The first thing you’ll need to do after opening GitUp is login. Simply enter y
 
 After successfully logging in you will be taken to the main menu:
 
-![image alt text](images/menu.png)
+![image alt text](images/main_menu.png)
 
 To login to your GitHub account GitUp uses a well established authorization service called OAuth which can be used to login to other services without privacy concerns.
 On your first login we will create an authorization token for your account to GitUp, you can manage GitUp’s permissions at any time from your account by clicking "*Edit OAuth Settings*" on the main menu, this will redirect you to [https://github.com/settings/applications](https://github.com/settings/applications). From here click on “*Authorized OAuth Apps”* and you can remove/edit GitUp’s permissions. 
