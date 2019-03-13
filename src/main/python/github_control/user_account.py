@@ -222,6 +222,20 @@ class UserAccount(object):
         url = "https://{}@{}".format(self.__token, url[1])
         return url
     
+    def create_clone_url(self, repo_url: str):
+        """
+        Arguments:
+           repo_url: the clone url of the repo to clone in the form https://remote_repo_url.git
+        
+        Takes in a repo_url of the above form. Returns a repo url in the form 
+        https://user_token@remote_repo_url.git to perform a authenticated clone of the remote repo.
+        """
+        # right half of remote
+        url = repo_url.split("https://")
+        # splice the url correctly
+        url = "https://{}@{}".format(self.__token, url[1])
+        return url
+
     def push_to_remote(self, local_repo):
         """
         Argument:
