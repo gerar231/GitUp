@@ -1,9 +1,13 @@
 import sys
 import os
 import time
-sys.path.append(os.path.normpath(".."))
+import subprocess
+sys.path.append(os.path.normpath("../../main/python/"))
 from daemon_launcher import daemon_launcher
 from multiprocessing import Process
+
+print(os.path.abspath(os.curdir))
+subprocess.call("./initrepo.sh")
 
 # Make sure the daemon isn't running when we start
 if daemon_launcher.daemon_is_running():

@@ -1,3 +1,4 @@
+#!/bin/bash
 #Create gitup directory
 cd /tmp
 if [[ -e gitup ]]; then

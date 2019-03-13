@@ -1,11 +1,14 @@
 import sys
 import os
 import time
+import subprocess
 from git import Repo
 from git.exc import GitCommandError
-sys.path.append(os.path.normpath(".."))
+sys.path.append(os.path.normpath("../../main/python/"))
 from daemon_launcher import daemon_launcher
 from multiprocessing import Process
+
+subprocess.call("./initrepo.sh")
 
 try:
     repo = Repo('/tmp/testrepo/')
