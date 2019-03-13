@@ -2,9 +2,6 @@
 cd src
 python3.6 -m compileall -l .
 
-#Compile the python files in /src/gui
-python3.6 -m compileall -l ./gui
-
 #Compile the python files in /src/main/python/gui
 python3.6 -m compileall -l ./main/python/gui
 
