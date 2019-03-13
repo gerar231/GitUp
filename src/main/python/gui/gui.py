@@ -6,228 +6,399 @@ import git
 from git import Repo
 from git import Commit
 import time
-sys.path.append(os.path.normpath(os.path.join(os.path.realpath(__file__), "..", "..")))
+import commit_grouper as grouper
+sys.path.append(os.path.normpath(os.path.join(os.path.realpath('__file__'), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
 
+# Represents the GitHub credentials of the current user
 user = None
+
+# Object that facilitates interaction between the user and Git repositories
 proj_manager = None
-proj_name = None
+
+# Represents the absolute path to the Git repository the user is interacting with
 proj_dir = None
+
+# Represents the current Git repository the user is interacting with
 repo = None
 
 # Main Application
 class GitUpApp(tk.Tk):
+    
+    #Initialization of App
     def __init__(self):
+
+        #Initial configuration
         tk.Tk.__init__(self)
         self.geometry('600x350')
         self.title('GitUp')
         self._frame = None
-        global user   
+        global user
+
+        #Checks if there is a currently logged in user   
         try:
+            # There is a logged in user. Sets up user account and goes to main menu
             user = user_account.UserAccount("/tmp/gitup/token.txt")
             self.switch_frame(StartingMenu)
+
         except ValueError:
+            #There isn't a currently logged in user. Goes to login menu to get one.
             self.switch_frame(LoginWindow)
- 
+
+    '''
+    Helper method that allows the application to switch frames.
+    frame_class: the frame class that the app is switching to
+    Destroys the old frame, if it exists, and switches to frame_class
+    '''
     def switch_frame(self, frame_class):
+        # Checks if there is an existing frame
         if self._frame is not None:
+            # Destroys frame if it exists
             self._frame.destroy()
+
         self._frame = frame_class(self)
         self._frame.pack()
 
-
+# Starting Menu that greets the user once they are logged in
 class StartingMenu(tk.Frame):
+
+    # Window initialization
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global user
         global proj_manager
+
+        # Sets up the project manager if it isn't already set up
         if proj_manager is None:
             proj_manager = project_manager.ProjectManager(user)
+
+        # Text in Starting Menu
         tk.Label(self, text = "GitUp").pack()
         tk.Label (self, text = "v1.0.0").pack()
         tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
+        
+        # Button to logout the user and prompt them to log in
         tk.Button(self, text = "Logout",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
+
+        # Button to open menu for adding a remote project to local machine
         tk.Button(self, text = "Add Project",
                 command = lambda: master.switch_frame(ExistingProjects)).pack()
+
+        # Button to open menu for viewing a project and adding it to GitUp's
+        # tracked projects if it is not already being tracked
         tk.Button(self, text = "View Project",
                 command = lambda: master.switch_frame(OpenProjectMenu)).pack()
+
+        # Button to open menu for deleting project. Backend needs to be implemented
+        '''
         tk.Button(self, text = "Remove Project", state = tk.DISABLED,
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
+        '''
 
 # Login window for GitUp
 class LoginWindow(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+
+        #Username/password label and text box
         tk.Label(self, text = "Username:").grid(column = 0, row = 0)
         tk.Label(self, text = "Password:").grid(column = 0, row = 1)
         self.username = tk.Entry(self)
         self.username.grid(column = 1, row = 0)
         self.password = tk.Entry(self, show='*')
         self.password.grid(column = 1, row = 1)
+
+        # Button to attempt to login to GitUp
         tk.Button(self, text="Login",
                 command = lambda: self.login(master)).grid(row = 2)
+
+        # Button to return to main menu
         tk.Button(self, text="Back",
                 command = lambda: master.switch_frame(StartingMenu)).grid(column = 1, row=2)
 
+    '''
+    Logs in to the user's GitHub account with the provided credentials
+    master: The main GitUp class. Used to switch frames.
+    Attempts to log in to the user's GitHub account with the credentials given
+    in the user and password textboxes. If successful, intializes the user and
+    creates a token at /tmp/gitup/token.txt for future use. If the login fails,
+    does nothing.
+    '''
     def login(self, master):
         if self.username.get() != "" and self.password.get != "":
             global user
-            user = user_account.UserAccount(self.username.get(), self.password.get(), "/tmp/gitup/token.txt")
-            master.switch_frame(StartingMenu)
-          
+            try:
+                user = user_account.UserAccount(self.username.get(), self.password.get(),
+                        "/tmp/gitup/token.txt")
+                master.switch_frame(StartingMenu)
 
+            except ValueError:
+                return
+          
+# Window for restoring a remote project to the local machine
 class ExistingProjects(tk.Frame):
+
+    # Initializes frame
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         tk.Label(self, text = "Choose a project to restore:").pack()
         global user
+
+        # Create combobox and populate it with all remote projects that be restored
         projs = [i[0] for i in user.get_remote_repos()]
         choose_proj = tk.ttk.Combobox(self, values = projs)
         choose_proj.pack()
+
+        # Button to add the selected project to the local machine
         tk.Button(self, text = "Add Project",
                 command = lambda: self.createFolder(master, choose_proj.get())).pack()
+
+        # Button to go back to the main menu
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
 
+    # Creates local version of projName that is synced with the remote version
     def createFolder(self, master, projName):
+        # Get directory to create project in
         proj_loc = filedialog.askdirectory()
+
+        # Create the project
         proj_manager.restore_project_repo(proj_loc, projName)
         master.switch_frame(StartingMenu)
 
+# Menu for opening a project in the GitUp program
 class OpenProjectMenu(tk.Frame):
+    # Initialize window
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+
+        # Button to go back to the main menu
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
+
+        # Button to open a project
         tk.Button(self, text = "Open Project",
             command = lambda: self.openProject(master)).pack()
 
+    '''
+    Opens a project to be viewed in the GitUp GUI. If the project is not
+    a repository being tracked, then it is initialized as a Git repository
+    associated with the user's GitHub account and will now be tracked by GitUp.
+    master: Main GitUp class. Used to switch windows
+    '''
     def openProject(self, master):
         global proj_dir
         proj_dir = filedialog.askdirectory(initialdir = "/")
         global repo
         global proj_manager
+
+        # Check if project is a repo being tracked by GitUp
         repo = proj_manager.find_project_repo(proj_dir)
         if repo is None:
+            # Project is not being tracked by GitUp
             repo = proj_manager.view_project_repo(proj_dir)
-        #repo = Repo(proj_dir)
+
         master.switch_frame(ProjectMenu)
 
+# Menu for a particular project
 class ProjectMenu(tk.Frame):
+    
+    # Initialize window
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+
+        # Button to compare and revert past versions of a file
         tk.Button(self, text = "View File",
                 command = lambda: master.switch_frame(ViewFile)).grid()
-        '''
+
+        # Scrollbar for list of grouped commits
         scrollbar = tk.Scrollbar(self)
         scrollbar.grid(column= 1, sticky='ns')
-        listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
+        self.listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
+
+        # Get all commits for this project
         commitlist = list(repo.iter_commits('--all'))
-        for commit in commitlist:
-            time = time.localtime(commit.committed_date)
-            key = "%a, %d %b %Y %H:%M"
-        self.commits = {
-                    "1/24":["14:23", "15:32"],
-                    "1/22":["2:42"]
-                }
-        for group in self.commits.keys():
-            listbox.insert(tk.END, group)
-        scrollbar.config(command=listbox.yview)
-        listbox.grid(row=1)
-        listbox.bind('<Double-1>', lambda x: self.viewDetailedCommits(listbox.get(listbox.curselection())))
 
-    def viewDetailedCommits(self, groupName):
+        # Group the commits by date
+        self.commits = grouper.group_commits_by_time(commitlist)
+
+        # Get a sorted list of dates where commits occured
+        self.dates = list(self.commits.keys())
+        self.dates.sort()
+
+        # Display the dates in sorted order in the listbox
+        for date in self.dates:
+            self.listbox.insert(tk.END, date)
+        scrollbar.config(command=self.listbox.yview)
+        self.listbox.grid(row=1)
+
+        # Button to go back to the main menu
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).grid(row=2)
+
+        # Bind double clicking a date to opening a list of all commits on that date
+        self.listbox.bind('<Double-1>', lambda x: 
+                self.viewDetailedCommits())
+
+    # Displays a popup window that contains a list of all the commits that occured
+    # on the date the user specified in the format [Date]-[modified file],[modified file]...
+    def viewDetailedCommits(self):
+        #Get selected date
+        date = self.dates[int(self.listbox.curselection()[0])]
+        
+        global repo
         commitWindow = tk.Toplevel()
-        scrollbar = tk.Scrollbar(commitWindow)
-        scrollbar.grid(column= 1, sticky='ns')
-        listbox = tk.Listbox(commitWindow, yscrollcommand=scrollbar.set)
-        for commit in self.commits[groupName]:
-            listbox.insert(tk.END, commit)
-        # listbox.insert(tk.END, "BACK")
-        scrollbar.config(command=listbox.yview)
-        listbox.grid(row=1)
-        # listbox.bind('<Double-1>', lambda x: self.getFileViewer())
-        '''
+        listbox = tk.Listbox(commitWindow)
 
+        # Get display message for each commit        
+        commit_messages = [str(time.strftime("%a, %d %b %Y %H:%M",
+                time.localtime(commit.committed_date))) + "-" +
+                repo.git.show(commit.hexsha, name_only=True, pretty="").replace('\n', ',')
+                for commit in self.commits[date]]
+
+        # Populate listbox with commit messages
+        for date in commit_messages:
+            listbox.insert(tk.END, date)
+
+        # Scrollbars for textbox
+        xscrollbar = tk.Scrollbar(commitWindow, orient="horizontal")
+        xscrollbar.config(command=listbox.xview)
+        xscrollbar.pack(side=tk.BOTTOM, fill="x")
+        yscrollbar = tk.Scrollbar(commitWindow, orient="vertical")
+        yscrollbar.config(command=listbox.yview)
+        yscrollbar.pack(side="right", fill="y")
+        listbox.pack(side='left', fill='both', expand=True)
+        listbox.config(yscrollcommand=yscrollbar.set)
+        listbox.config(xscrollcommand=xscrollbar.set)
+
+# Window for comparing and reverting past versions of files
 class ViewFile(tk.Frame):
+
+    # Initializes file viewer interface
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         global proj_dir
         global proj_manager
+
+        # Get file to view
         self.filename =  filedialog.askopenfilename(initialdir = proj_dir,
                 title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
         self.filename = self.filename.replace(proj_dir, '')
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).grid()
-        compare = tk.Button(self, text = "Compare",
-                command = lambda: self.getDiff()).grid(row=1,column=4)
-        #tk.Label(self, text=filename).grid(column=1)
+
+        buttons = tk.Frame(self)
+        # Button to go back to the main menu
+        tk.Button(text = "Back",
+                command=lambda: master.switch_frame(StartingMenu)).pack(in_=buttons, side='left')
+
+        # Button to revert the local version of the file to the version selected
+        # in the pre combobox
+        tk.Button(text = "Revert to Pre",
+                command=lambda: self.revertFile(master)).pack(in_=buttons, side = 'left')
+
+        # Button to compare the version of the file selected in the pre combobox
+        # with the version of the file selected in the post combobox
+        compare = tk.Button(text = "Compare",
+                command = lambda: self.getDiff()).pack(in_=buttons, side = 'left')
+
+        buttons.grid()
+
+        # Get list of past versions of the file, store them by the date they were created
         self.commits = list(repo.iter_commits('--all', paths=proj_dir + "/" + self.filename))
-        commit_dates = [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) for commit in self.commits]
-        tk.Label(self, text = "Old Version").grid(row = 1)        
+        commit_dates = [time.strftime("%a, %d %b %Y %H:%M", time.localtime(commit.committed_date)) 
+                for commit in self.commits]
+
+        # Initialize pre and post comboboxes and populate them with the dates of past versions
+        # of the file
+        version_selection = tk.Frame(self)
+        tk.Label(self, text = "Old Version").pack(in_=version_selection, side = 'left')        
         self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
-        self.pre_version.grid(row = 1, column = 1)
+        self.pre_version.pack(in_=version_selection, side = 'left')
         self.pre_version.current(0)
-        tk.Label(self, text="New Version").grid(row = 1, column = 2)
+        tk.Label(self, text="New Version").pack(in_=version_selection, side = 'left')
         self.post_version = tk.ttk.Combobox(self, values = commit_dates)
-        self.post_version.grid(row = 1, column = 3)
-        self.text = tk.Text(self)
+        self.post_version.pack(in_=version_selection, side = 'left')
+        self.post_version.current(0)
+        version_selection.grid(row=1)
+
+        # Configure the textbox to display files and the red/green text for additions and
+        # deletions.
+        text_frame = tk.Frame(self)
+        self.text = tk.Text(text_frame)
         self.text.tag_config("del", background="#fcc9c9", foreground="red")
         self.text.tag_config("add", background="#ccfcc9", foreground="#1e9e16")
-        scrollbar = tk.Scrollbar(self, command=self.text.yview)
-        scrollbar.grid(row = 2, column= 4, sticky='ns')
         self.text.config(state = tk.DISABLED)
-        self.text.grid(row = 2, columnspan = 4)
-        self.text['yscrollcommand'] = scrollbar.set
-        self.post_version.current(0)
+
+        # Configure scrollbar for the text box
+        xscrollbar = tk.Scrollbar(text_frame, orient="horizontal")
+        xscrollbar.config(command=self.text.xview)
+        xscrollbar.pack(in_=text_frame, side=tk.BOTTOM, fill="x")
+        yscrollbar = tk.Scrollbar(text_frame, orient="vertical")
+        yscrollbar.config(command=self.text.yview)
+        yscrollbar.pack(in_=text_frame, side="right", fill="y")
+        self.text.pack(in_ = text_frame, side='left', fill='both', expand=True)
+        self.text.config(yscrollcommand=yscrollbar.set)
+        self.text.config(xscrollcommand=xscrollbar.set)
+        text_frame.grid(row=2, sticky='nsew')
+
+        # Display current version of the file
         self.getDiff()
 
+    '''
+    Compares the two versions of the file selected by the user and displays it
+    in the textbox. If both versions selected are the same, just displays that version
+    of the file.
+    '''
     def getDiff(self):       
         global repo
         global proj_dir
+
+        # Clears textbox
         self.text.config(state = tk.NORMAL)
         self.text.delete('1.0', tk.END)
+
+        # Checks if the user selected the same version for pre and post
         if self.pre_version.current() == self.post_version.current():
-            with open(proj_dir + "/" + self.filename, "r") as f:
-                self.text.insert(tk.END, f.read())
-        diff_contents = repo.git.diff(self.commits[self.pre_version.current()], self.commits[self.post_version.current()], proj_dir + "/" + self.filename)
-        diff_lines = diff_contents.splitlines()
-        for line in diff_lines[4:]:
-            if len(line) > 0 and line[0] == '-':
-                self.text.insert(tk.END, line + '\n', 'del')
-            elif len(line) > 0 and line[0] == '+':
-                self.text.insert(tk.END, line + '\n', 'add')
-            elif len(line) > 0 and line[:2] != '@@':
+            # User selected same version for both. Display that version
+            file_contents = repo.git.show(self.commits[self.pre_version.current()].hexsha
+                    + ":" + self.filename[1:]).splitlines()
+            for line in file_contents:
                 self.text.insert(tk.END, line + '\n')
+        else:
+            # User selected different versions. Display the diff between the two versions in
+            # the aforementioned format
+            diff_contents = repo.git.diff(self.commits[self.pre_version.current()], 
+                    self.commits[self.post_version.current()], proj_dir + "/" + self.filename)
+            diff_lines = diff_contents.splitlines()
+            for line in diff_lines[4:]:
+                if len(line) > 0 and line[0] == '-':
+                    # Line present in old version, but not new
+                    self.text.insert(tk.END, line + '\n', 'del')
+
+                elif len(line) > 0 and line[0] == '+':
+                    # Line present in new version, but not old
+                    self.text.insert(tk.END, line + '\n', 'add')
+
+                # Remove hunk headers from displayed text
+                elif len(line) > 0 and line[:2] != '@@':
+                    self.text.insert(tk.END, line + '\n')
+
+        # Prevent user from being able to modify contents of the file
         self.text.config(state = tk.DISABLED)
-        
-        
-'''       
-class FileView(tk.Frame):
-    def __init__(self, master, file):
-        tk.Frame.__init__(self, master)
-        self.file = file
-        vscrollbar = Scrollbar(self, orient=VERTICAL)
-        vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
-        tk.Label(self, text="Old Version").grid()
-        commits = self.getCommits()
-        pre_version = tk.ttk.Combobox(self, values = tuple(commits))
-        pre_version.grid(column = 1)
-        tk.Label(self, text="New Version").grid(column = 2)
-        post_version = tk.ttk.Combobox(self, values = tuple(commits))
-        post_version.grid(column = 3)
-        tk.Button(self, text = "Compare",
-            command = lambda: compareVersions(file))
 
-    def getCommits():
-        #TODO: get list of all past versions of file
-        return ["1", "2", "3"]
-
-    def compareVersions(file):
+    '''
+    Reverts the local copy of the file the user is viewing to the version of the file
+    selected by the 'pre' combobox.
+    master: The main GitUp class. Used to switch frames.
+    '''
+    def revertFile(self, master):
+        global repo
+        global proj_dir
+        repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', self.filename[1:])
+        master.switch_frame(ViewFile)
         
-        
+# Delete Project Window. Backend not yet implemented
 '''
 class DeleteProjectMenu(tk.Frame):
     def __init__(self, master):
@@ -239,7 +410,9 @@ class DeleteProjectMenu(tk.Frame):
                 command = proj_manager.delete_project_repo(options.get()))
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
+'''
 
+# Code to actually run the GitUp app
 if __name__ == "__main__":
     app = GitUpApp()
     app.mainloop()

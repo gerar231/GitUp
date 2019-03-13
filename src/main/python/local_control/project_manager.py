@@ -105,13 +105,14 @@ class ProjectManager(object):
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
-        cloned_repo = git.Repo.clone_from(found_repo[1], norm_path, branch='master')
+        cloned_repo = git.Repo.clone_from(self.curr_user.create_clone_url(found_repo[1]), norm_path, branch='master')
         try:
             cloned_repo.remote()
             self.__update_daemon_csv(norm_path) 
         except:
             raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
         return cloned_repo
+    
     
     def __update_daemon_csv(self, path: str) -> bool:
         """
