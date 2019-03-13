@@ -12,7 +12,7 @@ As of now, GitUp only works on Linux based systems. Additionally, to use GitUp, 
 
 ## Download GitUp
 
-Simply download the runnable program at https://www.dropbox.com/sh/6b9m3x3yx5ewmla/AACQUobVn7HXC8kURkqPk56Da?dl=0 to an easily accessible place on your system, and you’re good to go!
+Simply download the repository at https://github.com/gerar231/GitUp/ and follow the build instructions. Then, navigate to GitUp/src/main/python/gui on your command line and type 'python3 gui.py'! Now, GitUp is running!
 
 ## System Requirements
 
@@ -25,60 +25,60 @@ Congratulations! You now have everything you need to use GitUp. To begin, simply
 
 ## Logging in
 
-The first thing you’ll need to do after opening GitUp is login. Simply click on the *Edit OAuth Settings* button in the upper left hand corner of the main menu to do so. You’ll be prompted to enter your GitHub username and password:
+The first thing you’ll need to do after opening GitUp is login. Simply enter your GitHub username and password where prompted and click 'Login':
 
-![image alt text](images/image_0.png)
+![image alt text](images/login.png)
 
 After successfully logging in you will be taken to the main menu:
 
-![image alt text](images/image_1.png)
+![image alt text](images/menu.png)
 
 To login to your GitHub account GitUp uses a well established authorization service called OAuth which can be used to login to other services without privacy concerns.
 On your first login we will create an authorization token for your account to GitUp, you can manage GitUp’s permissions at any time from your account by clicking "*Edit OAuth Settings*" on the main menu, this will redirect you to [https://github.com/settings/applications](https://github.com/settings/applications). From here click on “*Authorized OAuth Apps”* and you can remove/edit GitUp’s permissions. 
 
 Revoking GitUp permissions from your GitHub account will stop all project backups until you login again.
 
+## Restore a project
+To add a project backed up remotely but not locally, first click on 'Add Project'. Then, you'll be greeted by the following window:
+
+![image alt text](images/restore_2.png)
+
+Click on the combobox to select a project to restore:
+
+![image alt text](images/restore_1.png)
+
+Once you've selected a project, click on 'Add Project'. Then, you'll need to select to where you want to add the project:
+
+![image alt text](images/restore_3.png)
+
+After the project has been added, you'll go back to the main menu. Congratulations, you now have successfully added the backed up project to your local machine!
+
+
 ## View A Project
+To start backing up projects with GitUp simply click 'View Project'. At that point, you'll be prompted to select a directory:
 
-To start backing up projects with GitUp simply click *View a Project* and select the project directory on your machine.
+![image alt text](images/view_1.png)
 
-Once you’ve viewed a project directory in GitUp, you won’t ever have to worry about backing up your work! GitUp will automatically attempt back up your work whenever you save a file. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
+Once you select a directory, GitUp will automatically back up the directory if it isn't already backed up. At this point, your work is now being backed up!  GitUp will automatically attempt back up your work whenever you save a file. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
 
-Gitup stores a variety of types of data such as the names of the projects the user has created, which ones are active on the current machine, the paths to the root folder of each project, and the URL to the github repository. This data is stored in a file called projects.csv in directory gitup is installed to.
+Once you've selected the directory, you'll be greeted by the following menu:
 
-## Remove A Project
+![image alt text](images/view_2.png)
 
-To stop backing up a project with GitUp simply click *Remove a Project*. 
+The list is a big picture view of all the changes you've made to your project. If you click on a date, you can see all the changes you've made to your project that day! If you want to look in depth at the changes you made to a specific file, simply click 'View File'. Then, you'll be prompted to select a file:
 
-Removing a project from a backup is very simple, but takes a few steps for security sake. The first screen you will see is a confirmation to re-enter your username and password, as mentioned we do not store this information, but we do want to verify with GitHub that it is you! Next select a project directory on your machine, if this is a valid GitUp project then a dialog box will be shown with the project directory, and two options:
+![image alt text](images/view_3.png)
 
-1. Stop Project Backup
+Once you've selected a file, you'll be greeted by the following screen:
 
-2. Remove Project Files from GitHub
+![image alt text](images/view_4.png)
 
-If you select "*Stop Project Backup" *GitUp will no longer backup files from this project on GitHub but the files will remain on your GitHub account.
+You can select an old and new version to compare with one another. If you select the same version for both, then it will just display that version of the file. However, if you select different versions, you'll get something like the following:
 
-If you select *"Remove Project Files from GitHub" *GitUp will remove your project files from your GitHub account (permanently deleting all backup history) but will continue backing up this project to GitHub.
+![image alt text](images/view_5.png)
 
-Upon hitting the "*CONFIRM*" button all changes will be applied, shown below:
+Black text is the same between both versions, red text is text that is only in the old version, and green text is text that is only in the new version. If you ever want to revert the back to a previous version, simply click on 'Revert to Pre', and the file will be reverted to whatever version you selected as your Old Version.
 
-![image alt text](images/image_2.png)
-
-# The Project View Screen:
-
-![image alt text](images/image_3.png)
-
-## View/Revert Changes
-
-Selecting a file and clicking the "View/Revert Changes" button from the project screen allows the user to see a file’s history. The diff between the two commits is displayed and the user sees insertions in green and deletions in red.
-
-![image alt text](images/image_4.png)
-
-By clicking "Change Commits" the user sees a menu allowing them to select a pre and post commit. Clicking “Revert to Pre” will allow the user to set the current file to whatever previous commit they currently have selected in the “Change Commits” table. ![image alt text](images/image_5.png)
-
-## Syncing changes
-
-You don’t need to worry about syncing changes! GitUp will automatically back up your work whenever you change. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
 
 # Important Notes
 
