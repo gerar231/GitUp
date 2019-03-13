@@ -395,7 +395,7 @@ class ViewFile(tk.Frame):
     def revertFile(self, master):
         global repo
         global proj_dir
-        repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', 'testing.txt')
+        repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', self.filename[1:])
         master.switch_frame(ViewFile)
         
 # Delete Project Window. Backend not yet implemented
