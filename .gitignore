@@ -2,4 +2,4 @@
 *.swp
 *.vscode
 src/token.txt
-local_control_script.py
+local_control_script*
