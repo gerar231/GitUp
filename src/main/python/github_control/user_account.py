@@ -210,7 +210,7 @@ class UserAccount(object):
             local_repo: Repo the push operation is being performed on.
             remote_name: name of remote associated with Repo local_repo.
         
-        Returns a string in the form https://user_login:token@remote_repo_url.git for the
+        Returns a string in the form https://token@remote_repo_url.git for the
         remote_name specified as a remote of local_repo using the GitUp access token and
         the current user's id.
         """
