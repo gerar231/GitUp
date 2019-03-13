@@ -41,11 +41,11 @@ class GitUpDaemon(Daemon):
             repo.safe_pull(self.user_account)
             repo.safe_push(self.user_account)
 
-    def __schedule_push_pull_job(self, interval_mins=5):
+    def __schedule_push_pull_job(self, interval_mins=15):
         self.scheduler.start()
-        # Schedule the daemon to push/pull all repos every 5 minutes
+        # Schedule the daemon to push/pull all repos every interval_seconds seconds
         self.push_pull_job = self.scheduler.add_job(self.__push_pull,
-                'interval', minutes=interval_mins)
+                'interval', seconds=interval_seconds)
 
     # Returns a formated string representing the current time.
     def __get_timestamp(self): 
