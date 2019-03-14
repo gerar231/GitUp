@@ -16,3 +16,6 @@ python3.6 -m compileall -l ./main/python/github_control
 
 #Compile the python files in /src/main/python/local_control
 python3.6 -m compileall -l ./main/python/local_control
+
+#Compile the python files in /src/unittest/python
+python3.6 -m compileall -l ./unittest/python
