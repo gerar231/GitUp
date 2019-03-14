@@ -157,11 +157,19 @@ class Repository(git.Repo):
         print("{}: failed to pull remote.\n\trepo: {}".format(
                 self.__get_timestamp(), self.path), file=sys.stderr)
 
+    def __contains_merge(self):
+        merge_head_path = os.path.join(self.git_dir, "MERGE_HEAD")
+        return os.path.exists(merge_head_path) 
+
     # Pulls the remote for this repository. Returns True on success, False on
     # failure.
     def safe_pull(self, user_account):
         print("{}: pulling.\n\trepo: {}".format(
                 self.__get_timestamp(), self.path))
+        if self.__contains_merge():
+           print("{}: already in merge not pulling.\n\trepo: {}".format(
+                   self.__get_timestamp(), self.path))
+           return False
         if not user_account:
             self.__pull_failure()
             print("\n\tno user account", file=sys.stderr)
@@ -172,6 +180,10 @@ class Repository(git.Repo):
         except GitCommandError as e:
             self.__pull_failure()
             print(e, file=sys.stderr)
+            if self.__contains_merge():
+                print("{}: encountered merge conflict.\n\trepo: {}".format(
+                    self.__get_timestamp(), self.path))
+                # TODO: display a message to the user.
             return False
    
     # Print an error message about failing to push to the remote. 
