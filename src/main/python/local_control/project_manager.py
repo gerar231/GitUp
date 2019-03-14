@@ -105,8 +105,12 @@ class ProjectManager(object):
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
+        # perform an authenticated clone
         cloned_repo = git.Repo.clone_from(self.curr_user.create_clone_url(found_repo[1]), norm_path, branch='master')
         try:
+            # recreate the origin remote to avoid storing token
+            cloned_repo.delete_remote(cloned_repo.remote())
+            cloned_repo.create_remote(name="origin", url=found_repo[1]) 
             cloned_repo.remote()
             self.__update_daemon_csv(norm_path) 
         except:
