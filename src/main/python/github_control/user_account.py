@@ -149,19 +149,23 @@ class UserAccount(object):
             repos.append(tuple([repo.name, repo.clone_url]))
         return repos
 
-    def create_remote_repo(self, local_repo: Repo, create_new_origin=False):
+    def create_remote_repo(self, local_repo: Repo, create_new_origin=False, use_existing_repo=False):
         """
         Arguments:
             local_repo: GitPython Repo object to create a remote repository on the user account.
-            create_new_origin: If true then attempts to create a new remote repository under
+            create_new_origin: If True then attempts to create a new remote repository under
             existing origin, default is False.
+            use_existing_repo: If True then if an existing repo is found on the user's account a
+            remote will be created from the local to the existing remote. If no existing remote repo
+            is found then a new remote repo will be created.
 
         Create a remote repository under the name of the parent directory containing the repo
         on the current user's GitHub account and add remote under the name "origin" to this local repository. 
         Adds all changes and pushes all contents of local repo into remote repo after creation.
         If an "origin" remote already exists and create_new_origin is False then throw AssertionError.
-        If a remote repo with conflicting name exist then thrown an AssertionError.
-        If push fails after a remote repo is created then throw a GitCommandError.
+        If no "origin" remote exists and create_new_origin is True then throw AssertionError.
+        If a remote repo with conflicting name exists and use_existing_repo is False then thrown an AssertionError.
+        If push fails after a remote repo is created/found then throw a GitCommandError.
         """
         # verify that there is not an origin remote
         try:
@@ -171,38 +175,52 @@ class UserAccount(object):
                 raise AssertionError("local_repo already has an origin remote and create_new_origin is False.")
         except ValueError:
             # local repo does not have origin remote
-            create_new_origin = True
+            if create_new_origin:
+                raise AssertionError("create_remote_repo called with create_new_origin True but no existing origin.")
+            pass
 
-        if create_new_origin:
-            # attempt to create a new remote repository using the folder containing the repository name
-            repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
-            existing_repos = self.__github_control.get_user().get_repos()
-            # check if the user has an existing remote repository of this name
-            for curr_repo in existing_repos:
-                if curr_repo.name == repo_name:
-                    raise AssertionError("Existing remote repo found with the name {}.".format(repo_name))
+        # attempt to create a new remote repository using the folder containing the repository name
+        repo_name = os.path.basename(os.path.normpath(os.path.join(local_repo.common_dir, "..")))
+        existing_repos = self.get_remote_repos()
+        # check if the user has an existing remote repository of this name
+        remote_url = None
+        for curr_repo in existing_repos:
+            if curr_repo[0] == repo_name:
+                if not use_existing_repo:
+                    raise AssertionError("Existing remote repo found with the name {} and use_existing_repo is False.".format(repo_name))
+                else:
+                    # if a remote repo is found with a matching name then use the existing one.
+                    remote_url = curr_repo[1]
+                    break
 
-            # create a new remote repository
+        # create a new remote repository
+        if remote_url is None:
             remote_repo = self.__github_control.get_user().create_repo(name=repo_name, description=str("Repository created by GitUp."))
-            print(remote_repo.git_url)
-
-            # ERROR CHECK NEEDED
-            # add the remote from the remote repository to the local repository
+            print("New remote repository created for {} at {} under the name {}.".format(self.get_login, remote_repo.git_url, repo_name))
             remote_url = str(remote_repo.clone_url)
-            local_repo.create_remote(name="origin", url=remote_url)
-            
-            # add all changes
-            local_repo.git.add(".")
 
-            # commit 
-            local_repo.git.commit(m="GitUp added all changes after creating remote repo.")
-
-            # push to the remote using https://token@remote_url.git
-            # perform a push using the git binary, specifying the url dynamically generated in the above format
+        # ERROR CHECK NEEDED
+        # add the remote from the remote repository to the local repository
+        if create_new_origin:
             try:
-                local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
+                local_repo.delete_remote(local_repo.remote())
             except:
-                raise git.exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
+                raise git.exc.GitCommandError("Deleting \"origin\" remote failed during create_remote_repo with create_new_origin True.")
+
+        local_repo.create_remote(name="origin", url=remote_url)
+        
+        # add all changes
+        local_repo.git.add(".")
+
+        # commit 
+        local_repo.git.commit(m="GitUp added all changes after creating new remote to remote repo.")
+
+        # push to the remote using https://token@remote_url.git
+        # perform a push using the git binary, specifying the url dynamically generated in the above format
+        try:
+            self.push_to_remote(local_repo)
+        except:
+            raise git.exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
     
     def __create_remote_url(self, local_repo: Repo, remote_name: str):
         """
