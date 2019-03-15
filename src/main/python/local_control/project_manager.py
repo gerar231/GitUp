@@ -116,7 +116,12 @@ class ProjectManager(object):
         except:
             raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
         return cloned_repo
-    
+
+    def __start_or_restart_daemon(self):
+        if DMN.daemon_is_running():
+            DMN.restart_daemon()
+        else:
+            DNM.start_daemon()
     
     def __update_daemon_csv(self, path: str) -> bool:
         """
