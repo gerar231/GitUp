@@ -161,7 +161,6 @@ class UserAccount(object):
 
         Create a remote repository under the name of the parent directory containing the repo
         on the current user's GitHub account and add remote under the name "origin" to this local repository. 
-        Adds all changes and pushes all contents of local repo into remote repo after creation.
         If an "origin" remote already exists and create_new_origin is False then throw AssertionError.
         If no "origin" remote exists and create_new_origin is True then throw AssertionError.
         If a remote repo with conflicting name exists and use_existing_repo is False then thrown an AssertionError.
@@ -205,22 +204,9 @@ class UserAccount(object):
             try:
                 local_repo.delete_remote(local_repo.remote())
             except:
-                raise git.exc.GitCommandError("Deleting \"origin\" remote failed during create_remote_repo with create_new_origin True.")
+                raise git.exc.GitCommandError("Deleting \"origin\" remote failed during create_remote_repo with create_new_origin True.", status=1)
 
         local_repo.create_remote(name="origin", url=remote_url)
-        
-        # add all changes
-        local_repo.git.add(".")
-
-        # commit 
-        local_repo.git.commit(m="GitUp added all changes after creating new remote to remote repo.")
-
-        # push to the remote using https://token@remote_url.git
-        # perform a push using the git binary, specifying the url dynamically generated in the above format
-        try:
-            self.push_to_remote(local_repo)
-        except:
-            raise git.exc.GitCommandError("Push to origin failed after remote repo created for {}".format(os.path.join(local_repo.common_dir, "..")))
     
     def __create_remote_url(self, local_repo: Repo, remote_name: str):
         """
@@ -267,12 +253,12 @@ class UserAccount(object):
         try:
             local_repo.remote(name="origin")
         except ValueError:
-            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir), status=1)
         # push to the remote
         try:
             local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
         except:
-            raise git.exc.GitCommandError("Push to origin remote failed for repo {}.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("Push to origin remote failed for repo {}.".format(local_repo.working_tree_dir), status=1)
 
     def pull_to_local(self, local_repo: Repo):
         """
@@ -285,9 +271,9 @@ class UserAccount(object):
         try:
             local_repo.remote(name="origin")
         except ValueError:
-            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir), status=1)
         # push to the remote
         try:
             local_repo.git.pull(self.__create_remote_url(local_repo, "origin"), "master")
         except:
-            raise git.exc.GitCommandError("Pull to repo {} from remote origin failed.".format(local_repo.working_tree_dir))
+            raise git.exc.GitCommandError("Pull to repo {} from remote origin failed.".format(local_repo.working_tree_dir), status=1)
