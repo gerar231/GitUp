@@ -121,7 +121,7 @@ class ProjectManager(object):
         if DMN.daemon_is_running():
             DMN.restart_daemon()
         else:
-            DNM.start_daemon()
+            DMN.start_daemon()
     
     def __update_daemon_csv(self, path: str) -> bool:
         """
@@ -141,10 +141,10 @@ class ProjectManager(object):
         except ValueError:
             return False
         # if necessarry then restart the Daemon
-        # Calling DMN.restart_daemon() causes a fairly complicated bug, due to
+        # Not using a process causes a fairly complicated bug, due to
         # the double fork attempting to call exit from the parent processes. To
         # avoid this restarting the daemon should be done from a separate process.
-        p = Process(target=DMN.restart_daemon)
+        p = Process(target=self.__start_or_restart_daemon)
         p.start()
         p.join()
         return True
