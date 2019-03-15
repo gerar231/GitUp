@@ -7,6 +7,7 @@ from git import Repo
 from git import Commit
 import time
 import commit_grouper as grouper
+from lib import Tooltip
 sys.path.append(os.path.normpath(os.path.join(os.path.realpath('__file__'), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
@@ -78,18 +79,34 @@ class StartingMenu(tk.Frame):
         tk.Label (self, text = "v1.0.0").pack()
         tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
         
+        '''
+        Login button removed for now (we don't want multiple users using the same system)
         # Button to logout the user and prompt them to log in
         tk.Button(self, text = "Logout",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
+        '''
 
         # Button to open menu for adding a remote project to local machine
-        tk.Button(self, text = "Add Project",
-                command = lambda: master.switch_frame(ExistingProjects)).pack()
+        self.restore = tk.Button(self, text = "Add Project",
+            command = lambda: master.switch_frame(ExistingProjects))
+        self.restore.pack()
+
+        restore_ttp_msg = ("Click here if you want to add a project "
+                "you've already backed up through GitUp to this "
+                "machine to work on!")
+        restore_ttp = Tooltip.CreateToolTip(self.restore, restore_ttp_msg)
 
         # Button to open menu for viewing a project and adding it to GitUp's
         # tracked projects if it is not already being tracked
-        tk.Button(self, text = "View Project",
-                command = lambda: master.switch_frame(OpenProjectMenu)).pack()
+        self.view = tk.Button(self, text = "View Project",
+                command = lambda: master.switch_frame(OpenProjectMenu))
+        self.view.pack()
+
+        view_ttp_msg = ("Click here if you want to backup a project you're "
+                "working on in this machine with GitUp or want to view "
+                "the change history of your project and its files!")
+        view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
+
 
         # Button to open menu for deleting project. Backend needs to be implemented
         '''
