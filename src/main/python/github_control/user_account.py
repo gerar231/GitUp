@@ -202,8 +202,8 @@ class UserAccount(object):
         if create_new_origin:
             try:
                 local_repo.delete_remote(local_repo.remote())
-            except:
-                raise git.exc.GitCommandError("Deleting \"origin\" remote failed during create_remote_repo with create_new_origin True.", status=1)
+            except git.exc.GitCommandError as e:
+                raise e
 
         local_repo.create_remote(name="origin", url=remote_url)
     
@@ -256,8 +256,8 @@ class UserAccount(object):
         # push to the remote
         try:
             local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
-        except:
-            raise git.exc.GitCommandError("Push to origin remote failed for repo {}.".format(local_repo.working_tree_dir), status=1)
+        except git.exc.GitCommandError as e:
+            raise e
 
     def pull_to_local(self, local_repo: Repo):
         """
@@ -274,5 +274,5 @@ class UserAccount(object):
         # push to the remote
         try:
             local_repo.git.pull(self.__create_remote_url(local_repo, "origin"), "master")
-        except:
-            raise git.exc.GitCommandError("Pull to repo {} from remote origin failed.".format(local_repo.working_tree_dir), status=1)
+        except git.exc.GitCommandError as e:
+            raise e 
