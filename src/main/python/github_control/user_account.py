@@ -112,7 +112,14 @@ class UserAccount(object):
                         raise ValueError("Token at default path {} was invalid (might need login refresh).".format(token_path))
             except FileNotFoundError:
                 raise ValueError("No user_name and/or password and no token at default path {}.".format(token_path))
-
+    
+    def remove_token(self):
+        """
+        Invalidates (if necessary) and removes the existing user authentication token from GitUp's
+        project files.
+        """
+        # TODO: finish this method.
+        raise NotImplementedError()
 
     def get_name(self):
         """
