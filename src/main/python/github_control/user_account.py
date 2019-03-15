@@ -164,7 +164,6 @@ class UserAccount(object):
         If an "origin" remote already exists and create_new_origin is False then throw AssertionError.
         If no "origin" remote exists and create_new_origin is True then throw AssertionError.
         If a remote repo with conflicting name exists and use_existing_repo is False then thrown an AssertionError.
-        If push fails after a remote repo is created/found then throw a GitCommandError.
         """
         # verify that there is not an origin remote
         try:
