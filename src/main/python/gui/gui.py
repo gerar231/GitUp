@@ -100,7 +100,7 @@ class StartingMenu(tk.Frame):
         # Button to open menu for viewing a project and adding it to GitUp's
         # tracked projects if it is not already being tracked
         self.backup = tk.Button(self, text = "Backup Project",
-                command = lambda: master.switch_frame(OpenProjectMenu))
+                command = lambda: self.backup_project())
         self.backup.pack()
 
         backup_ttp_msg = ("Click here if you want to backup a project you're "
@@ -122,6 +122,15 @@ class StartingMenu(tk.Frame):
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
         '''
 
+    def backup_project(self):
+        global proj_dir
+        proj_dir = filedialog.askdirectory(initialdir = "/")
+        global repo
+        global proj_manager
+
+        # Check if project is a repo being tracked by GitUp
+        repo = proj_manager.view_project_repo(proj_dir)
+        
 # Login window for GitUp
 class LoginWindow(tk.Frame):
     def __init__(self, master):
@@ -191,45 +200,6 @@ class ExistingProjects(tk.Frame):
 
         # Create the project
         proj_manager.restore_project_repo(proj_loc, projName)
-        master.switch_frame(StartingMenu)
-
-# Menu for opening a project in the GitUp program
-class OpenProjectMenu(tk.Frame):
-    # Initialize window
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-
-        global proj_dir
-        proj_dir = filedialog.askdirectory(initialdir = "/")
-        global repo
-        global proj_manager
-
-        # Check if project is a repo being tracked by GitUp
-        repo = proj_manager.find_project_repo(proj_dir)
-        if repo is None:
-           #project is not being tracked by GitUp
-            repo = proj_manager.view_project_repo(proj_dir) # Pr
-
-        master.switch_frame(StartingMenu)
-
-    '''
-    Opens a project to be viewed in the GitUp GUI. If the project is not
-    a repository being tracked, then it is initialized as a Git repository
-    associated with the user's GitHub account and will now be tracked by GitUp.
-    master: Main GitUp class. Used to switch windows
-    '''
-    def openProject(self, master):
-        global proj_dir
-        proj_dir = filedialog.askdirectory(initialdir = "/")
-        global repo
-        global proj_manager
-
-        # Check if project is a repo being tracked by GitUp
-        repo = proj_manager.find_project_repo(proj_dir)
-        if repo is None:
-           #project is not being tracked by GitUp
-            repo = proj_manager.view_project_repo(proj_dir) # Pr
-
         master.switch_frame(StartingMenu)
 
 class ViewProjectMenu(tk.Frame):
