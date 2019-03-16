@@ -1,5 +1,6 @@
 import sys
 import os
+import csv
 import tkinter as tk
 from tkinter import filedialog, ttk
 import git
@@ -98,14 +99,21 @@ class StartingMenu(tk.Frame):
 
         # Button to open menu for viewing a project and adding it to GitUp's
         # tracked projects if it is not already being tracked
-        self.view = tk.Button(self, text = "View Project",
+        self.backup = tk.Button(self, text = "Backup Project",
                 command = lambda: master.switch_frame(OpenProjectMenu))
-        self.view.pack()
+        self.backup.pack()
 
-        view_ttp_msg = ("Click here if you want to backup a project you're "
+        backup_ttp_msg = ("Click here if you want to backup a project you're "
                 "working on in this machine with GitUp or want to view "
                 "the change history of your project and its files!")
-        view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
+        backup_ttp = Tooltip.CreateToolTip(self.backup, backup_ttp_msg)
+
+
+        # Button to open menu for viewing a project
+
+        self.view = tk.Button(self, text = "View Project",
+                command = lambda: master.switch_frame(ViewProjectMenu))
+        self.view.pack()
 
 
         # Button to open menu for deleting project. Backend needs to be implemented
@@ -191,13 +199,18 @@ class OpenProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
 
-        # Button to go back to the main menu
-        tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).pack()
+        global proj_dir
+        proj_dir = filedialog.askdirectory(initialdir = "/")
+        global repo
+        global proj_manager
 
-        # Button to open a project
-        tk.Button(self, text = "Open Project",
-            command = lambda: self.openProject(master)).pack()
+        # Check if project is a repo being tracked by GitUp
+        repo = proj_manager.find_project_repo(proj_dir)
+        if repo is None:
+           #project is not being tracked by GitUp
+            repo = proj_manager.view_project_repo(proj_dir) # Pr
+
+        master.switch_frame(StartingMenu)
 
     '''
     Opens a project to be viewed in the GitUp GUI. If the project is not
@@ -214,10 +227,43 @@ class OpenProjectMenu(tk.Frame):
         # Check if project is a repo being tracked by GitUp
         repo = proj_manager.find_project_repo(proj_dir)
         if repo is None:
-            # Project is not being tracked by GitUp
-            repo = proj_manager.view_project_repo(proj_dir)
+           #project is not being tracked by GitUp
+            repo = proj_manager.view_project_repo(proj_dir) # Pr
 
+        master.switch_frame(StartingMenu)
+
+class ViewProjectMenu(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+
+        tk.Label(self, text = "Choose a project to view:").pack()
+        global user
+
+        # Create combobox and populate it with all projects that can be viewed
+        with open('/tmp/gitup/repositories.csv') as csvfile:
+            readCSV = csv.reader(csvfile, delimiter=',')
+            next(readCSV)
+            for row in readCSV:
+                projs = [row[0] for row in readCSV]
+
+        choose_proj = tk.ttk.Combobox(self, values = projs)
+        choose_proj.pack()
+
+        # Button to add the selected project to the local machine
+        tk.Button(self, text = "View Project",
+                command = lambda: self.viewProject(master, choose_proj.get())).pack()
+
+        # Button to go back to the main menu
+        tk.Button(self, text = "Back",
+                command = lambda: master.switch_frame(StartingMenu)).pack()
+
+    def viewProject(self, master, proj_path):
+        global proj_dir
+        global repo
+        proj_dir = proj_path
+        repo = proj_manager.find_project_repo(proj_dir)
         master.switch_frame(ProjectMenu)
+        
 
 # Menu for a particular project
 class ProjectMenu(tk.Frame):
