@@ -7,8 +7,8 @@ import git
 from git import Repo
 from git import Commit
 import time
-import commit_grouper as grouper
-from lib import Tooltip
+from gui import commit_grouper as grouper
+from gui.lib import Tooltip
 sys.path.append(os.path.normpath(os.path.join(os.path.realpath('__file__'), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
@@ -444,8 +444,3 @@ class DeleteProjectMenu(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
 '''
-
-# Code to actually run the GitUp app
-if __name__ == "__main__":
-    app = GitUpApp()
-    app.mainloop()
