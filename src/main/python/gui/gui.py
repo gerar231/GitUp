@@ -71,10 +71,6 @@ class StartingMenu(tk.Frame):
         global user
         global proj_manager
 
-        # Sets up the project manager if it isn't already set up
-        if proj_manager is None:
-            proj_manager = project_manager.ProjectManager(user)
-
         frame = tk.Frame(master)
 
         # Text in Starting Menu
@@ -126,6 +122,10 @@ class StartingMenu(tk.Frame):
                 "of your project and/or compare, view, and revert to past versions "
                 "of specific files!")
         view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
+
+        # Sets up the project manager if it isn't already set up
+        if proj_manager is None:
+            proj_manager = project_manager.ProjectManager(user)
 
         #frame.pack(expand = 1)
 
