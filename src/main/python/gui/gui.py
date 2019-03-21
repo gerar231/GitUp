@@ -463,7 +463,7 @@ class ViewFile(tk.Frame):
         global repo
         global proj_dir
         repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', self.filename[1:])
-        master.switch_frame(ViewFile)
+        master.switch_frame(ProjectMenu)
         
 # Delete Project Window. Backend not yet implemented
 '''
