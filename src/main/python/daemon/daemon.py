@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from inotify.adapters import InotifyTrees
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 from .base_daemon import Daemon
 from .repository import Repository
 sys.path.append(os.path.normpath("../"))
@@ -41,11 +42,11 @@ class GitUpDaemon(Daemon):
             repo.safe_pull(self.user_account)
             repo.safe_push(self.user_account)
 
-    def __schedule_push_pull_job(self, interval_seconds=15):
+    def __schedule_push_pull_job(self, interval_seconds=60):
         self.scheduler.start()
         # Schedule the daemon to push/pull all repos every interval_seconds seconds
         self.push_pull_job = self.scheduler.add_job(self.__push_pull,
-                'interval', seconds=interval_seconds)
+                             IntervalTrigger(seconds=interval_seconds))
 
     # Returns a formated string representing the current time.
     def __get_timestamp(self): 

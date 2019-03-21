@@ -1,12 +1,14 @@
 import sys
 import os
+import csv
 import tkinter as tk
 from tkinter import filedialog, ttk
 import git
 from git import Repo
 from git import Commit
 import time
-import commit_grouper as grouper
+from gui import commit_grouper as grouper
+from gui.lib import Tooltip
 sys.path.append(os.path.normpath(os.path.join(os.path.realpath('__file__'), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
@@ -58,7 +60,7 @@ class GitUpApp(tk.Tk):
             self._frame.destroy()
 
         self._frame = frame_class(self)
-        self._frame.pack()
+        self._frame.pack(expand = 1)
 
 # Starting Menu that greets the user once they are logged in
 class StartingMenu(tk.Frame):
@@ -73,23 +75,40 @@ class StartingMenu(tk.Frame):
         if proj_manager is None:
             proj_manager = project_manager.ProjectManager(user)
 
+        frame = tk.Frame(master)
+
         # Text in Starting Menu
-        tk.Label(self, text = "GitUp").pack()
-        tk.Label (self, text = "v1.0.0").pack()
-        tk.Label(self, text = "Welcome " + user.get_login() + "!").pack()
+        tk.Label(self, text = "GitUp").pack(fill_='x')
+        tk.Label (self, text = "v1.0.0").pack(fill_='x')
+        tk.Label(self, text = "Welcome " + user.get_login() + "!").pack(fill_='x')
         
+        '''
+        Login button removed for now (we don't want multiple users using the same system)
         # Button to logout the user and prompt them to log in
         tk.Button(self, text = "Logout",
                 command = lambda: master.switch_frame(LoginWindow)).pack()
-
-        # Button to open menu for adding a remote project to local machine
-        tk.Button(self, text = "Add Project",
-                command = lambda: master.switch_frame(ExistingProjects)).pack()
-
+        '''
         # Button to open menu for viewing a project and adding it to GitUp's
         # tracked projects if it is not already being tracked
-        tk.Button(self, text = "View Project",
-                command = lambda: master.switch_frame(OpenProjectMenu)).pack()
+        self.backup = tk.Button(self, text = "Backup New Project",
+                command = lambda: self.backup_project())
+        self.backup.pack(fill_='x')
+
+        backup_ttp_msg = ("Click here if you want to backup a project you're "
+                "working on in this machine with GitUp!")
+        backup_ttp = Tooltip.CreateToolTip(self.backup, backup_ttp_msg)
+
+        # Button to open menu for adding a remote project to local machine
+        self.restore = tk.Button(self, text = "Restore Backed up Project",
+            command = lambda: master.switch_frame(ExistingProjects))
+        self.restore.pack(fill_='x')
+
+        restore_ttp_msg = ("Click here if you want to add a project "
+                "you've already backed up through GitUp to this "
+                "machine to work on!")
+        restore_ttp = Tooltip.CreateToolTip(self.restore, restore_ttp_msg)
+
+
 
         # Button to open menu for deleting project. Backend needs to be implemented
         '''
@@ -97,6 +116,28 @@ class StartingMenu(tk.Frame):
                 command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
         '''
 
+        # Button to open menu for viewing a project
+
+        self.view = tk.Button(self, text = "View Project",
+                command = lambda: master.switch_frame(ViewProjectMenu))
+        self.view.pack(fill_='x')
+
+        view_ttp_msg = ("Click here if you want to view the change history "
+                "of your project and/or compare, view, and revert to past versions "
+                "of specific files!")
+        view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
+
+        #frame.pack(expand = 1)
+
+    def backup_project(self):
+        global proj_dir
+        proj_dir = filedialog.askdirectory(initialdir = "/")
+        global repo
+        global proj_manager
+
+        # Check if project is a repo being tracked by GitUp
+        repo = proj_manager.view_project_repo(proj_dir)
+        
 # Login window for GitUp
 class LoginWindow(tk.Frame):
     def __init__(self, master):
@@ -113,10 +154,6 @@ class LoginWindow(tk.Frame):
         # Button to attempt to login to GitUp
         tk.Button(self, text="Login",
                 command = lambda: self.login(master)).grid(row = 2)
-
-        # Button to return to main menu
-        tk.Button(self, text="Back",
-                command = lambda: master.switch_frame(StartingMenu)).grid(column = 1, row=2)
 
     '''
     Logs in to the user's GitHub account with the provided credentials
@@ -162,45 +199,43 @@ class ExistingProjects(tk.Frame):
     # Creates local version of projName that is synced with the remote version
     def createFolder(self, master, projName):
         # Get directory to create project in
-        proj_loc = filedialog.askdirectory()
+        proj_loc = filedialog.askdirectory(initialdir = "/")
 
         # Create the project
         proj_manager.restore_project_repo(proj_loc, projName)
         master.switch_frame(StartingMenu)
 
-# Menu for opening a project in the GitUp program
-class OpenProjectMenu(tk.Frame):
-    # Initialize window
+class ViewProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+
+        tk.Label(self, text = "Choose a project to view:").pack()
+        global user
+
+        # Create combobox and populate it with all projects that can be viewed
+        with open('/tmp/gitup/repositories.csv') as csvfile:
+            readCSV = csv.reader(csvfile, delimiter=',')
+            for row in readCSV:
+                projs = [row[0] for row in readCSV]
+
+        choose_proj = tk.ttk.Combobox(self, values = projs)
+        choose_proj.pack()
+
+        # Button to add the selected project to the local machine
+        tk.Button(self, text = "View Project",
+                command = lambda: self.viewProject(master, choose_proj.get())).pack()
 
         # Button to go back to the main menu
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
 
-        # Button to open a project
-        tk.Button(self, text = "Open Project",
-            command = lambda: self.openProject(master)).pack()
-
-    '''
-    Opens a project to be viewed in the GitUp GUI. If the project is not
-    a repository being tracked, then it is initialized as a Git repository
-    associated with the user's GitHub account and will now be tracked by GitUp.
-    master: Main GitUp class. Used to switch windows
-    '''
-    def openProject(self, master):
+    def viewProject(self, master, proj_path):
         global proj_dir
-        proj_dir = filedialog.askdirectory(initialdir = "/")
         global repo
-        global proj_manager
-
-        # Check if project is a repo being tracked by GitUp
+        proj_dir = proj_path
         repo = proj_manager.find_project_repo(proj_dir)
-        if repo is None:
-            # Project is not being tracked by GitUp
-            repo = proj_manager.view_project_repo(proj_dir)
-
         master.switch_frame(ProjectMenu)
+        
 
 # Menu for a particular project
 class ProjectMenu(tk.Frame):
@@ -210,12 +245,19 @@ class ProjectMenu(tk.Frame):
         tk.Frame.__init__(self, master)
 
         # Button to compare and revert past versions of a file
-        tk.Button(self, text = "View File",
-                command = lambda: master.switch_frame(ViewFile)).grid()
+        self.view = tk.Button(self, text = "View File",
+                command = lambda: master.switch_frame(ViewFile))
+
+        self.view.grid()
+
+        view_ttp_msg = ("Click here to view, compare, and revert to previous versions "
+                "of a specific file!")
+
+        view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
 
         # Scrollbar for list of grouped commits
         scrollbar = tk.Scrollbar(self)
-        scrollbar.grid(column= 1, sticky='ns')
+        scrollbar.grid(row = 2, column= 1, sticky='ns')
         self.listbox = tk.Listbox(self, yscrollcommand=scrollbar.set)
 
         # Get all commits for this project
@@ -232,11 +274,18 @@ class ProjectMenu(tk.Frame):
         for date in self.dates:
             self.listbox.insert(tk.END, date)
         scrollbar.config(command=self.listbox.yview)
-        self.listbox.grid(row=1)
+
+        commit_description = ("This is an overview of the change history of your project! "
+                "Click on a specific date to see a list of all the changes that were "
+                "made that day!")
+
+        tk.Message(self, text = commit_description).grid(row=1)
+        self.listbox.grid(row=2)
+
 
         # Button to go back to the main menu
         tk.Button(self, text = "Back",
-                command = lambda: master.switch_frame(StartingMenu)).grid(row=2)
+                command = lambda: master.switch_frame(StartingMenu)).grid(row=3)
 
         # Bind double clicking a date to opening a list of all commits on that date
         self.listbox.bind('<Double-1>', lambda x: 
@@ -290,17 +339,32 @@ class ViewFile(tk.Frame):
         buttons = tk.Frame(self)
         # Button to go back to the main menu
         tk.Button(text = "Back",
-                command=lambda: master.switch_frame(StartingMenu)).pack(in_=buttons, side='left')
+                command=lambda: master.switch_frame(ProjectMenu)).pack(in_=buttons, side='left')
 
         # Button to revert the local version of the file to the version selected
         # in the pre combobox
-        tk.Button(text = "Revert to Pre",
-                command=lambda: self.revertFile(master)).pack(in_=buttons, side = 'left')
+        self.revert = tk.Button(text = "Revert to Old Version",
+                command=lambda: self.revertFile(master))
+
+        self.revert.pack(in_=buttons, side = 'left')
+
+        revert_ttp_msg = ("Click here to revert this file back to the version of it "
+                "selected in the Old dropdown list!")
+
+        revert_ttp = Tooltip.CreateToolTip(self.revert, revert_ttp_msg)
 
         # Button to compare the version of the file selected in the pre combobox
         # with the version of the file selected in the post combobox
-        compare = tk.Button(text = "Compare",
-                command = lambda: self.getDiff()).pack(in_=buttons, side = 'left')
+        self.compare = tk.Button(text = "Compare",
+                command = lambda: self.getDiff())
+        self.compare.pack(in_=buttons, side = 'left')
+
+        compare_ttp_msg = ("Click here to compare the version of this file selected "
+                "in Old with the version selected in New, with additions highlighted in "
+                "green and deletions highlighted in red. To just view a past version of "
+                "a file, simply select that version in both Old and New!")
+
+        compare_ttp = Tooltip.CreateToolTip(self.compare, compare_ttp_msg)
 
         buttons.grid()
 
@@ -411,8 +475,3 @@ class DeleteProjectMenu(tk.Frame):
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
 '''
-
-# Code to actually run the GitUp app
-if __name__ == "__main__":
-    app = GitUpApp()
-    app.mainloop()

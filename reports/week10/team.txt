@@ -1,0 +1,28 @@
+Last Week’s Goals: 
+  - Our number one goal is to finish development of GitUp to the point where we can conduct a user test. This needs to get done ASAP.
+  - Get users to complete our survey and analyze the results.
+  - Add merge conflict resolution mechanism
+
+Progress:
+  - We were able to get GitUp to a state where a user could take our survey. We had 1 user test this past week. 
+  - This user test showed us that setting up GitUp and adding a local project were fairly easy and intuitive for the user 
+    (9 and 5 minutes respectively), but when it came time to add remote projects, view and compare file versions, and revert changes, 
+    the user was unable to figure out what to do, even with our user manual at their disposal. This tells us that there’s gaps in our 
+    user manual that need to be addressed specifically for these three operations.
+  - While thinking about how we should tackle this last feature, we decided it would be best to just use Git’s merge mechanism for 
+    merge conflict resolution. We haven’t started implementing this yet, but since we are using an already existing tool for this 
+    we don’t expect it to take too much time.
+
+Plans/Goals:
+  - Update our user manual, aiming to improve clarity on how to add remote projects, view and compare files, and revert changes.
+  - Bug fixes
+  - Any bugs that we don’t have time to fix will be added as issues to our repository.
+  - Finish implementing auto-merge
+
+TA Meeting Agenda:
+Treat Martin as a Lead Software Engineer:
+  1. Any ideas on packaging GitUp to be highly portable? 
+Treat Martin as a TA:
+  1. If we change up our user manual before continuing user testing, should we exclude the user test results from before we made the edits?
+Treat Martin as a Customer:
+  1. What would you most likely use GitUp for in its current state?

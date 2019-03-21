@@ -1,3 +1,6 @@
-To run the executable, you must first download the whole directory "GitUp" here: https://www.dropbox.com/sh/6b9m3x3yx5ewmla/AACQUobVn7HXC8kURkqPk56Da?dl=0
+To run the executable, you must first download the "GitUp.zip" file here: 
+https://www.dropbox.com/sh/754mfdmq0k7qx5o/AABhQ9GRjvHwIaoq5EMj9nHaa?dl=0
 
-This includes the executable "gui", among other necessary files. For this reason, please do not restructure the directory.
+Next, unzip GitUp.zip, which should provide an executable called "GitUp" and a git_attributes.txt file.
+The git_attributes.txt file needs to be next to the GitUp executable in order for it to maintain it's 
+full functionality, so please do not separate these two files.

@@ -105,14 +105,23 @@ class ProjectManager(object):
         
         # join norm path with repo_name for new directory
         norm_path = os.path.join(norm_path, repo_name)
+        # perform an authenticated clone
         cloned_repo = git.Repo.clone_from(self.curr_user.create_clone_url(found_repo[1]), norm_path, branch='master')
         try:
+            # recreate the origin remote to avoid storing token
+            cloned_repo.delete_remote(cloned_repo.remote())
+            cloned_repo.create_remote(name="origin", url=found_repo[1]) 
             cloned_repo.remote()
             self.__update_daemon_csv(norm_path) 
         except:
             raise sys.stderr.write("Cloned repository does not have an origin remote. GitUp will not track automatically.\n")
         return cloned_repo
-    
+
+    def __start_or_restart_daemon(self):
+        if DMN.daemon_is_running():
+            DMN.restart_daemon()
+        else:
+            DMN.start_daemon()
     
     def __update_daemon_csv(self, path: str) -> bool:
         """
@@ -132,10 +141,10 @@ class ProjectManager(object):
         except ValueError:
             return False
         # if necessarry then restart the Daemon
-        # Calling DMN.restart_daemon() causes a fairly complicated bug, due to
+        # Not using a process causes a fairly complicated bug, due to
         # the double fork attempting to call exit from the parent processes. To
         # avoid this restarting the daemon should be done from a separate process.
-        p = Process(target=DMN.restart_daemon)
+        p = Process(target=self.__start_or_restart_daemon)
         p.start()
         p.join()
         return True
