@@ -112,7 +112,33 @@ class UserAccount(object):
                         raise ValueError("Token at default path {} was invalid (might need login refresh).".format(token_path))
             except FileNotFoundError:
                 raise ValueError("No user_name and/or password and no token at default path {}.".format(token_path))
-
+    
+    def remove_token(self):
+        """
+        Invalidates (if necessary) and removes the existing user authentication token from GitUp's project files. 
+        Returns True if the token_file had a valid token and/or deleted the file from disk at the default path.
+        Returns False if a token_file was not found at the default directory.
+        """
+        default_token_path = os.path.normpath("/tmp/gitup/token.txt")
+        try:
+            with open(default_token_path) as token_file:
+                existing_token = token_file.readline() 
+                self.__github_control = Github(login_or_token=existing_token)
+                try:
+                    self.__login = self.__github_control.get_user().login
+                    self.__token = existing_token
+                    # token at default path is valid, invalidate the token
+                    authorizations = self.__github_control.get_user().get_authorizations()
+                    for auth in authorizations:
+                        if auth.note_url == "https://github.com/gerar231/GitUp":
+                            auth.delete()
+                except github.GithubException:
+                    sys.stderr.write("Token at default path {} was invalid (might need login refresh).\n")
+                # delete the token file 
+                os.remove(default_token_path)
+                return True
+        except FileNotFoundError:
+            return False
 
     def get_name(self):
         """
