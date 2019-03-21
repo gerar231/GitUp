@@ -301,11 +301,14 @@ class ProjectMenu(tk.Frame):
         commitWindow = tk.Toplevel()
         listbox = tk.Listbox(commitWindow)
 
-        # Get display message for each commit        
-        commit_messages = [str(time.strftime("%a, %d %b %Y %H:%M",
-                time.localtime(commit.committed_date))) + "-" +
-                repo.git.show(commit.hexsha, name_only=True, pretty="").replace('\n', ',')
-                for commit in self.commits[date]]
+        # Get display message for each commit
+        commit_messages = []
+        for commit in self.commits[date]:
+            files = repo.git.show(commit.hexsha, name_only=True, pretty="")
+            if not files.startswith('.') and not ('\n.' in files):
+                commit_messages.append(str(time.strftime("%a, %d %b %Y %H:%M",
+                        time.localtime(commit.committed_date))) + " - " +
+                        files.replace('\n', ','))
 
         # Populate listbox with commit messages
         for date in commit_messages:
