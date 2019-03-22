@@ -12,12 +12,18 @@ As of now, GitUp only works on Linux based systems. Additionally, to use GitUp, 
 
 ## Download GitUp
 
-Simply download the repository at https://github.com/gerar231/GitUp/ and follow the build instructions. Then, navigate to GitUp/src/main/python/gui on your command line and type 'python3 gui.py'! Now, GitUp is running!
+To download GitUp quickly and easily just download our executable zip found at: [https://www.dropbox.com/sh/9jsd261dos98f6n/AABZnOT4SGWmfYVqMDnTKFSMa?dl=0](https://www.dropbox.com/sh/9jsd261dos98f6n/AABZnOT4SGWmfYVqMDnTKFSMa?dl=0)
+Once downloaded you will need to unzip the contents. After unzipping, you should have a directory called GitUp. Inside this directory
+you will find the GitUp executable and a git_attributes.txt file. To ensure functionality, please do not restructure this directory.
+
+If you'd prefer to build from source, please see the "Building from Source" section at the end of this document.
 
 ## System Requirements
 
-The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version 3.6 installed:
-[https://www.python.org/downloads/release/python-368/](https://www.python.org/downloads/release/python-368/).
+The only operating system GitUp currently supports is Linux. Other than this, there are no other requirements to run GitUp if
+you download our executable.
+
+If you want to build from source, see the requirements in the "Building from Source" section at the end of this document.
 
 # Using GitUp:
 
@@ -87,12 +93,12 @@ Since the projects are on your GitHub account, you can modify your project using
 ## Building from Source
 
 Requirements:
-The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version 3.6 installed: [https://www.python.org/downloads/release/python-368/](https://www.python.org/downloads/release/python-368/).
+The only operating system GitUp currently supports is Linux. On top of this, your system will need to have Python version 3.7 installed: [https://www.python.org/downloads/release/python-372/](https://www.python.org/downloads/release/python-372/).
 
 
-To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp) using "git clone https://github.com/gerar231/GitUp". The second step is to download PyBuilder, which we use to build our project. You can run "sudo python3.6 -m pip install pybuilder" from the terminal to download this. Next, navigate into the repository from the terminal. After navigating to the repository, first run the command "sudo pyb install_dependencies", followed by "sudo pyb". 
+To build from source, first clone our git repository from [https://github.com/gerar231/GitUp](https://github.com/gerar231/GitUp) using "git clone https://github.com/gerar231/GitUp". The second step is to download PyBuilder, which we use to build our project. You can run "sudo python3.7 -m pip install -U --pre pybuilder" from the terminal to download this. Next, navigate into the repository from the terminal. After navigating to the repository, first run the command "sudo pyb install_dependencies", followed by "sudo pyb". 
 
-To run GitUp, navigate from the top level of the repository to /src/main/python/gui and then run "python3.6 gui.py".
+To run GitUp, navigate from the top level of the repository to /src/main/python/ and then run "python3.7 GitUp.py".
 
 ## Projects that helped us:
 
