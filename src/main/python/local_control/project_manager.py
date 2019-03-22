@@ -148,6 +148,28 @@ class ProjectManager(object):
         p.start()
         p.join()
         return True
+
+    def __remove_daemon_csv(self, path: str) -> bool:
+        """
+        Arguments:
+            path: the absolute path of the project to remove from the CSV tracked by the Daemon.
+        
+        Removes the path specified by the argument to the CSV tracked by the Daemon and restart
+        it. Returns True if the path was successfully removed, returns False if the path was 
+        not already in the CSV or CSV doesn't exist.
+        """
+        try:
+            CSV.remove_project(path)
+        except Exception:
+            return False
+        # if necessarry then restart the Daemon
+        # Not using a process causes a fairly complicated bug, due to
+        # the double fork attempting to call exit from the parent processes. To
+        # avoid this restarting the daemon should be done from a separate process.
+        p = Process(target=self.__start_or_restart_daemon)
+        p.start()
+        p.join()
+        return True
     
     def view_repo_commits(self, path: str):
         """
@@ -175,7 +197,17 @@ class ProjectManager(object):
         # instantiate the index
         curr_index = git.IndexFile(curr_repo, norm_path)
         curr_index.reset(commit=commit, paths=[norm_path])
+    
+    def stop_tracking_project(self, path: str):
+        """
+        Arguments:
+            path:
 
+        Removes the given path from the list of projects being tracked.
+        Throw a ValueError if the path is not being tracked.
+        """
+        if not self.__remove_daemon_csv(path):
+            raise ValueError("The provided path {} is not being tracked by GitUp.".format(path))
     
     def delete_project_repo(self, path: str, remove_files=False):
         """
