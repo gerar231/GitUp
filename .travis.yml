@@ -1,13 +1,42 @@
 matrix:
+  
   include:
+    language: node_js
+    node_js:
+      - '6.9.1'
+      - '7.0.0'
+    sudo: false
+
+    addons:
+      apt:
+        packages:
+          - xvfb
+
+    before_install:
+      - rvm install 2.2.6
+      - gem install dropbox-deployment
+
+    install:
+      - export DISPLAY=':99.0'
+      - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      - npm install
+    
     language: python
-    python: 3.6
+    python: 3.7
     dist: xenial
     sudo: true
+    
     before_script:
-      - sudo chmod +x ./src/test/compile-src.sh
-      - python3.6 -m pip install pybuilder
+      - sudo chmod +x ./src/test/compile-src.sh #Add permission to run script
+      - sudo chmod +x ./generate-and-deploy-executable.sh
+      - python3.7 -m pip install -U --pre pybuilder #For Build System
+      - python3.7 -m pip install pyinstaller #For Creating Executable
+    
     script:
-      - ./src/test/compile-src.sh
-      - pyb install_dependencies
-      - pyb
+      - ./src/test/compile-src.sh #Compile python files in /src
+      - pyb install_dependencies #Install Build Dependencies
+      - pyb #Build
+    
+    after_script:
+      - ./generate-and-deploy-executable.sh
+      
