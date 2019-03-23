@@ -138,7 +138,7 @@ This is Version
 
 \>\>\>\>\>\>\> \#RandomStringOfLettersAndNumbers
 
-The conflict region is bounded off from regular parts of the file through <s and >s. The acutal two conflicting versions of the conflict region are separated by a string of =s. To fix the merge conflict, simply open the file on one version of the project, and edit it and save. The changes will be automatically reflected in all versions of the file, and you can proceed as normal!
+The conflict region is bounded off from regular parts of the file through <s and \>s. The acutal two conflicting versions of the conflict region are separated by a string of =s. To fix the merge conflict, simply open the file on one version of the project, and edit it and save. The changes will be automatically reflected in all versions of the file, and you can proceed as normal!
 
 
 # Important Notes
