@@ -161,15 +161,15 @@ class Repository(git.Repo):
         merge_head_path = os.path.join(self.git_dir, "MERGE_HEAD")
         return os.path.exists(merge_head_path) 
 
+    def __merge_commit(self):
+        self.git.add(os.curdir)
+        self.git.commit(message="merge commit")
+
     # Pulls the remote for this repository. Returns True on success, False on
     # failure.
     def safe_pull(self, user_account):
         print("{}: pulling.\n\trepo: {}".format(
                 self.__get_timestamp(), self.path))
-        if self.__contains_merge():
-           print("{}: already in merge not pulling.\n\trepo: {}".format(
-                   self.__get_timestamp(), self.path))
-           return False
         if not user_account:
             self.__pull_failure()
             print("\n\tno user account", file=sys.stderr)
@@ -184,8 +184,8 @@ class Repository(git.Repo):
                 print("{}: encountered merge conflict.\n\trepo: {}".format(
                     self.__get_timestamp(), self.path))
                 # TODO display an error message to the user.
-                self.__safe_commit()
                 try:
+                    self.__merge_commit()
                     user_account.set_upstream_push_to_remote(self)
                 except GitCommandError as err:
                     print("{}: failed to push merge conflict.\n\trepo: {}".format(
