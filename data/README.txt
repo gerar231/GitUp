@@ -1,21 +1,22 @@
 The Excel Spreadsheet "Survey Data Analysis" is intended to be written too with results from our Google survey.
 
-The spreadsheet produces 4 bar graphs. Each bar graph has 3 bars on the x-axis, representing each of Git, GitKraken, 
-and GitUp. The graphs differ in their y-axes, where one measures average number of tasks completed in 30 minutes, one 
-measures the number of votes for most functional VCS tool, one measures the number of votes for easiest to use VCS 
-tool, and the last measures the number of votes for the best overall VCS tool.
+The spreadsheet produces 5 line graphs. Each line graph has an x-axis which represents the test iteration, or
+user test number. The y-axis for each graph represents the number of minutes taken to complete each task (the
+task is indicated in each graph title).
 
-The spreadsheet requires 6 inputs from the survey for each survey response:
-1. The number of tasks completed using Git
-2. The number of tasks completed using GitKraken
-3. The number of tasks completed using GitUp
-4. The vote for most functional (Git, GitKraken, or GitUp)
-5. The vote for easiest to use (Git, GitKraken, or GitUp)
-6. The vote for best overall (Git, GitKraken, or GitUp)
+These line graphs are intended to demonstrate that as we made changes between testers, there was an overall trend
+of tasks being completed more quickly. In other words, the changes we made given the feedback of our previous user
+tests made it easier for future users to figure out.
 
-The spreadsheet currently can store up to 100 survey responses, but can be easily expanded.
-For a user to see the results, all they need to do is open the excel spreadsheet. Then, they
-can view the automatically generated graphs to see our results.
+The spreadsheet requires 5 inputs from the survey for each survey response:
+1. The time taken to setup GitUp
+2. The time taken to backup a local project using GitUp
+3. The time taken to add a remote project already backed up using GitUp
+4. The time taken to view and compare past versions of files using GitUp
+5. The time taken to revert a file to a previous version using GitUp
 
-We'll also store individual feedback responses based off of using GitUp for an actual software
-project as text files in this directory that a user can click on to read.
+The spreadsheet can dynamically change it's graphs given increasing amounts of data using Excel's Table feature.
+Each input column is an excel table in this spreadsheet. Adding cell values to the end of the table will automatically 
+be absorbed into the table and incorporated into the graphs. However, adding data rows through copy and pasting will 
+NOT force the tables to absorb the new values below them. If you do copy and paste rows of data though, all you need to
+do is drag each of the table bounds down to cover the new data and the graphs will automatically update.
