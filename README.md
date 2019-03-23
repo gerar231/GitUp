@@ -60,29 +60,42 @@ Once you've selected a project, click on 'Add Project'. Then, you'll need to sel
 
 After the project has been added, you'll go back to the main menu. Congratulations, you now have successfully added the backed up project to your local machine!
 
-
-## View A Project
-To start backing up projects with GitUp simply click 'View Project'. At that point, you'll be prompted to select a directory:
+## Backup A Project
+To start backing up projects with GitUp simply click 'Backup New Project'. At that point, you'll be prompted to select a directory:
 
 ![image alt text](images/view_1.PNG)
 
 Once you select a directory, GitUp will automatically back up the directory if it isn't already backed up. At this point, your work is now being backed up!  GitUp will automatically attempt back up your work whenever you save a file. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
 
-Once you've selected the directory, you'll be greeted by the following menu:
+
+## View A Project
+If you want to view a GitUp project, select 'View Project' from the main menu. You'll then be brought to the following screen
+
+![image alt text](images/view_1.PNG)
+
+Click on the combobox to select a project to view:
 
 ![image alt text](images/view_2.PNG)
 
-The list is a big picture view of all the changes you've made to your project. If you click on a date, you can see all the changes you've made to your project that day! If you want to look in depth at the changes you made to a specific file, simply click 'View File'. Then, you'll be prompted to select a file:
+You'll then be brought to this screen:
 
 ![image alt text](images/view_3.PNG)
 
-Once you've selected a file, you'll be greeted by the following screen:
+This list is a big picture view of all the changes you've made to your project. If you click on a date, you can see all the changes you've made to your project that day:
 
 ![image alt text](images/view_4.PNG)
 
-You can select an old and new version to compare with one another. If you select the same version for both, then it will just display that version of the file. However, if you select different versions, you'll get something like the following:
+If you want to look in depth at the changes you made to a specific file, simply click 'View File'. Then, you'll be prompted to select a file:
 
 ![image alt text](images/view_5.PNG)
+
+Once you've selected a file, you'll be greeted by the following screen:
+
+![image alt text](images/view_6.PNG)
+
+You can select an old and new version to compare with one another. If you select the same version for both, then it will just display that version of the file. However, if you select different versions, you'll get something like the following:
+
+![image alt text](images/view_7.PNG)
 
 Black text is the same between both versions, red text is text that is only in the old version, and green text is text that is only in the new version. If you ever want to revert the back to a previous version, simply click on 'Revert to Pre', and the file will be reverted to whatever version you selected as your Old Version.
 
