@@ -144,9 +144,7 @@ class ProjectManager(object):
         # Not using a process causes a fairly complicated bug, due to
         # the double fork attempting to call exit from the parent processes. To
         # avoid this restarting the daemon should be done from a separate process.
-        p = Process(target=self.__start_or_restart_daemon)
-        p.start()
-        p.join()
+        self.start_daemon()
         return True
 
     def __remove_daemon_csv(self, path: str) -> bool:
@@ -166,10 +164,14 @@ class ProjectManager(object):
         # Not using a process causes a fairly complicated bug, due to
         # the double fork attempting to call exit from the parent processes. To
         # avoid this restarting the daemon should be done from a separate process.
+        self.start_daemon()
+        return True
+
+    # Starts the daemon, or restarts if it is already running
+    def start_daemon(self):
         p = Process(target=self.__start_or_restart_daemon)
         p.start()
         p.join()
-        return True
     
     def view_repo_commits(self, path: str):
         """
