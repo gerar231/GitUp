@@ -23,13 +23,13 @@ class UserAccount(object):
         If no arguments provided:
             Checks default_token_path, if no token exists at the default path then throw a ValueError. 
             If token at default path is invalid then throw a ValueError.
-
-        If user_name or password are provided:
-            Uses provided token_path or default_token_path if none, if neither are valid then Value Error. 
             
         If only a token_path is provided:
             Checks the file given at path for an authorization token, if none or invalid path then print error message 
             and check the default path. If no token exists at default path and no username and password then throw error.
+
+        If user_name or password are provided:
+            Uses provided token_path or default_token_path if none, if neither are valid then Value Error. 
 
         If user_name and password are provided:
             Logs in to a user account and creates a new token for GitUp that
@@ -282,6 +282,27 @@ class UserAccount(object):
         # push to the remote
         try:
             local_repo.git.push(self.__create_remote_url(local_repo, "origin"), "master")
+        except git.exc.GitCommandError as e:
+            raise e
+
+    def set_upstream_push_to_remote(self, local_repo):
+        """
+        Argument:
+           local_repo: GitPython repo to push to changes to origin remote.
+        
+        Pushes the latest changes to the remote repository under remote "origin" to branch master.
+        Uses special tag --set-upstream
+        If local_repo does not have a remote named "origin" throw a GitCommandError.
+        If push to remote "origin" fails throw GitCommandError.
+        """
+        # verify this repo has an origin remote
+        try:
+            local_repo.remote(name="origin")
+        except ValueError:
+            raise git.exc.GitCommandError("No origin remote for repo {}.".format(local_repo.working_tree_dir), status=1)
+        # push to the remote
+        try:
+            local_repo.git.push("--set-upstream", self.__create_remote_url(local_repo, "origin"), "master")
         except git.exc.GitCommandError as e:
             raise e
 
