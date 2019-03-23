@@ -45,6 +45,17 @@ On your first login we will create an authorization token for your account to Gi
 
 Revoking GitUp permissions from your GitHub account will stop all project backups until you login again.
 
+
+## Backup A Project
+To start backing up projects with GitUp simply click 'Backup New Project'. At that point, you'll be prompted to select a directory:
+
+![image alt text](images/restore_3.PNG)
+
+Once you select a directory, GitUp will automatically back up the directory if it isn't already backed up. At this point, your work is now being backed up!  GitUp will automatically attempt back up your work whenever you save a file. When choosing a project to backup,
+please do not under any circumstances try to backup a directory that either contains or is a sub-directory in a project that is
+already being backed up by GitUp/
+
+
 ## Restore a project
 To add a project backed up remotely but not locally, first click on 'Add Project'. Then, you'll be greeted by the following window:
 
@@ -58,14 +69,7 @@ Once you've selected a project, click on 'Add Project'. Then, you'll need to sel
 
 ![image alt text](images/restore_3.PNG)
 
-After the project has been added, you'll go back to the main menu. Congratulations, you now have successfully added the backed up project to your local machine!
-
-## Backup A Project
-To start backing up projects with GitUp simply click 'Backup New Project'. At that point, you'll be prompted to select a directory:
-
-![image alt text](images/restore_3.PNG)
-
-Once you select a directory, GitUp will automatically back up the directory if it isn't already backed up. At this point, your work is now being backed up!  GitUp will automatically attempt back up your work whenever you save a file. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
+After the project has been added, you'll go back to the main menu. Congratulations, you now have successfully added the backed up project to your local machine! Please do not any circumstances attempt to restore a project inside a project that GitUp is already tracking!
 
 
 ## View A Project
@@ -100,9 +104,46 @@ You can select an old and new version to compare with one another. If you select
 Black text is the same between both versions, red text is text that is only in the old version, and green text is text that is only in the new version. If you ever want to revert the back to a previous version, simply click on 'Revert to Pre', and the file will be reverted to whatever version you selected as your Old Version.
 
 
+# Deleting a Project
+
+You cannot delete project files through GitUp. However, you can stop tracking a project through GitUp, at which point any further changes you make to the project's files won't be backed up. To stop tracking a file, simply click on 'Stop Tracking Project' Then,
+you'll be greeted by the following window:
+
+![image alt text](images/del.png)
+
+To delete a project, simply open up the dropdown list. Then, similarly to viewing a project, simply select the project you want to stop tracking. Hit 'Stop Tracking Project', and GitUp will no longer track the project you've selected!
+
+
+# Merge Conflicts
+
+Since GitUp automatically syncs versions of files, sometimes a file is changed at the same time by two different machines. When that happens, something called a 'merge conflict' occurs. When a merge conflict occurs for a file, GitUp will replace that file with a special conflict file for all versions of the project. The conflict file will look something like this:
+
+
+![image_alt_text](images/merge.png)
+
+All parts of the file where both versions of the file were the same just appear as normal text. However, there will be one
+or more special 'conflict' regions where each version of the file was different. The conflict regions will be separated from the rest of the file and will be in the format
+
+<<<<<<< HEAD
+
+This is
+
+Version 1
+
+\=\=\=\=\=\=\=\=
+
+This is Version
+
+2
+
+\>\>\>\>\>\>\> \#RandomStringOfLettersAndNumbers
+
+The conflict region is bounded off from regular parts of the file through <s and >s. The acutal two conflicting versions of the conflict region are separated by a string of =s. To fix the merge conflict, simply open the file on one version of the project, and edit it and save. The changes will be automatically reflected in all versions of the file, and you can proceed as normal!
+
+
 # Important Notes
 
-Since the projects are on your GitHub account, you can modify your project using git. However, we strongly discourage doing this, as GitUp will handle all aspects of backing up your work and viewing/reverting past versions for you. Also, proceed with caution whenever you get a warning that something could potentially become out of sync! If a file becomes out of sync, GitUp will automatically attempt to resolve it, though you may lose work when it does so.
+Since the projects are on your GitHub account, you can modify your project using git. However, we strongly discourage doing this, as GitUp will handle all aspects of backing up your work and viewing/reverting past versions for you. Also, be careful about making changes to the same file in a project on multiple machines simultaneously or when you don't have access to the internet. Doing so could cause a merge conflict, which you will have to manually resolve.
 
 ## Building from Source
 
