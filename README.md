@@ -63,7 +63,7 @@ After the project has been added, you'll go back to the main menu. Congratulatio
 ## Backup A Project
 To start backing up projects with GitUp simply click 'Backup New Project'. At that point, you'll be prompted to select a directory:
 
-![image alt text](images/view_1.PNG)
+![image alt text](images/restore_3.PNG)
 
 Once you select a directory, GitUp will automatically back up the directory if it isn't already backed up. At this point, your work is now being backed up!  GitUp will automatically attempt back up your work whenever you save a file. If syncing fails, we will give you a warning about which files could potentially become out of sync with the backed up version.
 
