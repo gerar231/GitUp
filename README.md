@@ -20,8 +20,9 @@ If you'd prefer to build from source, please see the "Building from Source" sect
 
 ## System Requirements
 
-The only operating system GitUp currently supports is Linux. Other than this, there are no other requirements to run GitUp if
-you download our executable.
+The only operating system GitUp currently supports is Linux. Your system will also need to have git on it. To download git onto 
+your linux machine, you can find instructions for your linux distribution here: [https://git-scm.com/download/linux](https://git-scm.com/download/linux).
+Other than this, there are no other requirements to run GitUp if you download our executable.
 
 If you want to build from source, see the requirements in the "Building from Source" section at the end of this document.
 
