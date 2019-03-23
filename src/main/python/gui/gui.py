@@ -23,6 +23,9 @@ proj_manager = None
 # Represents the absolute path to the Git repository the user is interacting with
 proj_dir = None
 
+# Represents the absolute file path of a file being viewed
+filepath = None
+
 # Represents the current Git repository the user is interacting with
 repo = None
 
@@ -221,7 +224,8 @@ class ExistingProjects(tk.Frame):
         try:
             proj_manager.restore_project_repo(proj_loc, projName)
         except ValueError:
-            messagebox.showinfo('Error', "Cannot restore a project inside an existing project")
+            messagebox.showinfo('Error', ("Can only restore projects in existing directories that "
+                    "are not inside a project already being tracked!"))
         master.switch_frame(StartingMenu)
 
 class ViewProjectMenu(tk.Frame):
@@ -270,7 +274,7 @@ class ProjectMenu(tk.Frame):
 
         # Button to compare and revert past versions of a file
         self.view = tk.Button(self, text = "View File",
-                command = lambda: master.switch_frame(ViewFile))
+                command = lambda: self.view_file(master))
 
         self.view.grid()
 
@@ -315,6 +319,23 @@ class ProjectMenu(tk.Frame):
         self.listbox.bind('<Double-1>', lambda x: 
                 self.viewDetailedCommits())
 
+    def view_file(self, master):
+        global proj_dir
+        global filepath
+
+        # Get file to view
+        filepath =  filedialog.askopenfilename(initialdir = proj_dir,
+                title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
+
+        if filepath is '':
+            return
+
+        if proj_dir not in filepath:
+            messagebox.showinfo("Error", "Only files inside the project can be selected")
+            return
+
+        master.switch_frame(ViewFile)
+
     # Displays a popup window that contains a list of all the commits that occured
     # on the date the user specified in the format [Date]-[modified file],[modified file]...
     def viewDetailedCommits(self):
@@ -357,11 +378,10 @@ class ViewFile(tk.Frame):
         tk.Frame.__init__(self, master)
         global proj_dir
         global proj_manager
+        global filepath
 
-        # Get file to view
-        self.filename =  filedialog.askopenfilename(initialdir = proj_dir,
-                title = "Select file",filetypes = (("text files", "*.txt"),("all files","*.*")))
-        self.filename = self.filename.replace(proj_dir, '')
+        self.filename = filepath.replace(proj_dir, '')
+
 
         buttons = tk.Frame(self)
         # Button to go back to the main menu
@@ -461,6 +481,13 @@ class ViewFile(tk.Frame):
             # the aforementioned format
             diff_contents = repo.git.diff(self.commits[self.pre_version.current()], 
                     self.commits[self.post_version.current()], proj_dir + "/" + self.filename)
+
+            # Checks if both versions of the file are identical
+            if diff_contents is '':
+                file_contents = repo.git.show(self.commits[self.pre_version.current()].hexsha
+                        + ":" + self.filename[1:]).splitlines()
+                for line in file_contents:
+                    self.text.insert(tk.END, line + '\n')
             diff_lines = diff_contents.splitlines()
             for line in diff_lines[4:]:
                 if len(line) > 0 and line[0] == '-':
@@ -487,8 +514,11 @@ class ViewFile(tk.Frame):
         global repo
         global proj_dir
         global project_manager
-        print(self.filename)
+        global user
         repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', self.filename[1:])
+        repo.git.add(self.filename[1:])
+        repo.git.commit(self.filename[1:], m='Revert')
+        user.push_to_remote(repo)
         master.switch_frame(ProjectMenu)
         
 # Delete Project Window. Backend not yet implemented
