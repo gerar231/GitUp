@@ -190,7 +190,7 @@ class Repository(git.Repo):
                 except GitCommandError as err:
                     print("{}: failed to push merge conflict.\n\trepo: {}".format(
                             self.__get_timestamp(), self.path), file=sys.stderr)
-                    print(e, file=sys.stderr)
+                    print(err, file=sys.stderr)
         return False
    
     # Print an error message about failing to push to the remote. 
