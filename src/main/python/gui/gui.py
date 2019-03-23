@@ -2,7 +2,7 @@ import sys
 import os
 import csv
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog, ttk, messagebox
 import git
 from git import Repo
 from git import Commit
@@ -12,6 +12,7 @@ from gui.lib import Tooltip
 sys.path.append(os.path.normpath(os.path.join(os.path.realpath('__file__'), "..", "..")))
 from local_control import project_manager
 from github_control import user_account
+from daemon import repository
 
 # Represents the GitHub credentials of the current user
 user = None
@@ -104,14 +105,6 @@ class StartingMenu(tk.Frame):
                 "machine to work on!")
         restore_ttp = Tooltip.CreateToolTip(self.restore, restore_ttp_msg)
 
-
-
-        # Button to open menu for deleting project. Backend needs to be implemented
-        '''
-        tk.Button(self, text = "Remove Project", state = tk.DISABLED,
-                command = lambda: master.switch_frame(DeleteProjectMenu)).pack()
-        '''
-
         # Button to open menu for viewing a project
 
         self.view = tk.Button(self, text = "View Project",
@@ -123,20 +116,35 @@ class StartingMenu(tk.Frame):
                 "of specific files!")
         view_ttp = Tooltip.CreateToolTip(self.view, view_ttp_msg)
 
+        # Button to stop tracking project
+
+        self.delete = tk.Button(self, text = "Stop Tracking Project",
+                command = lambda: master.switch_frame(DeleteProjectMenu))
+
+        self.delete.pack(fill_='x')
+
+        del_ttp_msg = "Click here if you want GitUp to stop tracking a project!"
+        del_ttp = Tooltip.CreateToolTip(self.delete, del_ttp_msg)
+
         # Sets up the project manager if it isn't already set up
         if proj_manager is None:
             proj_manager = project_manager.ProjectManager(user)
-
-        #frame.pack(expand = 1)
+            proj_manager.start_daemon()
 
     def backup_project(self):
         global proj_dir
         proj_dir = filedialog.askdirectory(initialdir = "/")
+        if proj_dir is '':
+            return
         global repo
         global proj_manager
 
         # Check if project is a repo being tracked by GitUp
-        repo = proj_manager.view_project_repo(proj_dir)
+        try:
+            repo = proj_manager.view_project_repo(proj_dir)
+        except:
+            messagebox.showinfo("Error", "Invalid directory path!")
+            
         
 # Login window for GitUp
 class LoginWindow(tk.Frame):
@@ -172,8 +180,8 @@ class LoginWindow(tk.Frame):
                 master.switch_frame(StartingMenu)
 
             except ValueError:
-                return
-          
+                messagebox.showinfo("Error", "Username and/or password was incorrect!")
+
 # Window for restoring a remote project to the local machine
 class ExistingProjects(tk.Frame):
 
@@ -185,7 +193,7 @@ class ExistingProjects(tk.Frame):
 
         # Create combobox and populate it with all remote projects that be restored
         projs = [i[0] for i in user.get_remote_repos()]
-        choose_proj = tk.ttk.Combobox(self, values = projs)
+        choose_proj = tk.ttk.Combobox(self, state = "readonly", values = projs)
         choose_proj.pack()
 
         # Button to add the selected project to the local machine
@@ -198,11 +206,22 @@ class ExistingProjects(tk.Frame):
 
     # Creates local version of projName that is synced with the remote version
     def createFolder(self, master, projName):
+
+        if projName is '':
+            messagebox.showinfo("Error", "No project selected!")
+            return
+
         # Get directory to create project in
         proj_loc = filedialog.askdirectory(initialdir = "/")
-
+        if proj_loc is '':
+            return
+        
         # Create the project
-        proj_manager.restore_project_repo(proj_loc, projName)
+
+        try:
+            proj_manager.restore_project_repo(proj_loc, projName)
+        except ValueError:
+            messagebox.showinfo('Error', "Cannot restore a project inside an existing project")
         master.switch_frame(StartingMenu)
 
 class ViewProjectMenu(tk.Frame):
@@ -213,12 +232,14 @@ class ViewProjectMenu(tk.Frame):
         global user
 
         # Create combobox and populate it with all projects that can be viewed
-        with open('/tmp/gitup/repositories.csv') as csvfile:
-            readCSV = csv.reader(csvfile, delimiter=',')
-            for row in readCSV:
-                projs = [row[0] for row in readCSV]
-
-        choose_proj = tk.ttk.Combobox(self, values = projs)
+        try:
+            with open('/tmp/gitup/repositories.csv') as csvfile:
+               readCSV = csv.reader(csvfile, delimiter=',')
+               for row in readCSV:
+                   projs = [row[0] for row in readCSV]
+        except FileNotFoundError:
+            projs = []
+        choose_proj = tk.ttk.Combobox(self, state = "readonly", values = projs)
         choose_proj.pack()
 
         # Button to add the selected project to the local machine
@@ -232,9 +253,12 @@ class ViewProjectMenu(tk.Frame):
     def viewProject(self, master, proj_path):
         global proj_dir
         global repo
-        proj_dir = proj_path
-        repo = proj_manager.find_project_repo(proj_dir)
-        master.switch_frame(ProjectMenu)
+        if proj_path is '':
+            messagebox.showinfo("Error", "No project selected!")
+        else:
+            proj_dir = proj_path
+            repo = proj_manager.find_project_repo(proj_dir)
+            master.switch_frame(ProjectMenu)
         
 
 # Menu for a particular project
@@ -380,11 +404,11 @@ class ViewFile(tk.Frame):
         # of the file
         version_selection = tk.Frame(self)
         tk.Label(self, text = "Old Version").pack(in_=version_selection, side = 'left')        
-        self.pre_version = tk.ttk.Combobox(self, values = commit_dates)
+        self.pre_version = tk.ttk.Combobox(self, state = "readonly", values = commit_dates)
         self.pre_version.pack(in_=version_selection, side = 'left')
         self.pre_version.current(0)
         tk.Label(self, text="New Version").pack(in_=version_selection, side = 'left')
-        self.post_version = tk.ttk.Combobox(self, values = commit_dates)
+        self.post_version = tk.ttk.Combobox(self, state = "readonly", values = commit_dates)
         self.post_version.pack(in_=version_selection, side = 'left')
         self.post_version.current(0)
         version_selection.grid(row=1)
@@ -462,19 +486,37 @@ class ViewFile(tk.Frame):
     def revertFile(self, master):
         global repo
         global proj_dir
+        global project_manager
+        print(self.filename)
         repo.git.checkout(self.commits[self.pre_version.current()].hexsha, '--', self.filename[1:])
         master.switch_frame(ProjectMenu)
         
 # Delete Project Window. Backend not yet implemented
-'''
 class DeleteProjectMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         tk.Label(self, text = "Choose a project:").pack()
-        projs = ["None", "hah"] #TODO: Get List of names of projects GitUp is currently tracking
-        options = tk.ttk.Combobox(self, values = tuple(projs)).pack()
-        tk.Button(self, text = "Delete Project",
-                command = proj_manager.delete_project_repo(options.get()))
+        # Create combobox and populate it with all projects that can be viewed
+        try:
+            with open('/tmp/gitup/repositories.csv') as csvfile:
+               readCSV = csv.reader(csvfile, delimiter=',')
+               for row in readCSV:
+                   projs = [row[0] for row in readCSV]
+        except FileNotFoundError:
+            projs = []
+        self.choose_proj = tk.ttk.Combobox(self, state = "readonly", values = projs)
+        self.choose_proj.pack()
+        tk.Button(self, text = "Stop Tracking Project",
+                command = lambda: self.delete_project_repo(self.choose_proj.get(), master)).pack()
         tk.Button(self, text = "Back",
                 command = lambda: master.switch_frame(StartingMenu)).pack()
-'''
+
+    def delete_project_repo(self, path, master):
+        global proj_manager
+        if path is '':
+            messagebox.showinfo("Error", "No project selected!")
+        else:
+            proj_manager.stop_tracking_project(path)
+            proj_manager.start_daemon()
+            master.switch_frame(StartingMenu)
+            
