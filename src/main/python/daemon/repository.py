@@ -183,8 +183,14 @@ class Repository(git.Repo):
             if self.__contains_merge():
                 print("{}: encountered merge conflict.\n\trepo: {}".format(
                     self.__get_timestamp(), self.path))
-                # TODO: display a message to the user.
-            return False
+                self.__safe_commit()
+                try:
+                    user_account.set_upstream_push_to_remote(self)
+                except GitCommandError as err:
+                    print("{}: failed to push merge conflict.\n\trepo: {}".format(
+                            self.__get_timestamp(), self.path), file=sys.stderr)
+                    print(e, file=sys.stderr)
+        return False
    
     # Print an error message about failing to push to the remote. 
     def __push_failure(self):
