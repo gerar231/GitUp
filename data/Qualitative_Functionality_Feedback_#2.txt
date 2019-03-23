@@ -1,0 +1,14 @@
+- How Easy is GitUp to use?
+It looks pretty straightforward to use, definitely more so than Git or GitKraken. I definitely think a new developer would be able to use it fairly quickly. The GUI does look kind of ugly though.
+
+- Does it have all the functionality it needs to have to backup a software project?
+Yes.
+
+- What is the most important feature you feel like GitUp should have that it doesn't?
+Branches for sure. With GitUp, every change you make affects the main project, whether you
+want it to or not. When I code, I like to play around with my code and try things out. More
+often than not, I decide that whatever I tried to do wouldn't work well, so I discard my changes
+and start over. Other times, I want to try multiple different things at once and see how they
+compare with each other. With branches, I can easily partition any experimentation I do, and
+only add the changes I want to main. Using GitUp would leave me with a cluttered mess of a project,
+and constantly reverting files back to older versions would be a huge pain.

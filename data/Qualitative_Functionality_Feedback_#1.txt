@@ -1,0 +1,15 @@
+- How Easy is GitUp to use?
+Wayyyy easier to use than Git. It took me two quarters of using Git in my classes to finally
+get the hang of it, but I feel like if I had used GitUp, I would have had everything figured out
+in minutes!
+
+
+- Does it have all the functionality it needs to have to backup a software project?
+Definitely!
+
+- What is the most important feature you feel like GitUp should have that it doesn't?
+I think that you should have more control over what gets pushed and when. I get that automatic
+pushing/pulling is a lot easier to use than Git's adding, commiting, and pushing. However, I
+personally like to organize my pushes around functionality I implement. I don't see any
+easy way of seeing what changes correspond to what functionality, and I feel like choosing
+when to push will let a user get more out of their version history.
